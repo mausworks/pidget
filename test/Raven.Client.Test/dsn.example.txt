@@ -1,0 +1,1 @@
+# Paste your Sentry DSN in a file called "dsn.txt" at this file location
