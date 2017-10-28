@@ -50,7 +50,7 @@ var eventId = await raven.CaptureAsync(e => e
     .AddFingerprintData("POST", "/index"));
 ```
 
-## [Supported features](https://docs.sentry.io/clientdev/overview/#writing-an-sdk)
+## [Features](https://docs.sentry.io/clientdev/overview/#writing-an-sdk)
 
 - DSN configuration
 - `planned` ~~Graceful failures (e.g. Sentry server is unreachable)~~
