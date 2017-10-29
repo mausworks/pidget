@@ -8,6 +8,15 @@ namespace Raven.Client.Test
     public class SentryEventBuilderTests
     {
         [Fact]
+        public void ThrowsForNoExceptionOrMessage()
+        {
+            var builder = new SentryEventBuilder();
+
+            Assert.Throws<InvalidOperationException>(()
+                => builder.Build());
+        }
+
+        [Fact]
         public void SetException()
         {
             var exception = new Exception();
@@ -20,6 +29,15 @@ namespace Raven.Client.Test
                 builder.Build().Exception.Type);
         }
 
+        [Theory, InlineData("message")]
+        public void SetMessage(string message)
+        {
+            var builder = new SentryEventBuilder()
+                .SetMessage(message);
+
+            Assert.Equal(message, builder.Build().Message);
+        }
+
         [Theory, InlineData("transaction")]
         public void SetTransaction(string transaction)
         {
@@ -28,16 +46,6 @@ namespace Raven.Client.Test
                 .SetTransaction(transaction);
 
             Assert.Equal(transaction, builder.Build().Culprit);
-        }
-
-        [Theory, InlineData("message")]
-        public void SetMessage(string message)
-        {
-            var builder = new SentryEventBuilder()
-                .SetException(new Exception())
-                .SetMessage(message);
-
-            Assert.Equal(message, builder.Build().Message);
         }
 
         [Theory, InlineData(ErrorLevel.Fatal)]

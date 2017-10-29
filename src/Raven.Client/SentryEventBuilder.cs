@@ -129,15 +129,14 @@ namespace Raven.Client
         {
             AssertValidity();
 
-            var exceptionData = ExceptionData
-                .FromException(_exception);
+            var exceptionData = GetExceptionData();
 
             return new SentryEventData
             {
                 Exception = exceptionData,
                 Level = _errorLevel,
                 Timestamp = DateTime.UtcNow,
-                Culprit = _transaction ?? exceptionData.Module,
+                Culprit = _transaction ?? exceptionData?.Module,
                 Platform = Sentry.CSharpPlatformIdentifier,
                 Message = _message,
                 Tags = _tags,
@@ -146,12 +145,17 @@ namespace Raven.Client
             };
         }
 
+        private ExceptionData GetExceptionData()
+            => _exception != null
+                ? ExceptionData.FromException(_exception)
+                : null;
+
         private void AssertValidity()
         {
-            if (_exception == null)
+            if (_exception == null && string.IsNullOrEmpty(_message))
             {
                 throw new InvalidOperationException(
-                    "An exception must be set.");
+                    "An exception or message must be set.");
             }
         }
     }
