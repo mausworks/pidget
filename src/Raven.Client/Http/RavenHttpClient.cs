@@ -45,11 +45,8 @@ namespace Raven.Client.Http
         }
 
         protected override async Task<string> SendEventAsync(
-            SentryEvent sentryEvent)
+            SentryEventData eventData)
         {
-            var eventData = SentryEventData
-                .FromEvent(sentryEvent);
-
             using (var stream = _serializer.Serialize(eventData))
             {
                 var response = await HandleRequestAsync(stream);

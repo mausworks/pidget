@@ -15,7 +15,9 @@ namespace Raven.Client.Test
             var builder = new SentryEventBuilder()
                 .SetException(exception);
 
-            Assert.Equal(exception, builder.Build().Exception);
+            Assert.Equal(
+                exception.GetType().Name,
+                builder.Build().Exception.Type);
         }
 
         [Theory, InlineData("transaction")]
@@ -25,7 +27,7 @@ namespace Raven.Client.Test
                 .SetException(new Exception())
                 .SetTransaction(transaction);
 
-            Assert.Equal(transaction, builder.Build().Transaction);
+            Assert.Equal(transaction, builder.Build().Culprit);
         }
 
         [Theory, InlineData("message")]
@@ -45,7 +47,7 @@ namespace Raven.Client.Test
                 .SetException(new Exception())
                 .SetErrorLevel(level);
 
-            Assert.Equal(level, builder.Build().ErrorLevel);
+            Assert.Equal(level, builder.Build().Level);
         }
 
         [Theory, InlineData("name", "value")]
@@ -81,7 +83,7 @@ namespace Raven.Client.Test
                 .SetException(new Exception())
                 .AddExtraData(name, value);
 
-            var extraData = builder.Build().ExtraData;
+            var extraData = builder.Build().Extra;
 
             Assert.Equal(name, extraData.First().Key);
             Assert.Equal(value, extraData.First().Value);

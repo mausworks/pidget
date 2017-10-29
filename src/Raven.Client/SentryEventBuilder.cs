@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Raven.Client.Models;
 
 namespace Raven.Client
 {
@@ -124,18 +125,25 @@ namespace Raven.Client
             return this;
         }
 
-        public SentryEvent Build()
+        public SentryEventData Build()
         {
             AssertValidity();
 
-            return new SentryEvent(
-                _exception,
-                _errorLevel,
-                _transaction,
-                _message,
-                _extraData,
-                _tags,
-                _fingerprint);
+            var exceptionData = ExceptionData
+                .FromException(_exception);
+
+            return new SentryEventData
+            {
+                Exception = exceptionData,
+                Level = _errorLevel,
+                Timestamp = DateTime.UtcNow,
+                Culprit = _transaction ?? exceptionData.Module,
+                Platform = Sentry.CSharpPlatformIdentifier,
+                Message = _message,
+                Tags = _tags,
+                Extra = _extraData,
+                Fingerprint = _fingerprint
+            };
         }
 
         private void AssertValidity()

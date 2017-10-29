@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Raven.Client.Models;
 
 namespace Raven.Client.Test
 {
@@ -11,13 +12,13 @@ namespace Raven.Client.Test
         public override string Version =>
             throw new NotImplementedException();
 
-        private readonly Func<SentryEvent, string> _onSend;
+        private readonly Func<SentryEventData, string> _onSend;
 
         public TestableRavenClient(Dsn dsn,
-            Func<SentryEvent, string> onSend) : base(dsn)
+            Func<SentryEventData, string> onSend) : base(dsn)
             => _onSend = onSend;
 
-        protected override Task<string> SendEventAsync(SentryEvent sentryEvent)
+        protected override Task<string> SendEventAsync(SentryEventData sentryEvent)
             => Task.FromResult(_onSend(sentryEvent));
     }
 }

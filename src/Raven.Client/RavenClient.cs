@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Raven.Client.Models;
 
 namespace Raven.Client
 {
@@ -27,6 +28,6 @@ namespace Raven.Client
         }
 
         protected abstract Task<string> SendEventAsync(
-            SentryEvent sentryEvent);
+            SentryEventData sentryEvent);
     }
 }
