@@ -2,6 +2,8 @@
 
 A .NET Client for Sentry based on .NET Standard 2.0.
 
+[![Build Status](https://travis-ci.org/mausworks/sentry-raven.svg?branch=master)](https://travis-ci.org/mausworks/sentry-raven)
+
 ## [Supported platforms:](https://docs.microsoft.com/en-us/dotnet/standard/net-standard#net-implementation-support)
 
 - .NET Core 2.0
