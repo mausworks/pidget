@@ -28,11 +28,11 @@ namespace Raven.Client.Http
             SecretKey = secretKey;
         }
 
-        public static SentryAuth Issue(RavenClient client)
+        public static SentryAuth Issue(RavenClient client, DateTimeOffset issuedAt)
             => new SentryAuth(
                 sentryVersion: Sentry.CurrentProtocolVersion,
                 clientVersion: string.Join("/", $"{client.Name}-csharp", client.Version),
-                timestamp: UnixTimestamp.Create(DateTimeOffset.UtcNow),
+                timestamp: UnixTimestamp.Create(issuedAt),
                 publicKey: client.Dsn.GetPublicKey(),
                 secretKey: client.Dsn.GetSecretKey());
     }

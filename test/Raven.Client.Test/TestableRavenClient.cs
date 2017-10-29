@@ -9,8 +9,7 @@ namespace Raven.Client.Test
 
         public override string Name => nameof(TestableRavenClient);
 
-        public override string Version =>
-            throw new NotImplementedException();
+        public override string Version => "1.0.0";
 
         private readonly Func<SentryEventData, string> _onSend;
 

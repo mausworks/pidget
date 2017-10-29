@@ -66,7 +66,10 @@ namespace Raven.Client.Http
 
         private Task<HttpResponseMessage> HandleRequestAsync(Stream stream)
             => _httpClient.SendAsync(
-                GetRequest(SentryAuth.Issue(this), stream));
+                GetRequest(IssueAuth(), stream));
+
+        private SentryAuth IssueAuth()
+            => SentryAuth.Issue(this, DateTimeOffset.UtcNow);
 
         private HttpRequestMessage GetRequest(SentryAuth auth, Stream stream)
         {
