@@ -1,7 +1,0 @@
-language: csharp
-solution: sentry-raven.sln
-#install:
-#- dotnet restore
-#script:
-#- dotnet build
-#- dotnet test test/Raven.Client.Test/Raven.Client.Test.csproj
