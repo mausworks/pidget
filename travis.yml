@@ -1,7 +1,5 @@
 language: csharp
-dist: trusty
-mono: none
-dotnet: 2.0.0
+solution: sentry-raven.sln
 install:
 - dotnet restore
 script:
