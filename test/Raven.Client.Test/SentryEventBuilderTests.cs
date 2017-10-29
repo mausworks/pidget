@@ -16,7 +16,7 @@ namespace Raven.Client.Test
                 .SetException(exception);
 
             Assert.Equal(
-                exception.GetType().Name,
+                exception.GetType().FullName,
                 builder.Build().Exception.Type);
         }
 
