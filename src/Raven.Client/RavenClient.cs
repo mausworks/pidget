@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Raven.Client.Models;
+using Raven.Client.DataModels;
 
 namespace Raven.Client
 {

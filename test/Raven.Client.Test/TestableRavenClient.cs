@@ -1,6 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using Raven.Client.Models;
+using Raven.Client.DataModels;
 
 namespace Raven.Client.Test
 {

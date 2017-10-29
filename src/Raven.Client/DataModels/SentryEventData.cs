@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using Newtonsoft.Json;
 
-namespace Raven.Client.Models
+namespace Raven.Client.DataModels
 {
     public class SentryEventData
     {

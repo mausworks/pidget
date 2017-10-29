@@ -1,7 +1,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
-using Raven.Client.Models;
+using Raven.Client.DataModels;
 using Raven.Client.Serialization;
 using System;
 using System.IO;

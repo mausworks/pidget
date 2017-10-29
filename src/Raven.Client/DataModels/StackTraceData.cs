@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using Newtonsoft.Json;
 
-namespace Raven.Client.Models
+namespace Raven.Client.DataModels
 {
     public class StackTraceData
     {
