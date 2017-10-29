@@ -16,14 +16,14 @@ namespace Raven.Client.Http
 
         private SentryAuth(string sentryVersion,
             string clientVersion,
-            int timestap,
+            int timestamp,
             string publicKey,
             string secretKey)
             : this()
         {
             SentryVersion = sentryVersion;
             ClientVersion = clientVersion;
-            Timestamp = timestap;
+            Timestamp = timestamp;
             PublicKey = publicKey;
             SecretKey = secretKey;
         }
@@ -32,7 +32,7 @@ namespace Raven.Client.Http
             => new SentryAuth(
                 sentryVersion: Sentry.CurrentProtocolVersion,
                 clientVersion: string.Join("/", $"{client.Name}-csharp", client.Version),
-                timestap: UnixTimestamp.Create(DateTimeOffset.UtcNow),
+                timestamp: UnixTimestamp.Create(DateTimeOffset.UtcNow),
                 publicKey: client.Dsn.GetPublicKey(),
                 secretKey: client.Dsn.GetSecretKey());
     }
