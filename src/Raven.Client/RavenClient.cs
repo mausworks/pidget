@@ -16,7 +16,11 @@ namespace Raven.Client
         public abstract string Version { get; }
 
         protected RavenClient(Dsn dsn)
-            => Dsn = dsn;
+        {
+            Assert.ArgumentNotNull(dsn, nameof(dsn));
+
+            Dsn = dsn;
+        }
 
         public Task<string> CaptureAsync(
             Action<SentryEventBuilder> builderAccessor)
