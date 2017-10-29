@@ -32,11 +32,7 @@ namespace Raven.Client.Http
 
         private static JsonSerializer GetJsonSerializer()
         {
-            var settings = new JsonSerializerSettings
-            {
-                Formatting = Formatting.None,
-                NullValueHandling = NullValueHandling.Ignore
-            };
+            var settings = new JsonSerializerSettings();
 
             settings.Converters.Add(
                 new StringEnumConverter(camelCaseText: true));
@@ -49,7 +45,8 @@ namespace Raven.Client.Http
         {
             using (var stream = _serializer.Serialize(eventData))
             {
-                var response = await HandleRequestAsync(stream);
+                var response = await _httpClient.SendAsync(
+                    GetRequest(IssueAuth(), stream));
 
                 using (var body = await response.Content.ReadAsStreamAsync())
                 {
@@ -64,17 +61,13 @@ namespace Raven.Client.Http
         public void Dispose()
             => _httpClient.Dispose();
 
-        private Task<HttpResponseMessage> HandleRequestAsync(Stream stream)
-            => _httpClient.SendAsync(
-                GetRequest(IssueAuth(), stream));
-
         private SentryAuth IssueAuth()
             => SentryAuth.Issue(this, DateTimeOffset.UtcNow);
 
         private HttpRequestMessage GetRequest(SentryAuth auth, Stream stream)
         {
             var request = new HttpRequestMessage(HttpMethod.Post,
-                GetCaptureUrl(Dsn));
+                Dsn.GetCaptureUrl());
 
             request.Headers.Add(SentryAuthHeader.Name,
                 SentryAuthHeader.GetValues(auth));
@@ -102,21 +95,5 @@ namespace Raven.Client.Http
 
             return client;
         }
-
-        private HttpMessageHandler GetClientHandler()
-            => new HttpClientHandler
-            {
-                AutomaticDecompression = DecompressionMethods.GZip
-            };
-
-        private static string GetCaptureUrl(Dsn dsn)
-            => string.Concat(
-                dsn.Uri.Scheme,
-                Uri.SchemeDelimiter,
-                dsn.Uri.DnsSafeHost,
-                !dsn.Uri.IsDefaultPort ? $":{dsn.Uri.Port}" : null,
-                "/api/",
-                dsn.GetProjectId(),
-                "/store/");
     }
 }

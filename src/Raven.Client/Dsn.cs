@@ -29,6 +29,16 @@ namespace Raven.Client
         public override string ToString()
             => Uri.ToString();
 
+        public string GetCaptureUrl()
+            => string.Concat(
+                Uri.Scheme,
+                Uri.SchemeDelimiter,
+                Uri.DnsSafeHost,
+                !Uri.IsDefaultPort ? $":{Uri.Port}" : null,
+                "/api/",
+                GetProjectId(),
+                "/store/");
+
         public static Dsn Create(string dsn)
         {
             Assert.ArgumentNotNull(dsn, nameof(dsn));

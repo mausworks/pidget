@@ -10,7 +10,7 @@ namespace Raven.Client.Test
     {
         public static readonly Dsn Dsn = Dsn.Create(GetDsn());
 
-        [Fact(Skip = "Manual testing only.")]
+        [Fact]
         public async Task SendException_ReturnsEventId()
         {
             var client = Sentry.GetRavenClient(Dsn);
