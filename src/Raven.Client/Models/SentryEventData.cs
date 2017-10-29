@@ -41,25 +41,5 @@ namespace Raven.Client.Models
 
         [JsonProperty("tags")]
         public IDictionary<string, string> Tags { get; set; }
-
-        public static SentryEventData FromEvent(SentryEvent sentryEvent)
-        {
-            var exceptionData = ExceptionData
-                .FromException(sentryEvent.Exception);
-
-            return new SentryEventData
-            {
-                Level = sentryEvent.ErrorLevel,
-                Timestamp = DateTime.UtcNow,
-                Culprit = sentryEvent.Transaction ?? exceptionData.Module,
-                Platform = Sentry.CSharpPlatformIdentifier,
-                Logger = Sentry.DefaultLoggerName,
-                Exception = exceptionData,
-                Message = sentryEvent.Message,
-                Tags = sentryEvent.Tags.ToDictionary(t => t.Key, t => t.Value),
-                Extra = sentryEvent.ExtraData.ToDictionary(t => t.Key, t => t.Value),
-                Fingerprint = sentryEvent.Fingerprint.ToList()
-            };
-        }
     }
 }
