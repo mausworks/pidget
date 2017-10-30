@@ -26,7 +26,7 @@ var dsn = Dsn.Create("<your DSN>");
 var raven = Sentry.GetRavenClient(dsn);
 ```
 
-Sending an event:
+Capturing an exception:
 
 ```csharp
     // ...
@@ -37,6 +37,12 @@ catch (Exception ex)
 
     // ...
 }
+```
+
+Capturing a message:
+
+```csharp
+var eventId = await raven.CaptureAsync(e => e.SetMessage("Foo"));
 ```
 
 Using the sentry event builder API:
