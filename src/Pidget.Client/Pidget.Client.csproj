@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-
     <Version>0.1.0</Version>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -9,9 +8,17 @@
     <AssemblyName>Pidget.Client</AssemblyName>
     <AssemblyTitle>Pidget Client</AssemblyTitle>
     <Description>A tiny client for sentry.</Description>
+    <Authors>Rasmus Wennerström</Authors>
     <Copyright>Rasmus Wennerström</Copyright>
     <NeutralLanguage>en-US</NeutralLanguage>
 
+    <PackageTags>sentry;error reporting;event logging</PackageTags>
+    <PackageProjectUrl>https://github.com/mausworks/pidget</PackageProjectUrl>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/mausworks/pidget/master/LICENSE</PackageLicenseUrl>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/mausworks/pidget.git</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
