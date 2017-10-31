@@ -7,7 +7,7 @@
         {
             "taskName": "build",
             "args": [
-                "${workspaceRoot}/test/Raven.Client.Test/Raven.Client.Test.csproj"
+                "${workspaceRoot}/test/Pidget.Client.Test/Pidget.Client.Test.csproj"
             ],
             "isBuildCommand": true,
             "problemMatcher": "$msCompile"

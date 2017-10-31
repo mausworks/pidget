@@ -1,6 +1,6 @@
-# Sentry/Raven Client
+# Pidget
 
-A .NET Client for Sentry based on .NET Standard 2.0.
+A tiny client for Sentry.
 
 [![Build Status](https://travis-ci.org/mausworks/sentry-raven.svg?branch=master)](https://travis-ci.org/mausworks/sentry-raven)
 
@@ -23,7 +23,7 @@ Client initialization:
 
 ```csharp
 var dsn = Dsn.Create("<your DSN>");
-var raven = Sentry.GetRavenClient(dsn);
+var client = Sentry.CreateClient(dsn);
 ```
 
 Capturing an exception:
@@ -33,7 +33,7 @@ Capturing an exception:
 }
 catch (Exception ex)
 {
-    var eventId = await raven.CaptureAsync(e => e.SetException(ex));
+    var eventId = await client.CaptureAsync(e => e.SetException(ex));
 
     // ...
 }
@@ -42,13 +42,13 @@ catch (Exception ex)
 Capturing a message:
 
 ```csharp
-var eventId = await raven.CaptureAsync(e => e.SetMessage("Foo"));
+var eventId = await client.CaptureAsync(e => e.SetMessage("Foo"));
 ```
 
 Using the sentry event builder API:
 
 ```csharp
-var eventId = await raven.CaptureAsync(e => e
+var eventId = await client.CaptureAsync(e => e
     .SetException(exception)
     .SetErrorLevel(ErrorLevel.Fatal)
     .SetTransaction("/index")

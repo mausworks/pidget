@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+
+    <Version>0.1.0</Version>
+    <TargetFramework>netstandard2.0</TargetFramework>
+
+    <AssemblyName>Pidget.Client</AssemblyName>
+    <AssemblyTitle>Pidget Client</AssemblyTitle>
+    <Description>A tiny client for sentry.</Description>
+    <Copyright>Rasmus Wennerström</Copyright>
+    <NeutralLanguage>en-US</NeutralLanguage>
+
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+  </ItemGroup>
+
+</Project>
