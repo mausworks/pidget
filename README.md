@@ -2,7 +2,7 @@
 
 A tiny client for Sentry.
 
-[![Build Status](https://travis-ci.org/mausworks/sentry-raven.svg?branch=master)](https://travis-ci.org/mausworks/pidget)
+[![Build Status](https://travis-ci.org/mausworks/pidget.svg?branch=master)](https://travis-ci.org/mausworks/pidget)
 
 ## [Supported platforms:](https://docs.microsoft.com/en-us/dotnet/standard/net-standard#net-implementation-support)
 
