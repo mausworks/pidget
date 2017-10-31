@@ -5,11 +5,11 @@ VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{B26DC7DB-B6E8-44C3-A1EC-A5813AE738C6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.Client", "src\Raven.Client\Raven.Client.csproj", "{ABC21006-FE85-4C0A-9C56-0A0BA42CF920}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pidget.Client", "src\Pidget.Client\Pidget.Client.csproj", "{ABC21006-FE85-4C0A-9C56-0A0BA42CF920}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{0149F0E1-0BE0-419F-A336-8BF3B67F7C55}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.Client.Test", "test\Raven.Client.Test\Raven.Client.Test.csproj", "{92A8731B-2AB2-4819-B509-2017081404B1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pidget.Client.Test", "test\Pidget.Client.Test\Pidget.Client.Test.csproj", "{92A8731B-2AB2-4819-B509-2017081404B1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

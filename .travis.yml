@@ -5,4 +5,4 @@ dotnet: 2.0.0
 install:
 - dotnet restore
 script:
-- dotnet test test/Raven.Client.Test/Raven.Client.Test.csproj
+- dotnet test test/Pidget.Client.Test/Pidget.Client.Test.csproj
