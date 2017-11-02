@@ -19,6 +19,11 @@
 
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/mausworks/pidget.git</RepositoryUrl>
+
+    <!--
+      Not all public members have to be documented.
+    -->
+    <NoWarn>CS1591</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
