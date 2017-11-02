@@ -97,6 +97,45 @@ namespace Pidget.Client.Test
             Assert.Equal(value, extraData.First().Value);
         }
 
+        [Theory, InlineData("extra_data", "foo", "bar", "baz")]
+        public void AddEnumerableExtraData(params object[] data)
+        {
+            var builder = new SentryEventBuilder()
+                .SetException(new Exception())
+                .AddExtraData(ToNamedPairs<object>(data));
+
+            var extraData = builder.Build().Extra;
+
+            var idx = 0;
+
+            for (var c = 1; idx < extraData.Count; c += 2)
+            {
+                var pair = extraData.ElementAt(idx);
+
+                Assert.Equal(data[c - 1], pair.Key);
+                Assert.Equal(data[c], pair.Value);
+
+                idx++;
+            }
+        }
+
+        private IEnumerable<KeyValuePair<string, TValue>> ToNamedPairs<TValue>(params object[] extraData)
+        {
+            if (extraData.Length % 2 != 0)
+            {
+                throw new NotSupportedException(
+                    "Cannot created named pairs.");
+            }
+
+            for (var i = 0; i < extraData.Length; i += 2)
+            {
+                var name = extraData[i].ToString();
+                var value = (TValue)extraData[i + 1];
+
+                yield return new KeyValuePair<string, TValue>(name, value);
+            }
+        }
+
         [Theory, InlineData("foo", "bar")]
         public void AddFingerprintData(params string[] data)
         {

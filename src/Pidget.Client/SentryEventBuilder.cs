@@ -114,6 +114,21 @@ namespace Pidget.Client
             return this;
         }
 
+         /// <summary>
+        /// Adds a collection of extra data to the event.
+        /// </summary>
+        /// <param name="data">A collection of named data.</param>
+        public SentryEventBuilder AddExtraData(
+            IEnumerable<KeyValuePair<string, object>> data)
+        {
+            foreach (var kvp in data)
+            {
+                _extraData.Add(kvp.Key, kvp.Value);
+            }
+
+            return this;
+        }
+
         /// <summary>
         /// Adds the provided data to the fingerprint.
         /// </summary>
