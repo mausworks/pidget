@@ -7,7 +7,7 @@
 
     <AssemblyName>Pidget.AspNet</AssemblyName>
     <AssemblyTitle>Pidget ASP.NET Core Middleware</AssemblyTitle>
-    <Description>ASP.NET Core error reporting middleware</Description>
+    <Description>Sentry error reporting middleware for ASP.NET Core.</Description>
     <Authors>Rasmus Wennerström</Authors>
     <Copyright>Rasmus Wennerström</Copyright>
     <NeutralLanguage>en-US</NeutralLanguage>
