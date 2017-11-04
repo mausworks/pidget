@@ -29,7 +29,7 @@ namespace Pidget.AspNet
 
             _next = next;
             _dsn = Dsn.Create(Options.Dsn);
-            _sanitizer = new RequestSanitizer(Options.Sanitaztion);
+            _sanitizer = new RequestSanitizer(Options.Sanitation);
         }
 
         public async Task Invoke(HttpContext context)
@@ -41,6 +41,10 @@ namespace Pidget.AspNet
             catch (Exception ex)
             {
                 var eventId = await CaptureExceptionAsync(ex, context);
+
+                context.Items["SentryEventId"] = eventId;
+
+                throw;
             }
         }
 

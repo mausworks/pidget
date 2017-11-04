@@ -4,6 +4,6 @@ namespace Pidget.AspNet
     {
         public string Dsn { get; set; }
 
-        public SanitationOptions Sanitaztion { get; set; } = SanitationOptions.Default;
+        public SanitationOptions Sanitation { get; set; } = SanitationOptions.Default;
     }
 }
