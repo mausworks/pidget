@@ -1,7 +1,7 @@
 namespace Pidget.AspNet
 {
     /// <summary>
-    /// Options used for sanitizing data, e.g. posted for data.
+    /// Options used for sanitizing form, header, cookie and query parameters.
     /// See also: https://docs.sentry.io/clientdev/data-handling/#sensitive-data
     /// </summary>
     public class SanitationOptions
