@@ -9,12 +9,13 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Pidget.AspNet.Sanitizing;
+using System.Runtime.ExceptionServices;
 
 namespace Pidget.AspNet
 {
-    public class ErrorReportingMiddleware
+    public class ExceptionReportingMiddleware
     {
-        public ErrorReportingOptions Options { get; }
+        public ExceptionReportingOptions Options { get; }
 
         private readonly RequestDelegate _next;
 
@@ -22,8 +23,8 @@ namespace Pidget.AspNet
 
         private RequestSanitizer _sanitizer { get; }
 
-        public ErrorReportingMiddleware(RequestDelegate next,
-            IOptions<ErrorReportingOptions> options)
+        public ExceptionReportingMiddleware(RequestDelegate next,
+            IOptions<ExceptionReportingOptions> options)
         {
             Options = options.Value;
 
@@ -42,9 +43,10 @@ namespace Pidget.AspNet
             {
                 var eventId = await CaptureExceptionAsync(ex, context);
 
-                context.Items["SentryEventId"] = eventId;
+                context.Items.Add(Options.EventIdKey, eventId);
+                ex.Data.Add(Options.EventIdKey, eventId);
 
-                throw;
+                SilentlyRethrow(ex);
             }
         }
 
@@ -68,10 +70,6 @@ namespace Pidget.AspNet
             if (TryGetForm(context.Request, out var form))
             {
                 sentryEvent.AddExtraData("form", form);
-            }
-            if (TryGetFiles(context.Request, out var files))
-            {
-                sentryEvent.AddExtraData("form_files", files);
             }
             if (TryGetHeaders(context.Request, out var headers))
             {
@@ -131,7 +129,8 @@ namespace Pidget.AspNet
         private bool TryGetForm(HttpRequest request,
             out IDictionary<string, string> form)
         {
-            if (request.Form != null && request.Form.Any())
+            // Using multipart/form-data requires special binding.
+            if (IsUrlEncodedForm(request.ContentType) && request.Form != null)
             {
                 form = _sanitizer.SanitizeForm(request);
 
@@ -143,14 +142,16 @@ namespace Pidget.AspNet
             return false;
         }
 
-        private bool TryGetFiles(HttpRequest request,
-            out PostedFile[] postedFiles)
-        {
-            postedFiles = request?.Form?.Files
-                .Select(PostedFile.FromFormFile)
-                .ToArray();
+        private bool IsUrlEncodedForm(string contentType)
+            => contentType != null && contentType.Equals(
+                value: "application/x-www-form-urlencoded",
+                comparisonType: StringComparison.OrdinalIgnoreCase);
 
-            return postedFiles != null && postedFiles.Length > 0;
-        }
+        /// <summary>
+        /// Re-throws the provided exception without adding to the stack trace.
+        /// </summary>
+        /// <param name="ex">The exception to re-throw.</param>
+        private static void SilentlyRethrow(Exception ex)
+            => ExceptionDispatchInfo.Capture(ex).Throw();
     }
 }
