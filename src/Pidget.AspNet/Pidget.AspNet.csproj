@@ -1,37 +1,31 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <Version>0.1.0</Version>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-
     <AssemblyName>Pidget.AspNet</AssemblyName>
     <AssemblyTitle>Pidget ASP.NET Core Middleware</AssemblyTitle>
     <Description>Sentry error reporting middleware for ASP.NET Core.</Description>
     <Authors>Rasmus Wennerström</Authors>
     <Copyright>Rasmus Wennerström</Copyright>
     <NeutralLanguage>en-US</NeutralLanguage>
-
     <PackageTags>sentry;middleware;error-reporting;event-logging</PackageTags>
     <PackageProjectUrl>https://github.com/mausworks/pidget</PackageProjectUrl>
     <PackageLicenseUrl>https://raw.githubusercontent.com/mausworks/pidget/master/LICENSE</PackageLicenseUrl>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/mausworks/pidget.git</RepositoryUrl>
-
     <!--
       Not all public members have to be documented.
     -->
     <NoWarn>CS1591</NoWarn>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="2.0.0" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\Pidget.Client\Pidget.Client.csproj" />
   </ItemGroup>
-
 </Project>
