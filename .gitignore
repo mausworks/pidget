@@ -1,3 +1,5 @@
 bin/
 obj/
 dsn.txt
+
+test/Pidget.AspNet.Test.Site/appsettings.json
