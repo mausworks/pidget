@@ -16,7 +16,7 @@ namespace Pidget.AspNet.Sanitizing
             => _itemSanitizer = new NameValueSanitizer(options);
 
         public IDictionary<string, string> SanitizeForm(HttpRequest request)
-            => request.Form?.ToDictionary(f => f.Key, f =>
+            => request.Form.ToDictionary(f => f.Key, f =>
                 _itemSanitizer.SanitizeValue(f.Key, f.Value));
 
         public IDictionary<string, string> SanitizeHeaders(HttpRequest request)
