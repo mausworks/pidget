@@ -6,9 +6,6 @@ namespace Pidget.AspNet
     /// </summary>
     public class SanitationOptions
     {
-        /// <summary>
-        /// The default recommended sanitization options.
-        /// </summary>
         public static SanitationOptions Default { get; }
             = new SanitationOptions
             {
