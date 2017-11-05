@@ -48,6 +48,8 @@ namespace Pidget.AspNet.Test
         {
             var requestMock = new Mock<HttpRequest>();
 
+            requestMock.SetupGet(r => r.ContentType)
+                .Returns("application/x-www-form-urlencoded");
             requestMock.SetupGet(r => r.Form).Returns(new FormCollection(
                 new Dictionary<string, StringValues>
                 {
