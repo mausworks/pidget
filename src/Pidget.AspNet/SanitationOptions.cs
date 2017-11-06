@@ -6,8 +6,8 @@ namespace Pidget.AspNet
     /// </summary>
     public class SanitationOptions
     {
-        public static SanitationOptions Default { get; }
-            = new SanitationOptions
+        public static SanitationOptions Default
+            => new SanitationOptions
             {
                 ReplacementValue = "OMITTED",
                 ValuePatterns = new[]
