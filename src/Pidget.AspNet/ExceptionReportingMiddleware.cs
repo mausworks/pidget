@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
-using Pidget.AspNet.DataModels;
 using Pidget.Client;
 using Pidget.Client.Http;
 using System;
@@ -24,9 +23,9 @@ namespace Pidget.AspNet
         private RequestSanitizer _sanitizer { get; }
 
         public ExceptionReportingMiddleware(RequestDelegate next,
-            ExceptionReportingOptions options)
+            IOptions<ExceptionReportingOptions> optionsAccessor)
         {
-            Options = options;
+            Options = optionsAccessor.Value;
 
             _next = next;
             _dsn = Dsn.Create(Options.Dsn);

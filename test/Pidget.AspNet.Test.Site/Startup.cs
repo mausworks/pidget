@@ -17,10 +17,14 @@ namespace Pidget.AspNet.Test.Site
         public Startup(IConfiguration configuration)
             => Configuration = configuration;
 
+        public void ConfigureServices(IServiceCollection services)
+            => services.ConfigurePidgetMiddleware(
+                Configuration.GetSection("ExceptionReporting"));
+
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             app.UseMiddleware<OnExceptionMiddleware>();
-            app.UsePidgetMiddleware(Configuration.GetSection("ExceptionReporting"));
+            app.UsePidgetMiddleware();
 
             app.Run(context =>
             {

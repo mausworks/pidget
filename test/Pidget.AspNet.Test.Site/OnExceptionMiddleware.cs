@@ -13,10 +13,10 @@ namespace Pidget.AspNet.Test.Site
         private readonly RequestDelegate _next;
 
         public OnExceptionMiddleware(RequestDelegate next,
-            IOptions<ExceptionReportingOptions> options)
+            IOptions<ExceptionReportingOptions> optionsAccessor)
         {
             _next = next;
-            _eventIdKey = options.Value.EventIdKey;
+            _eventIdKey = optionsAccessor.Value.EventIdKey;
         }
 
         public async Task Invoke(HttpContext context)
