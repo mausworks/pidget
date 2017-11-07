@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Pidget.AspNet.DependencyInjection;
 
 namespace Pidget.AspNet.Test.Site
 {
@@ -18,19 +17,15 @@ namespace Pidget.AspNet.Test.Site
         public Startup(IConfiguration configuration)
             => Configuration = configuration;
 
-        public void ConfigureServices(IServiceCollection services)
-            => services.ConfigurePidgetMiddleware(
-                Configuration.GetSection("ExceptionReporting"));
-
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             app.UseMiddleware<OnExceptionMiddleware>();
-            app.UseMiddleware<ExceptionReportingMiddleware>();
+            app.UsePidgetMiddleware(Configuration.GetSection("ExceptionReporting"));
 
             app.Run(context =>
             {
                 throw new InvalidOperationException(
-                    "This app is not meant to run!");
+                    "You shall not pass!");
             });
         }
     }

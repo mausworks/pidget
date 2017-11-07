@@ -24,9 +24,9 @@ namespace Pidget.AspNet
         private RequestSanitizer _sanitizer { get; }
 
         public ExceptionReportingMiddleware(RequestDelegate next,
-            IOptions<ExceptionReportingOptions> options)
+            ExceptionReportingOptions options)
         {
-            Options = options.Value;
+            Options = options;
 
             _next = next;
             _dsn = Dsn.Create(Options.Dsn);
