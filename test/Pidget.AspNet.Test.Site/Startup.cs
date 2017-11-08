@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -21,16 +16,12 @@ namespace Pidget.AspNet.Test.Site
             => services.ConfigurePidgetMiddleware(
                 Configuration.GetSection("ExceptionReporting"));
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app)
         {
             app.UseMiddleware<OnExceptionMiddleware>();
             app.UsePidgetMiddleware();
 
-            app.Run(context =>
-            {
-                throw new InvalidOperationException(
-                    "You shall not pass!");
-            });
+            app.Run(_ => throw new Exception("You shall not pass!"));
         }
     }
 }
