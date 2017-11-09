@@ -20,8 +20,6 @@ namespace Pidget.AspNet
 
         private readonly Dsn _dsn;
 
-        private RequestSanitizer _sanitizer { get; }
-
         public ExceptionReportingMiddleware(RequestDelegate next,
             IOptions<ExceptionReportingOptions> optionsAccessor)
         {
@@ -29,7 +27,6 @@ namespace Pidget.AspNet
 
             _next = next;
             _dsn = Dsn.Create(Options.Dsn);
-            _sanitizer = new RequestSanitizer(Options.Sanitation);
         }
 
         public async Task Invoke(HttpContext context)
@@ -62,19 +59,21 @@ namespace Pidget.AspNet
         private void BuildEvent(Exception ex, HttpContext context,
             SentryEventBuilder sentryEvent)
         {
+            var provider = new RequestDataProvider(context.Request,
+                new RequestSanitizer(Options.Sanitation));
+
             sentryEvent.SetException(ex)
-                .AddTags(GetTags(context))
                 .AddFingerprintData(GetFingerprint(context));
 
-            if (TryGetForm(context.Request, out var form))
+            if (provider.TryGetForm(out var form))
             {
                 sentryEvent.AddExtraData("form", form);
             }
-            if (TryGetHeaders(context.Request, out var headers))
+            if (provider.TryGetHeaders(out var headers))
             {
                 sentryEvent.AddExtraData("request_headers", headers);
             }
-            if (TryGetCookies(context.Request, out var cookies))
+            if (provider.TryGetCookies(out var cookies))
             {
                 sentryEvent.AddExtraData("request_cookies", cookies);
             }
@@ -85,66 +84,8 @@ namespace Pidget.AspNet
             {
                 "{{ default }}",
                 context.Request.Method,
-                _sanitizer.SanitizeUrl(context.Request)
+                context.Request.Path.ToString()
             };
-
-        private IDictionary<string, string> GetTags(HttpContext context)
-            => new Dictionary<string, string>
-            {
-                { "request_method", context.Request.Method },
-                { "request_url", _sanitizer.SanitizeUrl(context.Request) }
-            };
-
-        private bool TryGetCookies(HttpRequest request,
-            out IDictionary<string, string> cookies)
-        {
-            if (request.Cookies != null && request.Cookies.Any())
-            {
-                cookies = _sanitizer.SanitizeCookies(request);
-
-                return true;
-            }
-
-            cookies = null;
-
-            return false;
-        }
-
-        private bool TryGetHeaders(HttpRequest request,
-            out IDictionary<string, string> headers)
-        {
-            if (request.Headers != null && request.Headers.Any())
-            {
-                headers = _sanitizer.SanitizeHeaders(request);
-
-                return true;
-            }
-
-            headers = null;
-
-            return false;
-        }
-
-        private bool TryGetForm(HttpRequest request,
-            out IDictionary<string, string> form)
-        {
-            // Using multipart/form-data requires special binding.
-            if (IsUrlEncodedForm(request.ContentType) && request.Form != null)
-            {
-                form = _sanitizer.SanitizeForm(request);
-
-                return true;
-            }
-
-            form = null;
-
-            return false;
-        }
-
-        private bool IsUrlEncodedForm(string contentType)
-            => contentType != null && contentType.Equals(
-                value: "application/x-www-form-urlencoded",
-                comparisonType: StringComparison.OrdinalIgnoreCase);
 
         /// <summary>
         /// Re-throws the provided exception without adding to the stack trace.
