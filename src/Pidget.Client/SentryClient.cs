@@ -5,7 +5,7 @@ using Pidget.Client.DataModels;
 
 namespace Pidget.Client
 {
-    public abstract class SentryClient
+    public abstract class SentryClient : IDisposable
     {
         public const string DefaultName = "pidget";
 
