@@ -21,6 +21,9 @@ namespace Pidget.AspNet
                 }
             };
 
+        public static SanitationOptions None
+            => new SanitationOptions();
+
         public string[] NamePatterns { get; set; }
 
         public string[] ValuePatterns { get; set; }
