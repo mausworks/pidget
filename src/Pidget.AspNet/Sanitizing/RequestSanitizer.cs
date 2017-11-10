@@ -15,6 +15,9 @@ namespace Pidget.AspNet.Sanitizing
         public RequestSanitizer(SanitationOptions options)
             => _itemSanitizer = new NameValueSanitizer(options);
 
+        public string SanitizeValue(string key, string value)
+            => _itemSanitizer.SanitizeValue(key, value);
+
         public IDictionary<string, string> SanitizeForm(HttpRequest request)
             => request.Form.ToDictionary(f => f.Key, f =>
                 _itemSanitizer.SanitizeValue(f.Key, f.Value));
@@ -25,13 +28,6 @@ namespace Pidget.AspNet.Sanitizing
 
         public IDictionary<string, string> SanitizeCookies(HttpRequest request)
             => request.Cookies.ToDictionary(c => c.Key, SanitizeCookieValue);
-
-        public string SanitizeUrl(HttpRequest request)
-            => string.Concat(request.Scheme,
-                Uri.SchemeDelimiter,
-                request.Host,
-                request.Path,
-                QueryString.Create(SanitizeQuery(request)).ToUriComponent());
 
         public IDictionary<string, string> SanitizeQuery(HttpRequest request)
             => request.Query.ToDictionary(k => k.Key, SanitizeHeaderValue);
