@@ -27,13 +27,13 @@ namespace Pidget.AspNet
                 QueryString = GetQueryString(request),
             };
 
-        private string GetUrl(HttpRequest request)
+        public string GetUrl(HttpRequest request)
             => string.Concat(request.Scheme,
                 Uri.SchemeDelimiter,
                 request.Host,
                 request.Path);
 
-        private string GetQueryString(HttpRequest request)
+        public string GetQueryString(HttpRequest request)
             => QueryString.Create(_sanitizer.SanitizeQuery(request))
                 .ToUriComponent();
 
