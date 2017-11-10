@@ -20,6 +20,9 @@ namespace Pidget.Client.DataModels
         [JsonProperty("headers")]
         public IDictionary<string, string> Headers { get; set; }
 
+        [JsonProperty("cookies")]
+        public string Cookies { get; set; }
+
         [JsonProperty("environment")]
         public IDictionary<string, string> Environment { get; set; }
     }
