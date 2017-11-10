@@ -41,5 +41,8 @@ namespace Pidget.Client.DataModels
 
         [JsonProperty("tags")]
         public IDictionary<string, string> Tags { get; set; }
+
+        [JsonProperty("request")]
+        public RequestData Request { get; set; }
     }
 }
