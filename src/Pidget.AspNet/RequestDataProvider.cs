@@ -2,68 +2,69 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.Extensions.Configuration;
 using Pidget.AspNet.Sanitizing;
+using Pidget.Client.DataModels;
 
 namespace Pidget.AspNet
 {
     public class RequestDataProvider
     {
-        private readonly HttpRequest _request;
-
         private readonly RequestSanitizer _sanitizer;
 
-        public RequestDataProvider(HttpRequest request, RequestSanitizer sanitizer)
-        {
-            _request = request;
-            _sanitizer = sanitizer;
-        }
+        public RequestDataProvider(RequestSanitizer sanitizer)
+            => _sanitizer = sanitizer;
 
-        public bool TryGetCookies(out IDictionary<string, string> cookies)
-        {
-            if (_request.Cookies != null && _request.Cookies.Any())
+        public RequestData GetRequestData(HttpRequest request)
+            => new RequestData
             {
-                cookies = _sanitizer.SanitizeCookies(_request);
+                Method = request.Method,
+                Url = GetUrl(request),
+                Data = GetData(request),
+                Cookies = GetCookies(request),
+                Headers = GetHeaders(request),
+                QueryString = GetQueryString(request),
+            };
 
-                return true;
-            }
+        private string GetUrl(HttpRequest request)
+            => string.Concat(request.Scheme,
+                Uri.SchemeDelimiter,
+                request.Host,
+                request.Path);
 
-            cookies = null;
+        private string GetQueryString(HttpRequest request)
+            => QueryString.Create(_sanitizer.SanitizeQuery(request))
+                .ToUriComponent();
 
-            return false;
-        }
+        public string GetCookies(HttpRequest request)
+            => request.Cookies != null && request.Cookies.Any()
+                ? StringifyCookies(_sanitizer.SanitizeCookies(request))
+                : null;
 
-        public bool TryGetHeaders(out IDictionary<string, string> headers)
-        {
-            if (_request.Headers != null && _request.Headers.Any())
-            {
-                headers = _sanitizer.SanitizeHeaders(_request);
+        public IDictionary<string, string> GetHeaders(HttpRequest request)
+            => request.Headers != null && request.Headers.Any()
+                ? _sanitizer.SanitizeHeaders(request)
+                : null;
 
-                return true;
-            }
+        public object GetData(HttpRequest request)
+            => IsUrlEncodedForm(request.ContentType)
+                ? GetForm(request)
+                : null;
 
-            headers = null;
-
-            return false;
-        }
-
-        public bool TryGetForm(out IDictionary<string, string> form)
-        {
-            // Using multipart/form-data requires special binding.
-            if (IsUrlEncodedForm(_request.ContentType) && _request.Form != null)
-            {
-                form = _sanitizer.SanitizeForm(_request);
-
-                return true;
-            }
-
-            form = null;
-
-            return false;
-        }
+        public IDictionary<string, string> GetForm(HttpRequest request)
+            => request.Form != null && request.Form.Any()
+                ? _sanitizer.SanitizeForm(request)
+                : null;
 
         private bool IsUrlEncodedForm(string contentType)
             => contentType != null && contentType.Equals(
                 value: "application/x-www-form-urlencoded",
                 comparisonType: StringComparison.OrdinalIgnoreCase);
+
+        private string StringifyCookies(IDictionary<string, string> cookies)
+            => string.Join("; ", cookies.Select(c => string.Join("=",
+                Uri.EscapeDataString(c.Key),
+                Uri.EscapeDataString(c.Value))));
     }
 }

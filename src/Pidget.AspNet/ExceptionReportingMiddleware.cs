@@ -1,14 +1,14 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
+using Pidget.AspNet.Sanitizing;
 using Pidget.Client;
 using Pidget.Client.Http;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
-using Pidget.AspNet.Sanitizing;
 using System.Runtime.ExceptionServices;
+using System.Threading.Tasks;
 
 namespace Pidget.AspNet
 {
@@ -52,40 +52,19 @@ namespace Pidget.AspNet
             using (var client = new SentryHttpClient(_dsn))
             {
                 return await client.CaptureAsync(e
-                    => BuildEvent(ex, context, e));
+                    => BuildEvent(ex, context.Request, e));
             }
         }
 
-        private void BuildEvent(Exception ex, HttpContext context,
+        private void BuildEvent(Exception ex, HttpRequest request,
             SentryEventBuilder sentryEvent)
         {
-            var provider = new RequestDataProvider(context.Request,
+            var provider = new RequestDataProvider(
                 new RequestSanitizer(Options.Sanitation));
 
             sentryEvent.SetException(ex)
-                .AddFingerprintData(GetFingerprint(context));
-
-            if (provider.TryGetForm(out var form))
-            {
-                sentryEvent.AddExtraData("form", form);
-            }
-            if (provider.TryGetHeaders(out var headers))
-            {
-                sentryEvent.AddExtraData("request_headers", headers);
-            }
-            if (provider.TryGetCookies(out var cookies))
-            {
-                sentryEvent.AddExtraData("request_cookies", cookies);
-            }
+                .SetRequestData(provider.GetRequestData(request));
         }
-
-        private string[] GetFingerprint(HttpContext context)
-            => new[]
-            {
-                "{{ default }}",
-                context.Request.Method,
-                context.Request.Path.ToString()
-            };
 
         /// <summary>
         /// Re-throws the provided exception without adding to the stack trace.
