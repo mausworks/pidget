@@ -53,5 +53,18 @@ namespace Pidget.AspNet.Sanitizing
 
         private bool IsCookieHeader(string name)
             => name.IndexOf("cookie", StringComparison.OrdinalIgnoreCase) > -1;
+
+        /// <summary>
+        /// Returns a new instance of a request sanitizer with default options.
+        /// </summary>
+        public static RequestSanitizer Default
+            => new RequestSanitizer(SanitationOptions.Default);
+
+        /// <summary>
+        /// Returns a new instance of a no-op request sanitizer.
+        /// </summary>
+        public static RequestSanitizer Noop
+            => new RequestSanitizer(SanitationOptions.None);
+
     }
 }
