@@ -3,12 +3,13 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Pidget.AspNet
+namespace Pidget.AspNet.Setup
 {
     public static class SetupExtensions
     {
         public static IServiceCollection ConfigurePidgetMiddleware(
-            this IServiceCollection services, IConfiguration configuration)
+            this IServiceCollection services,
+            IConfiguration configuration)
             => ConfigurePidgetMiddleware(services, configuration.Bind);
 
         public static IServiceCollection ConfigurePidgetMiddleware(

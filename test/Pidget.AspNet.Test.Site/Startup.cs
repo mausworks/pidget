@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Pidget.AspNet.Setup;
 
 namespace Pidget.AspNet.Test.Site
 {
