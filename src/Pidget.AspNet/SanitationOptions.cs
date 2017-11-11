@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Pidget.AspNet
 {
     /// <summary>
@@ -28,9 +30,9 @@ namespace Pidget.AspNet
                 NamePatterns = new string[0]
             };
 
-        public string[] NamePatterns { get; set; }
+        public IList<string> NamePatterns { get; set; }
 
-        public string[] ValuePatterns { get; set; }
+        public IList<string> ValuePatterns { get; set; }
 
         public string ReplacementValue { get; set; }
     }
