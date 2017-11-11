@@ -10,12 +10,13 @@
     <Authors>Rasmus Wennerström</Authors>
     <Copyright>Rasmus Wennerström</Copyright>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <PackageTags>sentry;middleware;error-reporting;event-logging</PackageTags>
+    <PackageTags>sentry;aspnet;middleware;error-reporting;event-logging</PackageTags>
     <PackageProjectUrl>https://github.com/mausworks/pidget</PackageProjectUrl>
     <PackageLicenseUrl>https://raw.githubusercontent.com/mausworks/pidget/master/LICENSE</PackageLicenseUrl>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/mausworks/pidget.git</RepositoryUrl>
+
     <!--
       Not all public members have to be documented.
     -->
