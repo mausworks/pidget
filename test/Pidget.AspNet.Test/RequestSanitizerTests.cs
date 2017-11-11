@@ -96,33 +96,5 @@ namespace Pidget.AspNet.Test
                     kvp.Value);
             }
         }
-
-        [Theory]
-        [InlineData("https", "fail.io", "/culprit")]
-        public void SanitizeQuery(string scheme, string host, string path)
-        {
-            var requestMock = new Mock<HttpRequest>();
-
-            var query = new QueryCollection(
-                new Dictionary<string, StringValues>
-                {
-                    { "auth", "" },
-                    { "secret", "" },
-                    { "token", "" },
-                    { "cc", "1234 4567 9876 5432" }
-                });
-
-            requestMock.SetupGet(r => r.Scheme).Returns(scheme);
-            requestMock.SetupGet(r => r.Host).Returns(new HostString(host));
-            requestMock.SetupGet(r => r.Path).Returns(path);
-            requestMock.SetupGet(r => r.Query).Returns(query);
-
-            var url = Sanitizer.SanitizeUrl(requestMock.Object);
-
-            Assert.Equal($"{scheme}://{host}{path}?" + string.Join("&",
-                query.Select(q =>
-                    $"{q.Key}={SanitationOptions.Default.ReplacementValue}")
-            ), url);
-        }
     }
 }
