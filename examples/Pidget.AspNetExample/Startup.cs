@@ -4,7 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Pidget.AspNet.Setup;
 
-namespace Pidget.AspNet.Test.Site
+namespace Pidget.AspNetExample
 {
     public class Startup
     {
@@ -14,7 +14,7 @@ namespace Pidget.AspNet.Test.Site
             => Configuration = configuration;
 
         public void ConfigureServices(IServiceCollection services)
-            => services.ConfigurePidgetMiddleware(
+            => services.AddPidgetMiddleware(
                 Configuration.GetSection("ExceptionReporting"));
 
         public void Configure(IApplicationBuilder app)

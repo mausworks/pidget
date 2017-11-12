@@ -7,7 +7,7 @@
         {
             "taskName": "build",
             "args": [
-                "${workspaceRoot}/test/Pidget.AspNet.Test.Site/Pidget.AspNet.Test.Site.csproj"
+                "${workspaceRoot}/examples/Pidget.AspNetExample/Pidget.AspNetExample.csproj"
             ],
             "isBuildCommand": true,
             "problemMatcher": "$msCompile"

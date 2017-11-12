@@ -2,8 +2,9 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
+using Pidget.AspNet;
 
-namespace Pidget.AspNet.Test.Site
+namespace Pidget.AspNetExample
 {
     public class OnExceptionMiddleware
     {
