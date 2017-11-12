@@ -1,14 +1,10 @@
+using System;
+using System.Runtime.ExceptionServices;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Pidget.AspNet.Sanitizing;
 using Pidget.Client;
-using Pidget.Client.Http;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.ExceptionServices;
-using System.Threading.Tasks;
 
 namespace Pidget.AspNet
 {
