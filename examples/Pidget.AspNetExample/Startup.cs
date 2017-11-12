@@ -19,9 +19,12 @@ namespace Pidget.AspNetExample
 
         public void Configure(IApplicationBuilder app)
         {
+            // Additional exception handling.
             app.UseMiddleware<OnExceptionMiddleware>();
+
             app.UsePidgetMiddleware();
 
+            // Throwing application code.
             app.Run(_ => throw new Exception("You shall not pass!"));
         }
     }
