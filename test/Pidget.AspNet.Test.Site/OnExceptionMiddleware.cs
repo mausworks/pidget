@@ -37,7 +37,7 @@ namespace Pidget.AspNet.Test.Site
         {
             await context.Response.WriteAsync($"{ex}\r\n\r\n");
             await context.Response.WriteAsync(
-                $"Sentry event ID: {context.Items[Options.EventIdKey]}");
+                $"Sentry event ID: {context.Items[ExceptionReportingMiddleware.EventIdKey]}");
         }
     }
 }

@@ -14,19 +14,21 @@ namespace Pidget.AspNet
 {
     public class ExceptionReportingMiddleware
     {
+        public const string EventIdKey = "SentryEventId";
+
         public ExceptionReportingOptions Options { get; }
 
         private readonly RequestDelegate _next;
 
-        private readonly Dsn _dsn;
+        private readonly SentryClient _sentryClient;
 
         public ExceptionReportingMiddleware(RequestDelegate next,
-            IOptions<ExceptionReportingOptions> optionsAccessor)
+            IOptions<ExceptionReportingOptions> optionsAccessor,
+            SentryClient sentryClient)
         {
-            Options = optionsAccessor.Value;
-
             _next = next;
-            _dsn = Dsn.Create(Options.Dsn);
+            _sentryClient = sentryClient;
+            Options = optionsAccessor.Value;
         }
 
         public async Task Invoke(HttpContext context)
@@ -39,8 +41,8 @@ namespace Pidget.AspNet
             {
                 var eventId = await CaptureExceptionAsync(ex, context);
 
-                context.Items.Add(Options.EventIdKey, eventId);
-                ex.Data.Add(Options.EventIdKey, eventId);
+                context.Items.Add(EventIdKey, eventId);
+                ex.Data.Add(EventIdKey, eventId);
 
                 SilentlyRethrow(ex);
             }
@@ -48,13 +50,8 @@ namespace Pidget.AspNet
 
         private async Task<string> CaptureExceptionAsync(Exception ex,
             HttpContext context)
-        {
-            using (var client = new SentryHttpClient(_dsn))
-            {
-                return await client.CaptureAsync(e
-                    => BuildEvent(ex, context.Request, e));
-            }
-        }
+            => await _sentryClient.CaptureAsync(e
+                => BuildEvent(ex, context.Request, e));
 
         private void BuildEvent(Exception ex, HttpRequest request,
             SentryEventBuilder sentryEvent)
