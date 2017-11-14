@@ -1,5 +1,7 @@
 bin/
 obj/
-dsn.txt
+.cov/
+.packages/
 
+dsn.txt
 test/Pidget.AspNetExample/appsettings.json
