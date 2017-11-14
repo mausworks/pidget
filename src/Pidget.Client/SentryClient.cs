@@ -31,7 +31,7 @@ namespace Pidget.Client
             return SendEventAsync(builder.Build());
         }
 
-        protected abstract Task<string> SendEventAsync(
+        public abstract Task<string> SendEventAsync(
             SentryEventData sentryEvent);
     }
 }

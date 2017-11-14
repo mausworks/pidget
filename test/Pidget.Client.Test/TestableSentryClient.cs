@@ -17,7 +17,7 @@ namespace Pidget.Client.Test
             Func<SentryEventData, string> onSend) : base(dsn)
             => _onSend = onSend;
 
-        protected override Task<string> SendEventAsync(SentryEventData sentryEvent)
+        public override Task<string> SendEventAsync(SentryEventData sentryEvent)
             => Task.FromResult(_onSend(sentryEvent));
     }
 }

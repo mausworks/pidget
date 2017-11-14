@@ -40,7 +40,7 @@ namespace Pidget.Client.Http
             return JsonSerializer.Create(settings);
         }
 
-        protected override async Task<string> SendEventAsync(
+        public override async Task<string> SendEventAsync(
             SentryEventData eventData)
         {
             using (var stream = _serializer.Serialize(eventData))
