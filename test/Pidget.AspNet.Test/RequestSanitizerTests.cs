@@ -12,8 +12,13 @@ namespace Pidget.AspNet.Test
 {
     public class HeaderSanitizerTests
     {
-        public static RequestSanitizer Sanitizer
-            = new RequestSanitizer(SanitationOptions.Default);
+        [Theory, InlineData("password", "")]
+        public void SanitizeValue(string key, string value)
+        {
+            var result = RequestSanitizer.Default.SanitizeValue(key, value);
+
+            Assert.Equal(SanitationOptions.Default.ReplacementValue, result);
+        }
 
         [Fact]
         public void SanitizeHeaders()
@@ -34,7 +39,7 @@ namespace Pidget.AspNet.Test
                     { "Token", "" }
                 }));
 
-            var headers = Sanitizer.SanitizeHeaders(requestMock.Object);
+            var headers = RequestSanitizer.Default.SanitizeHeaders(requestMock.Object);
 
             foreach (var kvp in headers)
             {
@@ -63,7 +68,7 @@ namespace Pidget.AspNet.Test
                     { "cc", "1234 4567 9876 5432" }
                 }));
 
-            var form = Sanitizer.SanitizeForm(requestMock.Object);
+            var form = RequestSanitizer.Default.SanitizeForm(requestMock.Object);
 
             foreach (var kvp in form)
             {
@@ -88,7 +93,7 @@ namespace Pidget.AspNet.Test
                         { "secret", "" }
                     }));
 
-            var cookies = Sanitizer.SanitizeCookies(requestMock.Object);
+            var cookies = RequestSanitizer.Default.SanitizeCookies(requestMock.Object);
 
             foreach (var kvp in cookies)
             {
