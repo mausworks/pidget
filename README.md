@@ -8,7 +8,7 @@
 
 This repository contains multiple projects. 
 
-### Pidget.Client
+### Pidget Sentry Client (Pidget.Client)
 
 A lightweight client for sending events to Sentry.
 
@@ -16,7 +16,7 @@ A lightweight client for sending events to Sentry.
 - [Source & documentation](https://github.com/mausworks/pidget/tree/master/src/Pidget.Client)
 - [Tests](https://github.com/mausworks/pidget/tree/master/test/Pidget.Client.Test)
 
-### Pidget.AspNet
+### Pidget ASP.NET Middleware (Pidget.AspNet)
 
 ASP.NET Core middleware for automatically capturing application errors.
 
