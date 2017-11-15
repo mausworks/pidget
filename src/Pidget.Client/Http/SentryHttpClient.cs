@@ -46,7 +46,7 @@ namespace Pidget.Client.Http
             using (var stream = _serializer.Serialize(eventData))
             {
                 var response = await _httpClient.SendAsync(
-                    GetRequest(IssueAuth(), stream));
+                    GetRequest(IssueAuth(), stream)).ConfigureAwait(false);
 
                 using (var body = await response.Content.ReadAsStreamAsync())
                 {
