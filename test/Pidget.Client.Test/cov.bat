@@ -18,7 +18,7 @@ set coveragefile=.cov\coverage.xml
 set coveragedir=.cov\
 
 if not exist %packages% (
-  %dotnet% restore ..\..\tools\code-coverage\code-coverage.csproj --packages ..\..\tools\code-coverage\packages
+  %dotnet% restore ..\..\tools\code-coverage\code-coverage.csproj --packages %packages%
 )
 
 if "%notest%"=="" %opencover%^
