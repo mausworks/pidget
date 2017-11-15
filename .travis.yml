@@ -1,6 +1,6 @@
 language: csharp
 dist: trusty
-mono: none
+mono: latest
 dotnet: 2.0.0
 
 install:
@@ -11,4 +11,4 @@ script:
 - dotnet build -c Debug
 - dotnet test --no-build test/Pidget.Client.Test/Pidget.Client.Test.csproj
 - dotnet test --no-build test/Pidget.AspNet.Test/Pidget.AspNet.Test.csproj
-- tools/code-coverage/.packages/OpenCover/4.6.519/tools/OpenCover.Console.exe -target:/usr/share/dotnet/sdk/2.0.0/dotnet.exe targetargs:"test --no-build test/Pidget.Client.Test/Pidget.Client.Test.csproj" -filter:"+[Pidget.Client*]* -[*.Test]* -[Xunit.*]* -[Moq.*]*" output:Pidget.Client.Coverage.xml -register:user -oldStyle -skipautoprops -hideskipped:All
+- mono tools/code-coverage/.packages/OpenCover/4.6.519/tools/OpenCover.Console.exe -target:/usr/share/dotnet/sdk/2.0.0/dotnet.exe targetargs:"test --no-build test/Pidget.Client.Test/Pidget.Client.Test.csproj" -filter:"+[Pidget.Client*]* -[*.Test]* -[Xunit.*]* -[Moq.*]*" output:Pidget.Client.Coverage.xml -register:user -oldStyle -skipautoprops -hideskipped:All
