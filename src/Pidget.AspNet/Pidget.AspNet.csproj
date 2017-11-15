@@ -6,18 +6,16 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <DebugType>Full</DebugType>
 
-    <AssemblyName>Pidget.Client</AssemblyName>
-    <AssemblyTitle>Pidget Client</AssemblyTitle>
-    <Description>A tiny client for sentry.</Description>
+    <AssemblyName>Pidget.AspNet</AssemblyName>
+    <AssemblyTitle>Pidget ASP.NET Core Middleware</AssemblyTitle>
+    <Description>Sentry error reporting middleware for ASP.NET Core.</Description>
     <Authors>Rasmus Wennerström</Authors>
     <Copyright>Rasmus Wennerström</Copyright>
     <NeutralLanguage>en-US</NeutralLanguage>
-
-    <PackageTags>sentry;error reporting;event logging</PackageTags>
+    <PackageTags>sentry;aspnet;middleware;error-reporting;event-logging</PackageTags>
     <PackageProjectUrl>https://github.com/mausworks/pidget</PackageProjectUrl>
     <PackageLicenseUrl>https://raw.githubusercontent.com/mausworks/pidget/master/LICENSE</PackageLicenseUrl>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/mausworks/pidget.git</RepositoryUrl>
 
@@ -28,7 +26,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="2.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Pidget.Client\Pidget.Client.csproj" />
   </ItemGroup>
 
 </Project>

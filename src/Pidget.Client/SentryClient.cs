@@ -7,7 +7,7 @@ namespace Pidget.Client
 {
     public abstract class SentryClient
     {
-        public const string DefaultName = "mausworks-raven";
+        public const string DefaultName = "pidget";
 
         public Dsn Dsn { get; }
 
@@ -31,7 +31,7 @@ namespace Pidget.Client
             return SendEventAsync(builder.Build());
         }
 
-        protected abstract Task<string> SendEventAsync(
+        public abstract Task<string> SendEventAsync(
             SentryEventData sentryEvent);
     }
 }

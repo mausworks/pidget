@@ -1,8 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Reflection;
 using Newtonsoft.Json;
 
 namespace Pidget.Client.DataModels
@@ -41,5 +38,8 @@ namespace Pidget.Client.DataModels
 
         [JsonProperty("tags")]
         public IDictionary<string, string> Tags { get; set; }
+
+        [JsonProperty("request")]
+        public RequestData Request { get; set; }
     }
 }

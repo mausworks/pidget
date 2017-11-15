@@ -18,6 +18,8 @@ namespace Pidget.Client
 
         private ErrorLevel _errorLevel;
 
+        private RequestData _requestData;
+
         private readonly Dictionary<string, string> _tags
             = new Dictionary<string, string>(4);
 
@@ -25,6 +27,7 @@ namespace Pidget.Client
             = new Dictionary<string, object>(4);
 
         private readonly List<string> _fingerprint = new List<string>(4);
+
 
         /// <summary>
         /// Sets the captured exception.
@@ -140,6 +143,13 @@ namespace Pidget.Client
             return this;
         }
 
+        public SentryEventBuilder SetRequestData(RequestData request)
+        {
+            _requestData = request;
+
+            return this;
+        }
+
         public SentryEventData Build()
         {
             AssertValidity();
@@ -156,7 +166,8 @@ namespace Pidget.Client
                 Message = _message,
                 Tags = _tags,
                 Extra = _extraData,
-                Fingerprint = _fingerprint
+                Fingerprint = _fingerprint,
+                Request = _requestData
             };
         }
 
