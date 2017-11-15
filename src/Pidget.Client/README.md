@@ -1,4 +1,4 @@
-Pidget Sentry Client
+# Pidget Sentry Client
 
 A lightweight sentry client for .NET
 
