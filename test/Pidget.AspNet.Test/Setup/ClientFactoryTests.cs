@@ -38,6 +38,16 @@ namespace Pidget.AspNet.Setup
             providerMock.Verify();
 
             Assert.Equal(Options.Dsn, client.Dsn.ToString());
+            AssertAreDefaultSanitationOptions(Options.Sanitation);
+        }
+
+        private void AssertAreDefaultSanitationOptions(SanitationOptions sanitation)
+        {
+            var defaults = SanitationOptions.Default;
+
+            Assert.Equal(defaults.NamePatterns, sanitation.NamePatterns);
+            Assert.Equal(defaults.ValuePatterns, sanitation.ValuePatterns);
+            Assert.Equal(defaults.ReplacementValue, sanitation.ReplacementValue);
         }
     }
 }
