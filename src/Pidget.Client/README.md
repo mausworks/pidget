@@ -1,3 +1,7 @@
+Pidget Sentry Client
+
+A lightweight sentry client for .NET
+
 ## Installation
 
 Installing using the dotnet CLI:
