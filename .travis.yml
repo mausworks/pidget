@@ -2,7 +2,11 @@ language: csharp
 dist: trusty
 mono: none
 dotnet: 2.0.0
+
 install:
 - dotnet restore
+
 script:
-- dotnet test test/Pidget.Client.Test/Pidget.Client.Test.csproj
+- dotnet build -c Debug
+- dotnet test --no-build test/Pidget.Client.Test/Pidget.Client.Test.csproj
+- dotnet test --no-build test/Pidget.AspNet.Test/Pidget.AspNet.Test.csproj

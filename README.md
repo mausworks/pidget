@@ -60,16 +60,16 @@ var eventId = await client.CaptureAsync(e => e
 
 ## [Features](https://docs.sentry.io/clientdev/overview/#writing-an-sdk)
 
-- DSN configuration
+- DSN configuration (Pidget.Client)
 - `planned` ~~Graceful failures (e.g. Sentry server is unreachable)~~
-- Setting attributes (e.g. tags and extra data)
-- Support for Linux, Windows and OS X (where applicable)
-- ~~Automated error capturing (e.g. uncaught exception handlers)~~
+- Setting attributes (e.g. tags and extra data) (Pidget.Client)
+- Support for Linux, Windows and OS X (where applicable) (Pidget.Client, Pidget.AspNet)
+- Automated error capturing (e.g. uncaught exception handlers) (Pidget.AspNet)
 - ~~Logging framework integration~~
 - Non-blocking event submission
-- `planned` ~~Basic data sanitization (e.g. filtering out values that look like passwords)~~
+- Basic data sanitization (e.g. filtering out values that look like passwords) (Pidget.AspNet)
 - ~~Context data helpers (e.g. setting the current user, recording breadcrumbs)~~
-- Event sampling
+- Event sampling (Pidget.Client, Pidget.AspNet)
 - `planned` ~~Honor Sentry’s HTTP 429 Retry-After header~~
 - ~~Pre and Post event send hooks~~
 - ~~Local variable values in stacktrace (on platforms where this is possible)~~

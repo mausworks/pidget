@@ -8,7 +8,7 @@ shift
 goto parse
 :endparse
 
-set project="Pidget.AspNet"
+set project=Pidget.AspNet
 
 set packages="..\..\tools\code-coverage\.packages\"
 set dotnet="C:\Program Files\dotnet\dotnet.exe"
@@ -18,7 +18,7 @@ set coveragefile=.cov\coverage.xml
 set coveragedir=.cov\
 
 if not exist %packages% (
-  %dotnet% restore ..\..\tools\code-coverage\code-coverage.csproj --packages ..\..\tools\code-coverage\packages
+  dotnet restore ..\..\tools\code-coverage\code-coverage.csproj --packages %packages%
 )
 
 if "%notest%"=="" %opencover%^
