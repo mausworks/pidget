@@ -1,4 +1,4 @@
-# Pidget
+![pidget-txt-sm](https://user-images.githubusercontent.com/8259221/32839163-cbc898c0-ca13-11e7-8624-b8e1dffa31eb.png)
 
 A tiny client for [Sentry](https://sentry.io/).
 
