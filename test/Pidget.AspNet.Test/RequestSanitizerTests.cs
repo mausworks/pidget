@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Primitives;
 using Moq;
 using Pidget.AspNet.Sanitizing;
@@ -100,6 +101,23 @@ namespace Pidget.AspNet.Test
                 Assert.Equal(SanitationOptions.Default.ReplacementValue,
                     kvp.Value);
             }
+        }
+
+        [Theory]
+        [InlineData("?foo=bar&bar=baz", "?foo=bar&bar=baz")]
+        [InlineData("?passw=a", "?passw=OMITTED")]
+        public void GetQuery_ReturnsProvidedQuery(string query, string expectedQuery)
+        {
+            var requestMock = new Mock<HttpRequest>();
+
+            requestMock.SetupGet(r => r.Query)
+                .Returns(new QueryCollection(
+                    QueryHelpers.ParseQuery(expectedQuery)));
+
+            var sanitizedParams = RequestSanitizer.Default.SanitizeQuery(requestMock.Object);
+
+            Assert.Equal(expectedQuery,
+                actual: QueryString.Create(sanitizedParams).ToUriComponent());
         }
     }
 }
