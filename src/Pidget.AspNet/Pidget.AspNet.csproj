@@ -16,6 +16,8 @@
     <PackageProjectUrl>https://github.com/mausworks/pidget</PackageProjectUrl>
     <PackageLicenseUrl>https://raw.githubusercontent.com/mausworks/pidget/master/LICENSE</PackageLicenseUrl>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageIcon>https://user-images.githubusercontent.com/8259221/32839226-04e019b2-ca14-11e7-9ba6-be3bff2291f2.png</PackageIcon>
+
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/mausworks/pidget.git</RepositoryUrl>
 
