@@ -35,7 +35,7 @@ namespace Pidget.AspNet
             }
             catch (Exception ex)
             {
-                var eventId = await CaptureExceptionAsync(ex, context);
+                var eventId = await CaptureAsync(ex, context);
 
                 context.Items.Add(EventIdKey, eventId);
                 ex.Data.Add(EventIdKey, eventId);
@@ -44,19 +44,24 @@ namespace Pidget.AspNet
             }
         }
 
-        private async Task<string> CaptureExceptionAsync(Exception ex,
-            HttpContext context)
+        private async Task<string> CaptureAsync(Exception ex, HttpContext context)
             => await _sentryClient.CaptureAsync(e
                 => BuildEvent(ex, context.Request, e));
 
         private void BuildEvent(Exception ex, HttpRequest request,
             SentryEventBuilder sentryEvent)
         {
+            sentryEvent.SetException(ex);
+
+            AddRequestData(sentryEvent, request);
+        }
+
+        private void AddRequestData(SentryEventBuilder sentryEvent, HttpRequest request)
+        {
             var provider = new RequestDataProvider(
                 new RequestSanitizer(Options.Sanitation));
 
-            sentryEvent.SetException(ex)
-                .SetRequestData(provider.GetRequestData(request));
+            sentryEvent.SetRequestData(provider.GetRequestData(request));
         }
 
         /// <summary>
