@@ -34,8 +34,10 @@ namespace Pidget.AspNet
                 request.Path);
 
         public string GetQueryString(HttpRequest request)
-            => QueryString.Create(_sanitizer.SanitizeQuery(request))
-                .ToUriComponent();
+            => request.Query != null
+                ? QueryString.Create(_sanitizer.SanitizeQuery(request))
+                    .ToUriComponent()
+                : null;
 
         public string GetCookies(HttpRequest request)
             => request.Cookies != null && request.Cookies.Any()
@@ -53,7 +55,7 @@ namespace Pidget.AspNet
                 : null;
 
         public IDictionary<string, string> GetForm(HttpRequest request)
-            => request.Form != null && request.Form.Any()
+            => request.Form != null
                 ? _sanitizer.SanitizeForm(request)
                 : null;
 
