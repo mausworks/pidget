@@ -47,6 +47,19 @@ namespace Pidget.AspNet.Test
             Assert.Equal(expectedQuery, query);
         }
 
+        [Fact]
+        public void GetQuery_HandlesNull()
+        {
+            var requestMock = new Mock<HttpRequest>();
+
+            requestMock.SetupGet(r => r.Query)
+                .Returns(() => null);
+
+            var query = RequestData.GetQueryString(requestMock.Object);
+
+            Assert.Null(query);
+        }
+
         [Theory, InlineData("foo=bar", "bar=baz")]
         public void GetCookies_ReturnsProvidedCookies(
             params string[] cookieValues)
@@ -60,6 +73,32 @@ namespace Pidget.AspNet.Test
             var cookieValue = RequestData.GetCookies(requestMock.Object);
 
             Assert.Equal(string.Join("; ", cookieValues), cookieValue);
+        }
+
+        [Fact]
+        public void NullCookies_ReturnsNull()
+        {
+            var requestMock = new Mock<HttpRequest>();
+
+            requestMock.SetupGet(r => r.Cookies)
+                .Returns(() => null);
+
+            var cookieValue = RequestData.GetCookies(requestMock.Object);
+
+            Assert.Null(cookieValue);
+        }
+
+        [Fact]
+        public void NoCookies_ReturnsNull()
+        {
+            var requestMock = new Mock<HttpRequest>();
+
+            requestMock.SetupGet(r => r.Cookies)
+                .Returns(new RequestCookieCollection());
+
+            var cookieValue = RequestData.GetCookies(requestMock.Object);
+
+            Assert.Null(cookieValue);
         }
 
         [Theory, InlineData("foo=bar", "bar=baz")]
@@ -79,6 +118,32 @@ namespace Pidget.AspNet.Test
                 h => Assert.Equal(headerDictionary[h.Key], h.Value));
         }
 
+        [Fact]
+        public void NullHeaders_ReturnsNull()
+        {
+            var requestMock = new Mock<HttpRequest>();
+
+            requestMock.SetupGet(r => r.Headers)
+                .Returns(() => null);
+
+            var headers = RequestData.GetHeaders(requestMock.Object);
+
+            Assert.Null(headers);
+        }
+
+        [Fact]
+        public void NoHeaders_ReturnsEmpty()
+        {
+            var requestMock = new Mock<HttpRequest>();
+
+            requestMock.SetupGet(r => r.Headers)
+                .Returns(new HeaderDictionary());
+
+            var headers = RequestData.GetHeaders(requestMock.Object);
+
+            // Assert.Empty(headers);
+        }
+
         [Theory, InlineData("application/x-www-form-urlencoded")]
         public void GetData_ReturnsFormForContentType(string contentType)
         {
@@ -95,6 +160,7 @@ namespace Pidget.AspNet.Test
 
             Assert.True(((IDictionary<string, string>)data).Count > 0);
         }
+
 
         [Theory, InlineData("foo=bar", "bar=baz")]
         public void GetForm_ReturnsForm(params string[] formValues)
@@ -113,6 +179,18 @@ namespace Pidget.AspNet.Test
         }
 
         [Fact]
+        public void NullForm_ReturnsNull()
+        {
+            var requestMock = new Mock<HttpRequest>();
+
+            requestMock.SetupGet(r => r.Form)
+                .Returns(() => null);
+
+            var form = RequestData.GetForm(requestMock.Object);
+
+            Assert.Null(form);
+        }
+
         public void GetData()
         {
             var requestMock = new Mock<HttpRequest>();
