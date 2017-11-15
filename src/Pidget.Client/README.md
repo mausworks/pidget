@@ -61,4 +61,4 @@ This library targets .NET Standard 2.0 an supports the following platforms.
 
 ## Dependencies
 
-- Newtonsoft.Json `>=9.0.1`
+- Newtonsoft.Json `>=10.0.3`
