@@ -1,6 +1,6 @@
 # Pidget
 
-A tiny client for Sentry.
+A tiny client for [Sentry](https://sentry.com/).
 
 [![Build Status](https://travis-ci.org/mausworks/pidget.svg?branch=master)](https://travis-ci.org/mausworks/pidget)
 
