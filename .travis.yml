@@ -6,3 +6,4 @@ install:
 - dotnet restore
 script:
 - dotnet test test/Pidget.Client.Test/Pidget.Client.Test.csproj
+- dotnet test test/Pidget.AspNet.Test/Pidget.AspNet.Test.csproj
