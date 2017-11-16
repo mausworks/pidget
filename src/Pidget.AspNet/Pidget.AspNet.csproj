@@ -6,12 +6,14 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <DebugType>Full</DebugType>
 
+    <Title>Pidget ASP.NET Middleware</Title>
     <AssemblyName>Pidget.AspNet</AssemblyName>
     <AssemblyTitle>Pidget ASP.NET Core Middleware</AssemblyTitle>
     <Description>Sentry error reporting middleware for ASP.NET Core.</Description>
     <Authors>Rasmus Wennerström</Authors>
     <Copyright>Rasmus Wennerström</Copyright>
     <NeutralLanguage>en-US</NeutralLanguage>
+
     <PackageTags>sentry;aspnet;middleware;error-reporting;event-logging</PackageTags>
     <PackageProjectUrl>https://github.com/mausworks/pidget</PackageProjectUrl>
     <PackageLicenseUrl>https://raw.githubusercontent.com/mausworks/pidget/master/LICENSE</PackageLicenseUrl>

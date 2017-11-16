@@ -6,8 +6,9 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <DebugType>Full</DebugType>
 
+    <Title>Pidget Sentry Client</Title>
     <AssemblyName>Pidget.Client</AssemblyName>
-    <AssemblyTitle>Pidget Client</AssemblyTitle>
+    <AssemblyTitle>Pidget Sentry Client</AssemblyTitle>
     <Description>A tiny client for sentry.</Description>
     <Authors>Rasmus Wennerström</Authors>
     <Copyright>Rasmus Wennerström</Copyright>
