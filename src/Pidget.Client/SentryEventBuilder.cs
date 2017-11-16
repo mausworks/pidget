@@ -20,6 +20,8 @@ namespace Pidget.Client
 
         private RequestData _requestData;
 
+        private UserData _userData;
+
         private readonly Dictionary<string, string> _tags
             = new Dictionary<string, string>(4);
 
@@ -143,6 +145,13 @@ namespace Pidget.Client
             return this;
         }
 
+        public SentryEventBuilder SetUserData(UserData user)
+        {
+            _userData = user;
+
+            return this;
+        }
+
         public SentryEventBuilder SetRequestData(RequestData request)
         {
             _requestData = request;
@@ -167,7 +176,8 @@ namespace Pidget.Client
                 Tags = _tags,
                 Extra = _extraData,
                 Fingerprint = _fingerprint,
-                Request = _requestData
+                Request = _requestData,
+                User = _userData
             };
         }
 
