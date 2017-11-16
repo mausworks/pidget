@@ -54,7 +54,7 @@ var eventId = await client.CaptureAsync(e => e
 
 ## Supported frameworks
 
-This library targets .NET Standard 2.0 an supports the following platforms.
+This library targets .NET Standard 2.0 and supports the following platforms.
 
 - .NET Core 2.0
 - .NET Framework 4.6.1+ (With .NET Core 2.0 SDK)
