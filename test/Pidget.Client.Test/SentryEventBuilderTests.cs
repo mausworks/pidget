@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Pidget.Client.DataModels;
 using Xunit;
 
 namespace Pidget.Client.Test
@@ -119,6 +120,44 @@ namespace Pidget.Client.Test
             }
         }
 
+        [Fact]
+        public void SetRequestData()
+        {
+            var expectedData = new RequestData();
+
+            var builder = new SentryEventBuilder()
+                .SetException(new Exception())
+                .SetRequestData(expectedData);
+
+            var requestData = builder.Build().Request;
+
+            Assert.Same(expectedData, requestData);
+        }
+
+        [Fact]
+        public void SetUserData()
+        {
+            var expectedData = new UserData();
+
+            var builder = new SentryEventBuilder()
+                .SetException(new Exception())
+                .SetUserData(expectedData);
+
+            var userData = builder.Build().User;
+
+            Assert.Same(expectedData, userData);
+        }
+
+        [Theory, InlineData("foo", "bar")]
+        public void AddFingerprintData(params string[] data)
+        {
+            var builder = new SentryEventBuilder()
+                .SetException(new Exception())
+                .AddFingerprintData(data);
+
+            Assert.Equal(data, builder.Build().Fingerprint);
+        }
+
         private IEnumerable<KeyValuePair<string, TValue>> ToNamedPairs<TValue>(params object[] extraData)
         {
             if (extraData.Length % 2 != 0)
@@ -134,16 +173,6 @@ namespace Pidget.Client.Test
 
                 yield return new KeyValuePair<string, TValue>(name, value);
             }
-        }
-
-        [Theory, InlineData("foo", "bar")]
-        public void AddFingerprintData(params string[] data)
-        {
-            var builder = new SentryEventBuilder()
-                .SetException(new Exception())
-                .AddFingerprintData(data);
-
-            Assert.Equal(data, builder.Build().Fingerprint);
         }
     }
 }
