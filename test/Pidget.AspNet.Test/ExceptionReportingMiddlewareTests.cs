@@ -46,8 +46,6 @@ namespace Pidget.AspNet.Test
         {
             var requestMock = new Mock<HttpRequest>();
 
-            requestMock.SetupAllProperties();
-
             var contextMock = new Mock<HttpContext>();
 
             contextMock.Setup(m => m.Items)
