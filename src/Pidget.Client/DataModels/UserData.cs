@@ -3,18 +3,32 @@ using Newtonsoft.Json;
 
 namespace Pidget.Client.DataModels
 {
-    public class UserData
+    public class UserData : ArbitraryData
     {
-        [JsonProperty("id")]
-        public string Id { get; set; }
+        public string Id
+        {
+            get => (string)Get("id");
+            set => Set("id", value);
+        }
 
-        [JsonProperty("username")]
-        public string UserName { get; set; }
+        public string UserName
+        {
+            get => (string)Get("username");
+            set => Set("username", value);
+        }
 
         [JsonProperty("email")]
-        public string Email { get; set; }
+        public string Email
+        {
+            get => (string)Get("email");
+            set => Set("email", value);
+        }
 
         [JsonProperty("ip_address")]
-        public string IpAddress { get; set; }
+        public string IpAddress
+        {
+            get => (string)Get("ip_address");
+            set => Set("ip_address", value);
+        }
     }
 }
