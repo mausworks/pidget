@@ -46,14 +46,25 @@ namespace Pidget.AspNet
 
         private async Task<string> CaptureAsync(Exception ex, HttpContext context)
             => await _sentryClient.CaptureAsync(e
-                => BuildEvent(ex, context.Request, e));
+                => BuildEvent(ex, context, e));
 
-        private void BuildEvent(Exception ex, HttpRequest request,
+        private void BuildEvent(Exception ex, HttpContext context,
             SentryEventBuilder sentryEvent)
         {
             sentryEvent.SetException(ex);
 
-            AddRequestData(sentryEvent, request);
+            AddUserData(sentryEvent, context);
+            AddRequestData(sentryEvent, context.Request);
+        }
+
+        private void AddUserData(SentryEventBuilder sentryEvent, HttpContext context)
+        {
+            var user = UserDataProvider.Default.GetUserData(context);
+
+            if (user != null)
+            {
+                sentryEvent.SetUserData(user);
+            }
         }
 
         private void AddRequestData(SentryEventBuilder sentryEvent, HttpRequest request)
