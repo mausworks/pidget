@@ -18,7 +18,7 @@ namespace Pidget.Client.DataModels
         public object this[string key] => _data[key];
 
         private readonly IDictionary<string, object> _data
-            = new Dictionary<string, object>();
+            = new Dictionary<string, object>(StringComparer.Ordinal);
 
         public ArbitraryData Set(string name, object data)
         {
