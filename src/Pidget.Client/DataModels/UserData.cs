@@ -17,14 +17,12 @@ namespace Pidget.Client.DataModels
             set => Set("username", value);
         }
 
-        [JsonProperty("email")]
         public string Email
         {
             get => (string)Get("email");
             set => Set("email", value);
         }
 
-        [JsonProperty("ip_address")]
         public string IpAddress
         {
             get => (string)Get("ip_address");
