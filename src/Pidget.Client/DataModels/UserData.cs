@@ -7,25 +7,25 @@ namespace Pidget.Client.DataModels
     {
         public string Id
         {
-            get => (string)Get("id");
+            get => Get("id") as string;
             set => Set("id", value);
         }
 
         public string UserName
         {
-            get => (string)Get("username");
+            get => Get("username") as string;
             set => Set("username", value);
         }
 
         public string Email
         {
-            get => (string)Get("email");
+            get => Get("email") as string;
             set => Set("email", value);
         }
 
         public string IpAddress
         {
-            get => (string)Get("ip_address");
+            get => Get("ip_address") as string;
             set => Set("ip_address", value);
         }
     }
