@@ -173,6 +173,9 @@ namespace Pidget.Client.Test
                 .SetContexts(contexts);
 
             Assert.Equal(contexts, builder.Build().Contexts);
+            Assert.Equal(contexts.OperatingSystem, contexts["os"]);
+            Assert.Equal(contexts.Device, contexts["device"]);
+            Assert.Equal(contexts.Runtime, contexts["runtime"]);
         }
 
         private IEnumerable<KeyValuePair<string, TValue>> ToNamedPairs<TValue>(params object[] extraData)
