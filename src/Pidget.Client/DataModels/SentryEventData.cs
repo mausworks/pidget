@@ -44,5 +44,8 @@ namespace Pidget.Client.DataModels
 
         [JsonProperty("user")]
         public UserData User { get; set; }
+
+        [JsonProperty("contexts")]
+        public ContextsData Contexts { get; set; }
     }
 }

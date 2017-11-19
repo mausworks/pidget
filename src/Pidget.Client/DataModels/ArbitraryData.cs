@@ -1,35 +1,35 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
-using Newtonsoft.Json;
 
 namespace Pidget.Client.DataModels
 {
-    [JsonDictionary]
-    public class ArbitraryData : IReadOnlyDictionary<string, object>
+    /// <summary>
+    /// A dictionary-like name/object data structure.
+    /// </summary>
+    public class ArbitraryData : IDictionary<string, object>
     {
-        public IEnumerable<string> Keys => _data.Keys;
+        public ICollection<string> Keys => _data.Keys;
 
-        public IEnumerable<object> Values => _data.Values;
+        public ICollection<object> Values => _data.Values;
 
         public int Count => _data.Count;
 
-        public object this[string key] => _data[key];
+        public bool IsReadOnly => _data.IsReadOnly;
 
         private readonly IDictionary<string, object> _data
-            = new Dictionary<string, object>();
+            = new Dictionary<string, object>(StringComparer.Ordinal);
 
-        public ArbitraryData Set(string name, object data)
+
+        public object this[string key]
         {
-            _data[name] = data;
-
-            return this;
+            get => Get(key);
+            set => _data[key] = value;
         }
 
-        public object Get(string name)
+        private object Get(string key)
         {
-            _data.TryGetValue(name, out object value);
+            TryGetValue(key, out object value);
 
             return value;
         }
@@ -45,5 +45,26 @@ namespace Pidget.Client.DataModels
 
         public bool TryGetValue(string key, out object value)
             => _data.TryGetValue(key, out value);
+
+        public void Add(string key, object value)
+            => _data.Add(key, value);
+
+        public bool Remove(string key)
+            => _data.Remove(key);
+
+        public void Add(KeyValuePair<string, object> item)
+            => _data.Add(item);
+
+        public void Clear()
+            => _data.Clear();
+
+        public bool Contains(KeyValuePair<string, object> item)
+            => _data.Contains(item);
+
+        public void CopyTo(KeyValuePair<string, object>[] array, int arrayIndex)
+            => _data.CopyTo(array, arrayIndex);
+
+        public bool Remove(KeyValuePair<string, object> item)
+            => _data.Remove(item);
     }
 }

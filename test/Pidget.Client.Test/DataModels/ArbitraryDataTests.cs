@@ -15,7 +15,7 @@ namespace Pidget.Client.Test.DataModels
         {
             var data = new ArbitraryData();
 
-            data.Set(key, value);
+            data[key] = value;
 
             Assert.Equal(key, data.First().Key);
             Assert.Equal(value, data.First().Value);
@@ -26,12 +26,11 @@ namespace Pidget.Client.Test.DataModels
         {
             var data = new ArbitraryData();
 
-            data.Set(key, value);
+            data[key] = value;
 
             Assert.Equal(1, data.Count);
             Assert.Equal(key, data.Keys.First());
             Assert.Equal(value, data.Values.First());
-            Assert.Equal(value, data.Get(key));
             Assert.Equal(value, data[key]);
             Assert.True(data.ContainsKey(key));
             Assert.True(data.TryGetValue(key, out object outValue));
