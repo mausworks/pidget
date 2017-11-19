@@ -4,44 +4,44 @@ namespace Pidget.Client.DataModels
     {
         public string Name
         {
-            get => Get("name") as string;
-            set => Set("name", value);
+            get => this["name"] as string;
+            set => this["name"] = value;
         }
 
         public string Family
         {
-            get => Get("family") as string;
-            set => Set("family", value);
+            get => this["family"] as string;
+            set => this["family"] = value;
         }
 
         public string Model
         {
-            get => Get("model") as string;
-            set => Set("model", value);
+            get => this["model"] as string;
+            set => this["model"] = value;
         }
 
         public string ModelId
         {
-            get => Get("model_id") as string;
-            set => Set("model_id", value);
+            get => this["model_id"] as string;
+            set => this["model_id"] = value;
         }
 
         public string Architecture
         {
-            get => Get("arch") as string;
-            set => Set("arch", value);
+            get => this["arch"] as string;
+            set => this["arch"] = value;
         }
 
-        public double BatteryLevel
+        public double? BatteryLevel
         {
-            get => Get("battery_level") as string;
-            set => Set("battery_level", value);
+            get => this["arch"] as double?;
+            set => this["battery_level"] = value;
         }
 
         public string Orientation
         {
-            get => Get("orientation") as string;
-            set => Set("orientation", value);
+            get => this["orientation"] as string;
+            set => this["orientation"] = value;
         }
     }
 }

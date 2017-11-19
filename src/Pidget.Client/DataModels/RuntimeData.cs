@@ -4,14 +4,14 @@ namespace Pidget.Client.DataModels
     {
         public string Name
         {
-            get => Get("name") as string;
-            set => Set("name", value);
+            get => this["name"] as string;
+            set => this["name"] = value;
         }
 
         public string Version
         {
-            get => Get("version") as string;
-            set => Set("version", value);
+            get => this["version"] as string;
+            set => this["version"] = value;
         }
     }
 }

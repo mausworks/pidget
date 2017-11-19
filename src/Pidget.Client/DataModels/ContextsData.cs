@@ -10,20 +10,20 @@ namespace Pidget.Client.DataModels
     {
         public OperatingSystemData OperatingSystem
         {
-            get => Get("os") as OperatingSystemData;
-            set => Set("os", value);
+            get => this["os"] as OperatingSystemData;
+            set => this["os"] = value;
         }
 
         public DeviceData Device
         {
-            get => Get("device") as DeviceData;
-            set => Set("device", value);
+            get => this["device"] as DeviceData;
+            set => this["device"] = value;
         }
 
         public RuntimeData Runtime
         {
-            get => Get("runtime") as RuntimeData;
-            set => Set("runtime", value);
+            get => this["runtime"] as RuntimeData;
+            set => this["runtime"] = value;
         }
     }
 }
