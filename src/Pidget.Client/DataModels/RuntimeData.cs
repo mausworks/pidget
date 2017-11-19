@@ -1,5 +1,8 @@
 namespace Pidget.Client.DataModels
 {
+    /// <summary>
+    /// Describes the runtime in more detail.
+    /// </summary>
     public class RuntimeData : ArbitraryData
     {
         public string Name

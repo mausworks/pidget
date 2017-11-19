@@ -6,6 +6,9 @@ using Newtonsoft.Json;
 
 namespace Pidget.Client.DataModels
 {
+    /// <summary>
+    /// A dictionary-like name/object data structure.
+    /// </summary>
     public class ArbitraryData : IDictionary<string, object>
     {
         public ICollection<string> Keys => _data.Keys;

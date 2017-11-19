@@ -1,5 +1,9 @@
 namespace Pidget.Client.DataModels
 {
+    /// <summary>
+    /// Describes the device that caused an event,
+    /// most appropriate for mobile applications.
+    /// </summary>
     public class DeviceData : ArbitraryData
     {
         public string Name

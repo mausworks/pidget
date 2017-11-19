@@ -1,11 +1,9 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Reflection;
-using Newtonsoft.Json;
-
 namespace Pidget.Client.DataModels
 {
+    /// <summary>
+    /// Provides additional contextual data, typically related to the current user.
+    /// See also: https://docs.sentry.io/clientdev/interfaces/contexts/
+    /// </summary>
     public class ContextsData : ArbitraryData
     {
         public OperatingSystemData OperatingSystem
