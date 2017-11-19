@@ -158,6 +158,23 @@ namespace Pidget.Client.Test
             Assert.Equal(data, builder.Build().Fingerprint);
         }
 
+        [Fact]
+        public void SetContexts()
+        {
+            var contexts = new ContextsData
+            {
+                OperatingSystem = new OperatingSystemData(),
+                Device = new DeviceData(),
+                Runtime = new RuntimeData()
+            };
+
+            var builder = new SentryEventBuilder()
+                .SetException(new Exception())
+                .SetContexts(contexts);
+
+            Assert.Equal(contexts, builder.Build().Contexts);
+        }
+
         private IEnumerable<KeyValuePair<string, TValue>> ToNamedPairs<TValue>(params object[] extraData)
         {
             if (extraData.Length % 2 != 0)

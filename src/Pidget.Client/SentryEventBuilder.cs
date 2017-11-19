@@ -30,6 +30,8 @@ namespace Pidget.Client
 
         private readonly List<string> _fingerprint = new List<string>(4);
 
+        private ContextsData _contextsData;
+
 
         /// <summary>
         /// Sets the captured exception.
@@ -159,6 +161,13 @@ namespace Pidget.Client
             return this;
         }
 
+        public SentryEventBuilder SetContexts(ContextsData contexts)
+        {
+            _contextsData = contexts;
+
+            return this;
+        }
+
         public SentryEventData Build()
         {
             AssertValidity();
@@ -177,7 +186,8 @@ namespace Pidget.Client
                 Extra = _extraData,
                 Fingerprint = _fingerprint,
                 Request = _requestData,
-                User = _userData
+                User = _userData,
+                Contexts = _contextsData
             };
         }
 
