@@ -6,11 +6,11 @@ using Xunit;
 
 namespace Pidget.Client.Test
 {
-    public class RavenHttpClientTests
+    public class SentryHttpClientTests
     {
         public static readonly Dsn Dsn = Dsn.Create(GetDsn());
 
-        // [Fact] // Manual testing only.
+        [Fact(Skip = "Manual testing only")]
         public async Task SendException_ReturnsEventId()
         {
             var client = Sentry.CreateClient(Dsn);
