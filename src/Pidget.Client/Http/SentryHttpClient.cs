@@ -15,10 +15,12 @@ namespace Pidget.Client.Http
 
         private readonly JsonStreamSerializer _serializer;
 
-        public SentryHttpClient(Dsn dsn)
+        public SentryHttpClient(Dsn dsn, HttpClient httpClient)
             : base(dsn)
         {
-            _httpClient = CreateHttpClient();
+            Assert.ArgumentNotNull(httpClient, nameof(httpClient));
+
+            _httpClient = httpClient;
             _serializer = new JsonStreamSerializer(
                 encoding: Sentry.ApiEncoding,
                 jsonSerializer: GetJsonSerializer());
@@ -51,6 +53,9 @@ namespace Pidget.Client.Http
         public void Dispose()
             => _httpClient.Dispose();
 
+        public static SentryHttpClient CreateDefault(Dsn dsn)
+            => new SentryHttpClient(dsn, CreateDefaultHttpClient());
+
         private SentryAuth IssueAuth()
             => SentryAuth.Issue(this, DateTimeOffset.UtcNow);
 
@@ -76,7 +81,7 @@ namespace Pidget.Client.Http
             return content;
         }
 
-        private HttpClient CreateHttpClient()
+        private static HttpClient CreateDefaultHttpClient()
         {
             var client = new HttpClient();
 
