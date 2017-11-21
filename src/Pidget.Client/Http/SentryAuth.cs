@@ -31,7 +31,7 @@ namespace Pidget.Client.Http
         public static SentryAuth Issue(SentryClient client, DateTimeOffset issuedAt)
             => new SentryAuth(
                 sentryVersion: Sentry.CurrentProtocolVersion,
-                clientVersion: string.Join("/", $"{client.Name}-csharp", client.Version),
+                clientVersion: string.Join("/", $"{SentryClient.Name}-csharp", SentryClient.Version),
                 timestamp: UnixTimestamp.Create(issuedAt),
                 publicKey: client.Dsn.GetPublicKey(),
                 secretKey: client.Dsn.GetSecretKey());

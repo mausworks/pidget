@@ -11,8 +11,6 @@ namespace Pidget.Client.Http
 {
     public class SentryHttpClient : SentryClient, IDisposable
     {
-        public override string Version => VersionNumber.Get();
-
         private readonly HttpClient _httpClient;
 
         private readonly JsonStreamSerializer _serializer;

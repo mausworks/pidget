@@ -6,10 +6,6 @@ namespace Pidget.Client.Test
 {
     public class TestableSentryClient : SentryClient
     {
-        public override string Name => nameof(TestableSentryClient);
-
-        public override string Version => "1.0.0";
-
         private readonly Func<SentryEventData, SentryResponse> _onSend;
 
         public TestableSentryClient(Dsn dsn,
