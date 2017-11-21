@@ -4,7 +4,8 @@
     <Version>0.3.0</Version>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <DebugType>Full</DebugType>
+    <DebugType Condition=" $(Coverage) == '' "></DebugType>
+    <DebugType Condition=" $(Coverage) != '' ">Full</DebugType>
 
     <Title>Pidget Sentry Client</Title>
     <AssemblyName>Pidget.Client</AssemblyName>
