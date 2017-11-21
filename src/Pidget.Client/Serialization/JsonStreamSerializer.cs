@@ -9,6 +9,8 @@ namespace Pidget.Client.Serialization
 {
     public class JsonStreamSerializer
     {
+        public const int BufferSize = 1024;
+
         public Encoding Encoding { get; }
 
         private readonly JsonSerializer _serializer;
@@ -49,10 +51,9 @@ namespace Pidget.Client.Serialization
         }
 
         private StreamWriter CreateWriter(Stream stream)
-            => new StreamWriter(
-                stream: stream,
+            => new StreamWriter(stream,
                 encoding: Encoding,
-                bufferSize: 64,
+                bufferSize: BufferSize,
                 leaveOpen: true);
     }
 }
