@@ -44,7 +44,7 @@ namespace Pidget.AspNet
             }
         }
 
-        private async Task<string> CaptureAsync(Exception ex, HttpContext context)
+        private async Task<SentryResponse> CaptureAsync(Exception ex, HttpContext context)
             => await _sentryClient.CaptureAsync(e
                 => BuildEvent(ex, context, e));
 

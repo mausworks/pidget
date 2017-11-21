@@ -60,7 +60,7 @@ namespace Pidget.AspNet.Test
                 Dsn.Create(ExceptionReportingOptions.Dsn));
 
             clientMock.Setup(c => c.SendEventAsync(It.IsAny<SentryEventData>()))
-                .ReturnsAsync(eventId)
+                .ReturnsAsync(new SentryResponse { EventId = eventId })
                 .Verifiable();
 
             var middleware = CreateMiddleware(Next_Throw, clientMock.Object);
@@ -105,7 +105,7 @@ namespace Pidget.AspNet.Test
                 => r.Request.Url == url.Split('?', StringSplitOptions.None)[0]
                 && r.Request.Method == method
                 && r.Request.QueryString == uri.Query)))
-                .ReturnsAsync(eventId)
+                .ReturnsAsync(new SentryResponse { EventId = eventId })
                 .Verifiable();
 
             var middleware = CreateMiddleware(Next_Throw, clientMock.Object);
@@ -158,7 +158,7 @@ namespace Pidget.AspNet.Test
                  && r.User.UserName == userName
                  && r.User.Email == email
                  && r.User.IpAddress == ipAddress)))
-                .ReturnsAsync(eventId)
+                .ReturnsAsync(new SentryResponse { EventId = eventId })
                 .Verifiable();
 
             var middleware = CreateMiddleware(Next_Throw, clientMock.Object);

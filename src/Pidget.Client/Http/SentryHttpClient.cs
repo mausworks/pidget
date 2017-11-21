@@ -1,19 +1,17 @@
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Serialization;
-using Pidget.Client.DataModels;
-using Pidget.Client.Serialization;
 using System;
 using System.IO;
-using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Pidget.Client.DataModels;
+using Pidget.Client.Serialization;
 
 namespace Pidget.Client.Http
 {
     public class SentryHttpClient : SentryClient, IDisposable
     {
-        public override string Version { get; }
+        public override string Version => VersionHelper.GetVersionNumber();
 
         private readonly HttpClient _httpClient;
 
@@ -22,9 +20,7 @@ namespace Pidget.Client.Http
         public SentryHttpClient(Dsn dsn)
             : base(dsn)
         {
-            Version = VersionHelper.GetVersionNumber();
             _httpClient = CreateHttpClient();
-
             _serializer = new JsonStreamSerializer(
                 encoding: Sentry.ApiEncoding,
                 jsonSerializer: GetJsonSerializer());
@@ -40,21 +36,17 @@ namespace Pidget.Client.Http
             return JsonSerializer.Create(settings);
         }
 
-        public override async Task<string> SendEventAsync(
+        public override async Task<SentryResponse> SendEventAsync(
             SentryEventData eventData)
         {
             using (var stream = _serializer.Serialize(eventData))
             {
-                var response = await _httpClient.SendAsync(
+                var httpResponse = await _httpClient.SendAsync(
                     GetRequest(IssueAuth(), stream)).ConfigureAwait(false);
 
-                using (var body = await response.Content.ReadAsStreamAsync())
-                {
-                    var eventCreated = _serializer
-                        .Deserialize<EventIdData>(body);
+                var responseProvider = new SentryResponseProvider(_serializer);
 
-                    return eventCreated.Id;
-                }
+                return await responseProvider.GetResponseAsync(httpResponse);
             }
         }
 

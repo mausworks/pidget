@@ -22,7 +22,7 @@ namespace Pidget.Client
             Dsn = dsn;
         }
 
-        public Task<string> CaptureAsync(
+        public Task<SentryResponse> CaptureAsync(
             Action<SentryEventBuilder> builderAccessor)
         {
             var builder = new SentryEventBuilder();
@@ -31,7 +31,7 @@ namespace Pidget.Client
             return SendEventAsync(builder.Build());
         }
 
-        public abstract Task<string> SendEventAsync(
+        public abstract Task<SentryResponse> SendEventAsync(
             SentryEventData sentryEvent);
     }
 }
