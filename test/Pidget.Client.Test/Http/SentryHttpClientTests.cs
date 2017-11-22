@@ -13,7 +13,22 @@ namespace Pidget.Client.Test
         [Fact]
         public void RequiresHttpClient()
             => Assert.Throws<ArgumentNullException>(()
-                => new SentryHttpClient(Dsn, null));
+                => new SentryHttpClient(DsnTests.SentryDsn, null));
+
+        [Fact]
+        public void RequiresDsn()
+            => Assert.Throws<ArgumentNullException>(()
+                => new SentryHttpClient(null,
+                    SentryHttpClient.CreateHttpClient()));
+
+        [Fact]
+        public void CreateHttpClient_HasExpectedUserAgent()
+        {
+            var httpClient = SentryHttpClient.CreateHttpClient();
+
+            Assert.Equal(SentryHttpClient.UserAgent,
+                httpClient.DefaultRequestHeaders.UserAgent.ToString());
+        }
 
 
         [Fact(Skip = "Manual testing only")]
@@ -40,15 +55,6 @@ namespace Pidget.Client.Test
 
                 Assert.NotNull(id);
             }
-        }
-
-        [Fact]
-        public void CreateHttpClient_HasExpectedUserAgent()
-        {
-            var httpClient = SentryHttpClient.CreateHttpClient();
-
-            Assert.Equal(SentryHttpClient.UserAgent,
-                httpClient.DefaultRequestHeaders.UserAgent.ToString());
         }
 
         private static string GetProductionDsn()
