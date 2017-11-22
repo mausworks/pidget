@@ -10,6 +10,12 @@ namespace Pidget.Client.Test
     {
         public static readonly Dsn Dsn = Dsn.Create(GetDsn());
 
+        [Fact]
+        public void RequiresHttpClient()
+            => Assert.Throws<ArgumentNullException>(()
+                => new SentryHttpClient(Dsn, null));
+
+
         [Fact(Skip = "Manual testing only")]
         public async Task SendException_ReturnsEventId()
         {

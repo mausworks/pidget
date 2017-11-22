@@ -11,9 +11,15 @@ namespace Pidget.Client.Http
 {
     public class SentryHttpClient : SentryClient, IDisposable
     {
-        private readonly HttpClient _httpClient;
+        public static JsonSerializer JsonSerializer { get; }
+            = GetJsonSerializer();
 
-        private readonly JsonStreamSerializer _serializer;
+        private static readonly JsonStreamSerializer _streamSerializer
+            = new JsonStreamSerializer(
+                encoding: Sentry.ApiEncoding,
+                jsonSerializer: JsonSerializer);
+
+        private readonly HttpClient _httpClient;
 
         public SentryHttpClient(Dsn dsn, HttpClient httpClient)
             : base(dsn)
@@ -21,9 +27,6 @@ namespace Pidget.Client.Http
             Assert.ArgumentNotNull(httpClient, nameof(httpClient));
 
             _httpClient = httpClient;
-            _serializer = new JsonStreamSerializer(
-                encoding: Sentry.ApiEncoding,
-                jsonSerializer: GetJsonSerializer());
         }
 
         private static JsonSerializer GetJsonSerializer()
@@ -39,12 +42,12 @@ namespace Pidget.Client.Http
         public override async Task<SentryResponse> SendEventAsync(
             SentryEventData eventData)
         {
-            using (var stream = _serializer.Serialize(eventData))
+            using (var stream = _streamSerializer.Serialize(eventData))
             {
                 var httpResponse = await _httpClient.SendAsync(
                     GetRequest(IssueAuth(), stream)).ConfigureAwait(false);
 
-                var responseProvider = new SentryResponseProvider(_serializer);
+                var responseProvider = new SentryResponseProvider(_streamSerializer);
 
                 return await responseProvider.GetResponseAsync(httpResponse);
             }
@@ -54,7 +57,7 @@ namespace Pidget.Client.Http
             => _httpClient.Dispose();
 
         public static SentryHttpClient CreateDefault(Dsn dsn)
-            => new SentryHttpClient(dsn, CreateDefaultHttpClient());
+            => new SentryHttpClient(dsn, CreateHttpClient());
 
         private SentryAuth IssueAuth()
             => SentryAuth.Issue(this, DateTimeOffset.UtcNow);
@@ -81,7 +84,7 @@ namespace Pidget.Client.Http
             return content;
         }
 
-        private static HttpClient CreateDefaultHttpClient()
+        public static HttpClient CreateHttpClient()
         {
             var client = new HttpClient();
 
