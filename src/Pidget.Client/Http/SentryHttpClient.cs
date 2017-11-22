@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -21,14 +22,14 @@ namespace Pidget.Client.Http
                 encoding: Sentry.ApiEncoding,
                 jsonSerializer: JsonSerializer);
 
-        private readonly HttpClient _httpClient;
+        private readonly HttpMessageInvoker _sender;
 
-        public SentryHttpClient(Dsn dsn, HttpClient httpClient)
+        public SentryHttpClient(Dsn dsn, HttpMessageInvoker sender)
             : base(dsn)
         {
-            Assert.ArgumentNotNull(httpClient, nameof(httpClient));
+            Assert.ArgumentNotNull(sender, nameof(sender));
 
-            _httpClient = httpClient;
+            _sender = sender;
         }
 
         private static JsonSerializer GetJsonSerializer()
@@ -46,8 +47,10 @@ namespace Pidget.Client.Http
         {
             using (var stream = _streamSerializer.Serialize(eventData))
             {
-                var httpResponse = await _httpClient.SendAsync(
-                    GetRequest(IssueAuth(), stream)).ConfigureAwait(false);
+                var httpResponse = await _sender.SendAsync(
+                        GetRequest(IssueAuth(), stream),
+                        CancellationToken.None)
+                    .ConfigureAwait(false);
 
                 var responseProvider = new SentryResponseProvider(_streamSerializer);
 
@@ -56,9 +59,9 @@ namespace Pidget.Client.Http
         }
 
         public void Dispose()
-            => _httpClient.Dispose();
+            => _sender.Dispose();
 
-        public static HttpClient CreateHttpClient()
+        public static HttpClient CreateSender()
         {
             var client = new HttpClient();
 
@@ -69,7 +72,7 @@ namespace Pidget.Client.Http
         }
 
         public static SentryHttpClient CreateDefault(Dsn dsn)
-            => new SentryHttpClient(dsn, CreateHttpClient());
+            => new SentryHttpClient(dsn, CreateSender());
 
         private SentryAuth IssueAuth()
             => SentryAuth.Issue(this, DateTimeOffset.UtcNow);
