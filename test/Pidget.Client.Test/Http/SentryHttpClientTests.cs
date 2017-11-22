@@ -8,7 +8,7 @@ namespace Pidget.Client.Test
 {
     public class SentryHttpClientTests
     {
-        public static readonly Dsn Dsn = Dsn.Create(GetDsn());
+        public static readonly Dsn Dsn = Dsn.Create(GetProductionDsn());
 
         [Fact]
         public void RequiresHttpClient()
@@ -42,7 +42,7 @@ namespace Pidget.Client.Test
             }
         }
 
-        private static string GetDsn()
+        private static string GetProductionDsn()
         {
             var cwd = Directory.GetCurrentDirectory();
 
