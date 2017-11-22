@@ -14,6 +14,8 @@ namespace Pidget.Client.Http
         public static JsonSerializer JsonSerializer { get; }
             = GetJsonSerializer();
 
+        public static string UserAgent => string.Join("/", Name, Version);
+
         private static readonly JsonStreamSerializer _streamSerializer
             = new JsonStreamSerializer(
                 encoding: Sentry.ApiEncoding,
@@ -89,7 +91,7 @@ namespace Pidget.Client.Http
             var client = new HttpClient();
 
             client.DefaultRequestHeaders
-                .Add("User-Agent", $"{Name}/{Version}");
+                .Add("User-Agent", UserAgent);
 
             return client;
         }

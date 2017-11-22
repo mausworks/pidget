@@ -42,6 +42,15 @@ namespace Pidget.Client.Test
             }
         }
 
+        [Fact]
+        public void CreateHttpClient_HasExpectedUserAgent()
+        {
+            var httpClient = SentryHttpClient.CreateHttpClient();
+
+            Assert.Equal(SentryHttpClient.UserAgent,
+                httpClient.DefaultRequestHeaders.UserAgent.ToString());
+        }
+
         private static string GetProductionDsn()
         {
             var cwd = Directory.GetCurrentDirectory();
