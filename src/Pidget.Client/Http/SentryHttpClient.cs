@@ -58,6 +58,16 @@ namespace Pidget.Client.Http
         public void Dispose()
             => _httpClient.Dispose();
 
+        public static HttpClient CreateHttpClient()
+        {
+            var client = new HttpClient();
+
+            client.DefaultRequestHeaders
+                .Add("User-Agent", UserAgent);
+
+            return client;
+        }
+
         public static SentryHttpClient CreateDefault(Dsn dsn)
             => new SentryHttpClient(dsn, CreateHttpClient());
 
@@ -84,16 +94,6 @@ namespace Pidget.Client.Http
             content.Headers.Add("Content-Type", "application/json");
 
             return content;
-        }
-
-        public static HttpClient CreateHttpClient()
-        {
-            var client = new HttpClient();
-
-            client.DefaultRequestHeaders
-                .Add("User-Agent", UserAgent);
-
-            return client;
         }
     }
 }
