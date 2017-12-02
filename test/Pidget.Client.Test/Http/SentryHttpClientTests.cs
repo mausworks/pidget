@@ -1,14 +1,29 @@
 using System;
 using System.IO;
+using System.Net;
+using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
+using Moq;
+using Newtonsoft.Json;
+using Pidget.Client.DataModels;
 using Pidget.Client.Http;
+using Pidget.Client.Serialization;
 using Xunit;
 
 namespace Pidget.Client.Test
 {
+    using static CancellationToken;
+
     public class SentryHttpClientTests
     {
-        public static readonly Dsn Dsn = Dsn.Create(GetProductionDsn());
+        public const string EventId = "event_id";
+
+        public static SentryResponse OkResponse { get; }
+            = new SentryResponse
+            {
+                EventId = EventId
+            };
 
         [Fact]
         public void RequiresHttpClient()
@@ -19,22 +34,47 @@ namespace Pidget.Client.Test
         public void RequiresDsn()
             => Assert.Throws<ArgumentNullException>(()
                 => new SentryHttpClient(null,
-                    SentryHttpClient.CreateHttpClient()));
+                    SentryHttpClient.CreateSender()));
 
         [Fact]
         public void CreateHttpClient_HasExpectedUserAgent()
         {
-            var httpClient = SentryHttpClient.CreateHttpClient();
+            var httpClient = SentryHttpClient.CreateSender();
 
             Assert.Equal(SentryHttpClient.UserAgent,
                 httpClient.DefaultRequestHeaders.UserAgent.ToString());
+        }
+
+        [Theory, InlineData("foo")]
+        public async Task SendMessageEvent(string message)
+        {
+            var senderMock = new Mock<HttpClient>();
+
+            var client = new SentryHttpClient(DsnTests.SentryDsn,
+                senderMock.Object);
+
+            senderMock.Setup(m => m.SendAsync(It.IsAny<HttpRequestMessage>(), None))
+                .ReturnsAsync(CreateOkHttpResponse(SentryHttpClient.JsonSerializer))
+                .Verifiable();
+
+            var response = await client.SendEventAsync(new SentryEventData
+            {
+                Message = message
+            });
+
+
+            senderMock.Verify();
+
+            Assert.Equal(HttpStatusCode.OK, response.HttpStatusCode);
+            Assert.NotNull(response.EventId);
+            Assert.Null(response.SentryError);
         }
 
 
         [Fact(Skip = "Manual testing only")]
         public async Task SendException_ReturnsEventId()
         {
-            var client = Sentry.CreateClient(Dsn);
+            var client = Sentry.CreateClient(Dsn.Create(GetProductionDsn()));
 
             var value = 0;
 
@@ -44,7 +84,7 @@ namespace Pidget.Client.Test
             }
             catch (Exception ex)
             {
-                var id = await client.CaptureAsync(e => e
+                var response = await client.CaptureAsync(e => e
                     .SetException(ex)
                     .SetErrorLevel(ErrorLevel.Warning)
                     .AddExtraData("test", new
@@ -53,15 +93,34 @@ namespace Pidget.Client.Test
                     })
                     .AddTag("test_tag", "yes"));
 
-                Assert.NotNull(id);
+                Assert.NotNull(response.EventId);
             }
+        }
+
+        private static HttpResponseMessage CreateOkHttpResponse(
+            JsonSerializer serializer)
+        {
+            var streamSerializer = new JsonStreamSerializer(Sentry.ApiEncoding,
+                serializer);
+
+            return new HttpResponseMessage
+            {
+                StatusCode = HttpStatusCode.OK,
+                Content = new StreamContent(streamSerializer.Serialize(OkResponse))
+            };
         }
 
         private static string GetProductionDsn()
         {
-            var cwd = Directory.GetCurrentDirectory();
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(),
+                "dsn.txt");
 
-            return File.ReadAllText(Path.Combine(cwd, "dsn.txt")).Trim();
+            if (!File.Exists(filePath))
+            {
+                return null;
+            }
+
+            return File.ReadAllText(filePath).Trim();
         }
     }
 }
