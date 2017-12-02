@@ -82,6 +82,11 @@ namespace Pidget.Client.Test
             Assert.True(sender.IsDisposed);
         }
 
+        [Fact]
+        public void CreateDefault()
+            => Assert.NotNull(
+                SentryHttpClient.CreateDefault(DsnTests.SentryDsn));
+
         [Fact(Skip = "Manual testing only")]
         public async Task SendException_ReturnsEventId()
         {
