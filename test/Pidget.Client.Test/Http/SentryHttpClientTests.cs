@@ -70,13 +70,6 @@ namespace Pidget.Client.Test
             Assert.Null(response.SentryError);
         }
 
-
-        [Fact]
-        public void DisposesSender()
-        {
-            var sentryClient = new SentryHttpClient(DsnTests.SentryDsn, senderMock.Object);
-        }
-
         [Fact(Skip = "Manual testing only")]
         public async Task SendException_ReturnsEventId()
         {
