@@ -61,7 +61,7 @@ namespace Pidget.Client.Http
         public void Dispose()
             => _sender.Dispose();
 
-        public static HttpClient CreateSender()
+        public static HttpMessageInvoker CreateSender()
         {
             var client = new HttpClient();
 

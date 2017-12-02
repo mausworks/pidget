@@ -37,9 +37,9 @@ namespace Pidget.Client.Test
                     SentryHttpClient.CreateSender()));
 
         [Fact]
-        public void CreateHttpClient_HasExpectedUserAgent()
+        public void HasExpectedUserAgent()
         {
-            var httpClient = SentryHttpClient.CreateSender();
+            var httpClient = SentryHttpClient.CreateSender() as HttpClient;
 
             Assert.Equal(SentryHttpClient.UserAgent,
                 httpClient.DefaultRequestHeaders.UserAgent.ToString());
@@ -70,6 +70,12 @@ namespace Pidget.Client.Test
             Assert.Null(response.SentryError);
         }
 
+
+        [Fact]
+        public void DisposesSender()
+        {
+            var sentryClient = new SentryHttpClient(DsnTests.SentryDsn, senderMock.Object);
+        }
 
         [Fact(Skip = "Manual testing only")]
         public async Task SendException_ReturnsEventId()
