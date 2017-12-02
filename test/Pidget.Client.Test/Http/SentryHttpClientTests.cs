@@ -69,6 +69,19 @@ namespace Pidget.Client.Test
             Assert.Null(response.SentryError);
         }
 
+        [Fact]
+        public void DisposesSender()
+        {
+            var sender = new TestSender(new HttpClientHandler());
+
+            var client = new SentryHttpClient(DsnTests.SentryDsn,
+                sender);
+
+            client.Dispose();
+
+            Assert.True(sender.IsDisposed);
+        }
+
         [Fact(Skip = "Manual testing only")]
         public async Task SendException_ReturnsEventId()
         {
