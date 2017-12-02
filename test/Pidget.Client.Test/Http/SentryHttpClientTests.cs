@@ -62,7 +62,6 @@ namespace Pidget.Client.Test
                 Message = message
             });
 
-
             senderMock.Verify();
 
             Assert.Equal(HttpStatusCode.OK, response.HttpStatusCode);
