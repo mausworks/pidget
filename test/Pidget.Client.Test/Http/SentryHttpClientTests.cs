@@ -1,14 +1,14 @@
+using Moq;
+using Newtonsoft.Json;
+using Pidget.Client.DataModels;
+using Pidget.Client.Http;
+using Pidget.Client.Serialization;
 using System;
 using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Moq;
-using Newtonsoft.Json;
-using Pidget.Client.DataModels;
-using Pidget.Client.Http;
-using Pidget.Client.Serialization;
 using Xunit;
 
 namespace Pidget.Client.Test
