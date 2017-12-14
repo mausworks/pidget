@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -18,29 +20,48 @@ namespace Pidget.Client.Http
             => Serializer = serializer;
 
         public async Task<SentryResponse> GetResponseAsync(
-            HttpResponseMessage httpResponse)
+            HttpResponseMessage response)
         {
-            using (var body = await httpResponse.Content.ReadAsStreamAsync())
+            if (!ShouldReadBody(response.Content))
+            {
+                return ErrorResponse(response);
+            }
+
+            using (var body = await ReadBodyAsync(response)
+                .ConfigureAwait(false))
             {
                 var responseData = Serializer
                     .Deserialize<SentryResponse>(body);
 
-                responseData.HttpStatusCode = httpResponse.StatusCode;
-                responseData.SentryError = GetSentryError(httpResponse);
+                responseData.HttpStatusCode = response.StatusCode;
+                responseData.SentryError = GetSentryError(response);
 
                 return responseData;
             }
         }
 
+        private SentryResponse ErrorResponse(HttpResponseMessage response)
+            => new SentryResponse
+            {
+                HttpStatusCode = response.StatusCode,
+                SentryError = GetSentryError(response)
+            };
+
+        private bool ShouldReadBody(HttpContent content)
+            => content.Headers.ContentLength > 0
+            && content.Headers.ContentType.MediaType
+                .Equals("application/json", StringComparison.OrdinalIgnoreCase);
+
+        private static Task<Stream> ReadBodyAsync(HttpResponseMessage httpResponse)
+            => httpResponse.Content.ReadAsStreamAsync();
+
         public string GetSentryError(HttpResponseMessage response)
         {
-            var header = response.Headers.TryGetValues(
+            var headerExists = response.Headers.TryGetValues(
                 name: SentryErrorHeaderName,
                 values: out IEnumerable<string> values);
 
-            return values != null && values.Any()
-                ? string.Join(", ", values)
-                : null;
+            return headerExists ? string.Join(", ", values) : null;
         }
     }
 }

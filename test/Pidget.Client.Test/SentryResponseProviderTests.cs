@@ -4,6 +4,9 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
+using System.Net.Http.Headers;
+using Moq;
+using System.IO;
 
 namespace Pidget.Client.Http
 {
@@ -19,18 +22,60 @@ namespace Pidget.Client.Http
             = new SentryResponseProvider(Serializer);
 
         [Theory, InlineData("{ \"id\": \"event_id\" }", "event_id")]
-        public async Task ReturnsEventIdFromJsonBody(string jsonBody,
+        public async Task ReturnsEventIdFromJsonBody(string json,
             string eventId)
         {
             var response = new HttpResponseMessage
             {
-                Content = new StringContent(jsonBody, Sentry.ApiEncoding)
+                Content = new StringContent(json,
+                    Sentry.ApiEncoding,
+                    "application/json")
             };
 
             var sentryResponse = await ResponseProvider.GetResponseAsync(response);
 
             Assert.Equal(eventId, sentryResponse.EventId);
             Assert.Equal(eventId, sentryResponse["id"]);
+        }
+
+        [Theory]
+        [InlineData(200, "application/json")]
+        [InlineData(200, "text/plain")]
+        public async Task EmptyContent(int statusCode, string contentType)
+        {
+            var response = new HttpResponseMessage
+            {
+                StatusCode = (HttpStatusCode)statusCode,
+                Content = new StringContent("",
+                    Sentry.ApiEncoding,
+                    contentType)
+            };
+
+            var sentryResponse = await ResponseProvider
+                .GetResponseAsync(response);
+
+            Assert.Equal(response.StatusCode, sentryResponse.HttpStatusCode);
+            Assert.Null(sentryResponse.EventId);
+        }
+
+        [Theory]
+        [InlineData(200, "")]
+        [InlineData(200, "NOT_JSON")]
+        public async Task WrongContentType(int statusCode, string content)
+        {
+            var response = new HttpResponseMessage
+            {
+                StatusCode = (HttpStatusCode)statusCode,
+                Content = new StringContent(content,
+                    Sentry.ApiEncoding,
+                    "text/plain")
+            };
+
+            var sentryResponse = await ResponseProvider
+                .GetResponseAsync(response);
+
+            Assert.Equal(response.StatusCode, sentryResponse.HttpStatusCode);
+            Assert.Null(sentryResponse.EventId);
         }
 
         [Theory, InlineData(HttpStatusCode.OK)]
@@ -42,7 +87,8 @@ namespace Pidget.Client.Http
                 Content = new StringContent("{ }")
             };
 
-            var sentryResponse = await ResponseProvider.GetResponseAsync(response);
+            var sentryResponse = await ResponseProvider
+                .GetResponseAsync(response);
 
             Assert.Equal(statusCode, sentryResponse.HttpStatusCode);
         }

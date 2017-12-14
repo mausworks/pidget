@@ -1,29 +1,39 @@
 using System;
 using System.IO;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Pidget.Client.DataModels;
 using Pidget.Client.Serialization;
 
+using static System.Threading.CancellationToken;
+
 namespace Pidget.Client.Http
 {
     public class SentryHttpClient : SentryClient, IDisposable
     {
-        public override string Version => VersionNumber.Get();
+        public static TimeSpan Timeout { get; } = TimeSpan.FromSeconds(3);
 
-        private readonly HttpClient _httpClient;
+        public static JsonSerializer JsonSerializer { get; }
+            = GetJsonSerializer();
 
-        private readonly JsonStreamSerializer _serializer;
+        public static string UserAgent => string.Join("/", Name, Version);
 
-        public SentryHttpClient(Dsn dsn)
+        private static readonly JsonStreamSerializer _streamSerializer
+            = new JsonStreamSerializer(
+                encoding: Sentry.ApiEncoding,
+                jsonSerializer: JsonSerializer);
+
+        private readonly HttpMessageInvoker _sender;
+
+        public SentryHttpClient(Dsn dsn, HttpMessageInvoker sender)
             : base(dsn)
         {
-            _httpClient = CreateHttpClient();
-            _serializer = new JsonStreamSerializer(
-                encoding: Sentry.ApiEncoding,
-                jsonSerializer: GetJsonSerializer());
+            Assert.ArgumentNotNull(sender, nameof(sender));
+
+            _sender = sender;
         }
 
         private static JsonSerializer GetJsonSerializer()
@@ -39,35 +49,48 @@ namespace Pidget.Client.Http
         public override async Task<SentryResponse> SendEventAsync(
             SentryEventData eventData)
         {
-            using (var stream = _serializer.Serialize(eventData))
+            using (var stream = _streamSerializer.Serialize(eventData))
             {
-                var httpResponse = await _httpClient.SendAsync(
-                    GetRequest(IssueAuth(), stream)).ConfigureAwait(false);
+                var httpResponse = await _sender
+                    .SendAsync(GetRequest(stream), None)
+                    .ConfigureAwait(false);
 
-                var responseProvider = new SentryResponseProvider(_serializer);
+                var responseProvider = new SentryResponseProvider(_streamSerializer);
 
                 return await responseProvider.GetResponseAsync(httpResponse);
             }
         }
 
-        public void Dispose()
-            => _httpClient.Dispose();
+        public void Dispose() => _sender.Dispose();
 
-        private SentryAuth IssueAuth()
-            => SentryAuth.Issue(this, DateTimeOffset.UtcNow);
+        public static HttpMessageInvoker CreateSender()
+        {
+            var client = new HttpClient { Timeout = Timeout };
 
-        private HttpRequestMessage GetRequest(SentryAuth auth, Stream stream)
+            client.DefaultRequestHeaders.Add("User-Agent", UserAgent);
+
+            return client;
+        }
+
+        public static SentryHttpClient CreateDefault(Dsn dsn)
+            => new SentryHttpClient(dsn, CreateSender());
+
+        private HttpRequestMessage GetRequest(Stream stream)
         {
             var request = new HttpRequestMessage(HttpMethod.Post,
                 Dsn.GetCaptureUrl());
 
-            request.Headers.Add(SentryAuthHeader.Name,
-                SentryAuthHeader.GetValues(auth));
+            AddSentryAuthHeader(request);
 
             request.Content = GetContent(stream);
 
             return request;
         }
+
+        private void AddSentryAuthHeader(HttpRequestMessage request)
+            => request.Headers.Add(SentryAuthHeader.Name,
+                SentryAuthHeader.GetValues(
+                    SentryAuth.Issue(this, DateTimeOffset.Now)));
 
         private static StreamContent GetContent(Stream stream)
         {
@@ -76,16 +99,6 @@ namespace Pidget.Client.Http
             content.Headers.Add("Content-Type", "application/json");
 
             return content;
-        }
-
-        private HttpClient CreateHttpClient()
-        {
-            var client = new HttpClient();
-
-            client.DefaultRequestHeaders
-                .Add("User-Agent", $"{Name}/{Version}");
-
-            return client;
         }
     }
 }

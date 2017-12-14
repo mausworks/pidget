@@ -45,5 +45,16 @@ namespace Pidget.Client.Test
                 expected: $"https://{Host}/api/{ProjectId}/store/",
                 actual: SentryDsn.GetCaptureUrl());
 
+        [Theory, InlineData(5000)]
+        public void GetCaptureUrl_NonStandardPort(int port)
+        {
+            var dsn = Dsn.Create(
+                $"https://{PublicKey}:{SecretKey}@{Host}:{port}{Path}{ProjectId}");
+
+            Assert.Equal(
+                expected: $"https://{Host}:{port}/api/{ProjectId}/store/",
+                actual: dsn.GetCaptureUrl());
+        }
+
     }
 }

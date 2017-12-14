@@ -16,6 +16,6 @@ namespace Pidget.Client
             = new UTF8Encoding(false, false);
 
         public static SentryClient CreateClient(Dsn dsn)
-            => new SentryHttpClient(dsn);
+            => SentryHttpClient.CreateDefault(dsn);
     }
 }

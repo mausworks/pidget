@@ -24,7 +24,7 @@ if not exist %packages% (
 if "%notest%"=="" %opencover%^
   -target:%dotnet%^
   -targetargs:"test /p:Coverage=true"^
-  -filter:"+[%project%*]* -[*.Test]* -[Xunit.*]* -[Moq.*]*"^
+  -filter:"+[%project%*]* -[*.Test]* -[Moq.*]*"^
   -output:%coveragefile%^
   -register:user^
   -oldStyle^

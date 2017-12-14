@@ -7,13 +7,11 @@ namespace Pidget.Client
 {
     public abstract class SentryClient
     {
-        public const string DefaultName = "pidget";
+        public const string Name = "pidget";
+
+        public static string Version => VersionNumber.Get();
 
         public Dsn Dsn { get; }
-
-        public virtual string Name => DefaultName;
-
-        public abstract string Version { get; }
 
         protected SentryClient(Dsn dsn)
         {

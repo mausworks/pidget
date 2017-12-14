@@ -35,10 +35,10 @@ namespace Pidget.AspNet
             }
             catch (Exception ex)
             {
-                var eventId = await CaptureAsync(ex, context);
+                var response = await CaptureAsync(ex, context);
 
-                context.Items.Add(EventIdKey, eventId);
-                ex.Data.Add(EventIdKey, eventId);
+                context.Items.Add(EventIdKey, response.EventId);
+                ex.Data.Add(EventIdKey, response.EventId);
 
                 SilentlyRethrow(ex);
             }
