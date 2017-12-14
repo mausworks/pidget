@@ -119,10 +119,15 @@ namespace Pidget.Client.Test
             var streamSerializer = new JsonStreamSerializer(Sentry.ApiEncoding,
                 serializer);
 
+            var content = new StreamContent(
+                streamSerializer.Serialize(OkResponse));
+
+            content.Headers.Add("Content-Type", "application/json");
+
             return new HttpResponseMessage
             {
                 StatusCode = HttpStatusCode.OK,
-                Content = new StreamContent(streamSerializer.Serialize(OkResponse))
+                Content = content
             };
         }
 
