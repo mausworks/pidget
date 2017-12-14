@@ -19,7 +19,6 @@ namespace Pidget.Client.Http
             int timestamp,
             string publicKey,
             string secretKey)
-            : this()
         {
             SentryVersion = sentryVersion;
             ClientVersion = clientVersion;
