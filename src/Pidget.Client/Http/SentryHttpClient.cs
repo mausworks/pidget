@@ -89,7 +89,8 @@ namespace Pidget.Client.Http
 
         private void AddSentryAuthHeader(HttpRequestMessage request)
             => request.Headers.Add(SentryAuthHeader.Name,
-                SentryAuthHeader.GetValues(SentryAuth.Issue(this)));
+                SentryAuthHeader.GetValues(
+                    SentryAuth.Issue(this, DateTimeOffset.Now)));
 
         private static StreamContent GetContent(Stream stream)
         {
