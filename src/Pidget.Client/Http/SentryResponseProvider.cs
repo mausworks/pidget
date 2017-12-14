@@ -61,9 +61,7 @@ namespace Pidget.Client.Http
                 name: SentryErrorHeaderName,
                 values: out IEnumerable<string> values);
 
-            return headerExists && values != null && values.Any()
-                ? string.Join(", ", values)
-                : null;
+            return headerExists ? string.Join(", ", values) : null;
         }
     }
 }
