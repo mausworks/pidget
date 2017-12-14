@@ -22,10 +22,16 @@ namespace Pidget.Client.Http
         public async Task<SentryResponse> GetResponseAsync(
             HttpResponseMessage response)
         {
+            if (!ShouldReadBody(response.Content))
+            {
+                return ErrorResponse(response);
+            }
+
             using (var body = await ReadBodyAsync(response)
                 .ConfigureAwait(false))
             {
-                var responseData = ParseSentryResponse(body);
+                var responseData = Serializer
+                    .Deserialize<SentryResponse>(body);
 
                 responseData.HttpStatusCode = response.StatusCode;
                 responseData.SentryError = GetSentryError(response);
@@ -34,18 +40,20 @@ namespace Pidget.Client.Http
             }
         }
 
+        private SentryResponse ErrorResponse(HttpResponseMessage response)
+            => new SentryResponse
+            {
+                HttpStatusCode = response.StatusCode,
+                SentryError = GetSentryError(response)
+            };
+
+        private bool ShouldReadBody(HttpContent content)
+            => content.Headers.ContentLength > 0
+            && content.Headers.ContentType.MediaType
+                .Equals("application/json", StringComparison.OrdinalIgnoreCase);
+
         private static Task<Stream> ReadBodyAsync(HttpResponseMessage httpResponse)
             => httpResponse.Content.ReadAsStreamAsync();
-
-        private SentryResponse ParseSentryResponse(Stream body)
-        {
-            if  (body == null || !body.CanRead)
-            {
-                return new SentryResponse();
-            }
-
-            return Serializer.Deserialize<SentryResponse>(body);
-        }
 
         public string GetSentryError(HttpResponseMessage response)
         {
