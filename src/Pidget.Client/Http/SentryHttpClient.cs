@@ -8,10 +8,14 @@ using Newtonsoft.Json.Converters;
 using Pidget.Client.DataModels;
 using Pidget.Client.Serialization;
 
+using static System.Threading.CancellationToken;
+
 namespace Pidget.Client.Http
 {
     public class SentryHttpClient : SentryClient, IDisposable
     {
+        public static TimeSpan Timeout { get; } = TimeSpan.FromSeconds(3);
+
         public static JsonSerializer JsonSerializer { get; }
             = GetJsonSerializer();
 
@@ -47,9 +51,8 @@ namespace Pidget.Client.Http
         {
             using (var stream = _streamSerializer.Serialize(eventData))
             {
-                var httpResponse = await _sender.SendAsync(
-                        GetRequest(IssueAuth(), stream),
-                        CancellationToken.None)
+                var httpResponse = await _sender
+                    .SendAsync(GetRequest(stream), None)
                     .ConfigureAwait(false);
 
                 var responseProvider = new SentryResponseProvider(_streamSerializer);
@@ -58,15 +61,13 @@ namespace Pidget.Client.Http
             }
         }
 
-        public void Dispose()
-            => _sender.Dispose();
+        public void Dispose() => _sender.Dispose();
 
         public static HttpMessageInvoker CreateSender()
         {
-            var client = new HttpClient();
+            var client = new HttpClient { Timeout = Timeout };
 
-            client.DefaultRequestHeaders
-                .Add("User-Agent", UserAgent);
+            client.DefaultRequestHeaders.Add("User-Agent", UserAgent);
 
             return client;
         }
@@ -74,21 +75,21 @@ namespace Pidget.Client.Http
         public static SentryHttpClient CreateDefault(Dsn dsn)
             => new SentryHttpClient(dsn, CreateSender());
 
-        private SentryAuth IssueAuth()
-            => SentryAuth.Issue(this, DateTimeOffset.UtcNow);
-
-        private HttpRequestMessage GetRequest(SentryAuth auth, Stream stream)
+        private HttpRequestMessage GetRequest(Stream stream)
         {
             var request = new HttpRequestMessage(HttpMethod.Post,
                 Dsn.GetCaptureUrl());
 
-            request.Headers.Add(SentryAuthHeader.Name,
-                SentryAuthHeader.GetValues(auth));
+            AddSentryAuthHeader(request);
 
             request.Content = GetContent(stream);
 
             return request;
         }
+
+        private void AddSentryAuthHeader(HttpRequestMessage request)
+            => request.Headers.Add(SentryAuthHeader.Name,
+                SentryAuthHeader.GetValues(SentryAuth.Issue(this)));
 
         private static StreamContent GetContent(Stream stream)
         {
