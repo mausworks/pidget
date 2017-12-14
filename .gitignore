@@ -4,4 +4,4 @@ obj/
 .packages/
 
 dsn.txt
-test/Pidget.AspNetExample/appsettings.json
+examples/Pidget.AspNetExample/appsettings.json
