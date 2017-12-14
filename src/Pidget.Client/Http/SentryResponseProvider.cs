@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -18,27 +20,40 @@ namespace Pidget.Client.Http
             => Serializer = serializer;
 
         public async Task<SentryResponse> GetResponseAsync(
-            HttpResponseMessage httpResponse)
+            HttpResponseMessage response)
         {
-            using (var body = await httpResponse.Content.ReadAsStreamAsync())
+            using (var body = await ReadBodyAsync(response)
+                .ConfigureAwait(false))
             {
-                var responseData = Serializer
-                    .Deserialize<SentryResponse>(body);
+                var responseData = ParseSentryResponse(body);
 
-                responseData.HttpStatusCode = httpResponse.StatusCode;
-                responseData.SentryError = GetSentryError(httpResponse);
+                responseData.HttpStatusCode = response.StatusCode;
+                responseData.SentryError = GetSentryError(response);
 
                 return responseData;
             }
         }
 
+        private static Task<Stream> ReadBodyAsync(HttpResponseMessage httpResponse)
+            => httpResponse.Content.ReadAsStreamAsync();
+
+        private SentryResponse ParseSentryResponse(Stream body)
+        {
+            if  (body == null || !body.CanRead)
+            {
+                return new SentryResponse();
+            }
+
+            return Serializer.Deserialize<SentryResponse>(body);
+        }
+
         public string GetSentryError(HttpResponseMessage response)
         {
-            var header = response.Headers.TryGetValues(
+            var headerExists = response.Headers.TryGetValues(
                 name: SentryErrorHeaderName,
                 values: out IEnumerable<string> values);
 
-            return values != null && values.Any()
+            return headerExists && values != null && values.Any()
                 ? string.Join(", ", values)
                 : null;
         }
