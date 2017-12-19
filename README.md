@@ -4,10 +4,6 @@
 
 [![Build Status](https://travis-ci.org/mausworks/pidget.svg?branch=master)](https://travis-ci.org/mausworks/pidget)
 
-## Projects
-
-This repository contains multiple projects. 
-
 ### Pidget Sentry Client (Pidget.Client)
 
 A lightweight client for sending events to Sentry.
