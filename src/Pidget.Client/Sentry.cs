@@ -1,6 +1,5 @@
-using System.Text;
-using Newtonsoft.Json.Serialization;
 using Pidget.Client.Http;
+using System.Text;
 
 namespace Pidget.Client
 {

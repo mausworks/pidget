@@ -1,7 +1,7 @@
-using System;
-using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Pidget.Client.DataModels;
+using System;
+using System.Security.Claims;
 
 namespace Pidget.AspNet
 {

@@ -1,7 +1,7 @@
-using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Pidget.Client;
+using System;
 
 namespace Pidget.AspNet.Setup
 {

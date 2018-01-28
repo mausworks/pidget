@@ -1,7 +1,6 @@
-﻿using System;
-using System.Net.Http;
+﻿using Pidget.Client.DataModels;
+using System;
 using System.Threading.Tasks;
-using Pidget.Client.DataModels;
 
 namespace Pidget.Client
 {
