@@ -57,6 +57,5 @@ namespace Pidget.AspNet
 
             return forwardedFor;
         }
-
     }
 }
