@@ -23,10 +23,7 @@ namespace Pidget.AspNet
                     Email = GetEmail(context.User),
                 };
 
-            if (context.Connection != null)
-            {
-                user.IpAddress = GetIpAddress(context.Connection);
-            }
+            user.IpAddress = GetIpAddress(context);
 
             return user;
         }
@@ -49,7 +46,17 @@ namespace Pidget.AspNet
         public string GetId(ClaimsPrincipal user)
             => user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-        public string GetIpAddress(ConnectionInfo connection)
-            => connection.RemoteIpAddress?.ToString();
+        public string GetIpAddress(HttpContext http)
+            => GetXForwardedFor(http.Request)
+            ?? http.Connection?.RemoteIpAddress?.ToString();
+
+        private string GetXForwardedFor(HttpRequest request)
+        {
+            request.Headers.TryGetValue("X-Forwarded-For",
+                out var forwardedFor);
+
+            return forwardedFor;
+        }
+
     }
 }
