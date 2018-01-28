@@ -1,19 +1,15 @@
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Security.Claims;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
-using Microsoft.Extensions.Primitives;
 using Moq;
-using Pidget.AspNet.Sanitizing;
 using Pidget.Client;
 using Pidget.Client.DataModels;
+using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Security.Claims;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Pidget.AspNet.Test
@@ -46,15 +42,15 @@ namespace Pidget.AspNet.Test
         [Theory, InlineData("1")]
         public async Task CapturesExceptionOnInvokation(string eventId)
         {
-            var requestMock = new Mock<HttpRequest>();
+            var reqMock = new Mock<HttpRequest>();
 
-            var contextMock = new Mock<HttpContext>();
+            var httpMock = new Mock<HttpContext>();
 
-            contextMock.Setup(m => m.Items)
+            httpMock.Setup(m => m.Items)
                 .Returns(new Dictionary<object, object>());
 
-            contextMock.SetupGet(c => c.Request)
-                .Returns(requestMock.Object);
+            httpMock.SetupGet(c => c.Request)
+                .Returns(reqMock.Object);
 
             var clientMock = new Mock<SentryClient>(
                 Dsn.Create(ExceptionReportingOptions.Dsn));
@@ -66,7 +62,7 @@ namespace Pidget.AspNet.Test
             var middleware = CreateMiddleware(Next_Throw, clientMock.Object);
 
             await Assert.ThrowsAsync<InvalidOperationException>(
-                () => middleware.Invoke(contextMock.Object));
+                () => middleware.Invoke(httpMock.Object));
 
             clientMock.Verify();
         }
@@ -77,26 +73,26 @@ namespace Pidget.AspNet.Test
             string url)
         {
             var uri = new Uri(url, UriKind.Absolute);
-            var requestMock = new Mock<HttpRequest>();
 
-            requestMock.SetupGet(r => r.Method).Returns(method);
+            var reqMock = new Mock<HttpRequest>();
 
-            requestMock.SetupGet(r => r.Scheme).Returns(uri.Scheme);
-            requestMock.SetupGet(r => r.Host).Returns(new HostString(uri.Host));
-            requestMock.SetupGet(r => r.Path).Returns(uri.AbsolutePath);
+            reqMock.SetupGet(r => r.Method).Returns(method);
+            reqMock.SetupGet(r => r.Scheme).Returns(uri.Scheme);
+            reqMock.SetupGet(r => r.Host).Returns(new HostString(uri.Host));
+            reqMock.SetupGet(r => r.Path).Returns(uri.AbsolutePath);
 
-            requestMock.SetupGet(r => r.QueryString)
+            reqMock.SetupGet(r => r.QueryString)
                 .Returns(QueryString.FromUriComponent(uri.Query));
-            requestMock.SetupGet(r => r.Query)
+            reqMock.SetupGet(r => r.Query)
                 .Returns(new QueryCollection(QueryHelpers.ParseQuery(uri.Query)));
 
-            var contextMock = new Mock<HttpContext>();
+            var httpMock = new Mock<HttpContext>();
 
-            contextMock.Setup(m => m.Items)
+            httpMock.Setup(m => m.Items)
                 .Returns(new Dictionary<object, object>());
 
-            contextMock.SetupGet(c => c.Request)
-                .Returns(requestMock.Object);
+            httpMock.SetupGet(c => c.Request)
+                .Returns(reqMock.Object);
 
             var clientMock = new Mock<SentryClient>(
                 Dsn.Create(ExceptionReportingOptions.Dsn));
@@ -111,7 +107,7 @@ namespace Pidget.AspNet.Test
             var middleware = CreateMiddleware(Next_Throw, clientMock.Object);
 
             await Assert.ThrowsAsync<InvalidOperationException>(
-                () => middleware.Invoke(contextMock.Object));
+                () => middleware.Invoke(httpMock.Object));
 
             clientMock.Verify();
         }
@@ -123,32 +119,37 @@ namespace Pidget.AspNet.Test
             string email,
             string ipAddress)
         {
+            var user = UserDataProviderTests.MakeUser(
+                Tuple.Create(ClaimTypes.NameIdentifier, userId),
+                Tuple.Create(ClaimTypes.Name, userName),
+                Tuple.Create(ClaimTypes.Email, email));
+
+            var reqMock = new Mock<HttpRequest>();
+
+            reqMock.SetupGet(r => r.Headers)
+                .Returns(new HeaderDictionary());
+
             var connectionMock = new Mock<ConnectionInfo>();
 
             connectionMock.SetupGet(c => c.RemoteIpAddress)
                 .Returns(IPAddress.Parse(ipAddress))
                 .Verifiable();
 
-            var user = UserDataProviderTests.MockUser(
-                Tuple.Create(ClaimTypes.NameIdentifier, userId),
-                Tuple.Create(ClaimTypes.Name, userName),
-                Tuple.Create(ClaimTypes.Email, email));
+            var httpMock = new Mock<HttpContext>();
 
-            var contextMock = new Mock<HttpContext>();
-
-            contextMock.SetupGet(c => c.Connection)
+            httpMock.SetupGet(c => c.Connection)
                 .Returns(connectionMock.Object)
                 .Verifiable();
 
-            contextMock.SetupGet(c => c.User)
+            httpMock.SetupGet(c => c.User)
                 .Returns(user)
                 .Verifiable();
 
-            contextMock.Setup(m => m.Items)
+            httpMock.Setup(m => m.Items)
                 .Returns(new Dictionary<object, object>());
 
-            contextMock.SetupGet(c => c.Request)
-                .Returns(Mock.Of<HttpRequest>());
+            httpMock.SetupGet(c => c.Request)
+                .Returns(reqMock.Object);
 
             var clientMock = new Mock<SentryClient>(
                 Dsn.Create(ExceptionReportingOptions.Dsn));
@@ -164,7 +165,7 @@ namespace Pidget.AspNet.Test
             var middleware = CreateMiddleware(Next_Throw, clientMock.Object);
 
             await Assert.ThrowsAsync<InvalidOperationException>(
-                () => middleware.Invoke(contextMock.Object));
+                () => middleware.Invoke(httpMock.Object));
 
             clientMock.Verify();
         }

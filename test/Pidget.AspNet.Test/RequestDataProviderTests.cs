@@ -131,7 +131,7 @@ namespace Pidget.AspNet.Test
         }
 
         [Fact]
-        public void NoHeaders_ReturnsEmpty()
+        public void NoHeaders_ReturnsNull()
         {
             var requestMock = new Mock<HttpRequest>();
 
@@ -140,7 +140,7 @@ namespace Pidget.AspNet.Test
 
             var headers = RequestData.GetHeaders(requestMock.Object);
 
-            // Assert.Empty(headers);
+            Assert.Null(headers);
         }
 
         [Theory, InlineData("application/x-www-form-urlencoded")]

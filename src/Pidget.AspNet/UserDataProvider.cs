@@ -52,7 +52,7 @@ namespace Pidget.AspNet
 
         private string GetXForwardedFor(HttpRequest request)
         {
-            request.Headers.TryGetValue("X-Forwarded-For",
+            request.Headers?.TryGetValue("X-Forwarded-For",
                 out var forwardedFor);
 
             return forwardedFor;
