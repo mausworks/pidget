@@ -34,8 +34,7 @@ namespace Pidget.AspNet
             Assert.Equal(email, UserDataProvider.Default.GetEmail(user));
         }
 
-        [Theory]
-        [InlineData("user")]
+        [Theory, InlineData("user")]
         public void GetUserName_ReturnsIdentityName(string userName)
         {
             var identityMock = new Mock<IIdentity>();
@@ -51,8 +50,7 @@ namespace Pidget.AspNet
             identityMock.Verify();
         }
 
-        [Theory]
-        [InlineData("user")]
+        [Theory, InlineData("user")]
         public void GetUserName_NoIdentityFallbacksToNameClaim(string userName)
         {
             var user = MockUser(Tuple.Create(ClaimTypes.Name, userName));
@@ -60,8 +58,7 @@ namespace Pidget.AspNet
             Assert.Equal(userName, UserDataProvider.Default.GetUserName(user));
         }
 
-        [Theory]
-        [InlineData("user")]
+        [Theory, InlineData("user")]
         public void GetUserName_NoIdentityNameFallbacksToNameClaim(
             string userName)
         {
