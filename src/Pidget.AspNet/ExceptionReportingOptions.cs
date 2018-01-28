@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Http;
-
 namespace Pidget.AspNet
 {
     public class ExceptionReportingOptions

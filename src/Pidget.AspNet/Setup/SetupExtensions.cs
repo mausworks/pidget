@@ -1,10 +1,8 @@
-using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using Pidget.Client;
-using Pidget.Client.Http;
+using System;
 
 namespace Pidget.AspNet.Setup
 {

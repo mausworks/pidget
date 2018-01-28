@@ -1,7 +1,5 @@
-using System.Net;
-using System.Net.Http;
 using Pidget.Client.DataModels;
-using Pidget.Client.Serialization;
+using System.Net;
 
 namespace Pidget.Client
 {
