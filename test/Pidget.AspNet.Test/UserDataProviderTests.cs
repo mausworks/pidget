@@ -88,10 +88,43 @@ namespace Pidget.AspNet
                 .Returns(IPAddress.Parse(ipAddress))
                 .Verifiable();
 
+            var httpMock = new Mock<HttpContext>();
+
+            httpMock.SetupGet(c => c.Connection)
+                .Returns(connectionMock.Object);
+
             Assert.Equal(ipAddress,
-                UserDataProvider.Default.GetIpAddress(connectionMock.Object));
+                UserDataProvider.Default.GetIpAddress(httpMock.Object));
 
             connectionMock.Verify();
+        }
+
+        [Theory, InlineData("1.1.1.1", "0.0.0.0")]
+        public void GetIpAddress_PrefersHttpXForwardedFor(
+            string xForwardedFor, string ipAddress)
+        {
+            var headers = new HeaderDictionary();
+            headers.Add("X-Forwarded-For", xForwardedFor);
+
+            var reqMock = new Mock<HttpRequest>();
+            reqMock.SetupGet(r => r.Headers)
+                .Returns(headers);
+
+            var connectionMock = new Mock<ConnectionInfo>();
+
+            connectionMock.SetupGet(c => c.RemoteIpAddress)
+                .Returns(IPAddress.Parse(ipAddress));
+
+            var httpMock = new Mock<HttpContext>();
+
+            httpMock.SetupGet(c => c.Connection)
+                .Returns(connectionMock.Object);
+
+            httpMock.SetupGet(c => c.Request)
+                .Returns(reqMock.Object);
+
+            Assert.Equal(xForwardedFor,
+                UserDataProvider.Default.GetIpAddress(httpMock.Object));
         }
 
         [Theory]
