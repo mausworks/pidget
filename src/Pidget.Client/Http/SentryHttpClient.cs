@@ -13,12 +13,14 @@ namespace Pidget.Client.Http
 {
     public class SentryHttpClient : SentryClient, IDisposable
     {
-        public static TimeSpan Timeout { get; } = TimeSpan.FromSeconds(3);
+        public static TimeSpan Timeout { get; }
+            = TimeSpan.FromSeconds(3);
 
         public static JsonSerializer JsonSerializer { get; }
             = GetJsonSerializer();
 
-        public static string UserAgent => string.Join("/", Name, Version);
+        public static string UserAgent { get; }
+            = string.Join("/", Name, Version);
 
         private static readonly JsonStreamSerializer _streamSerializer
             = new JsonStreamSerializer(
@@ -48,10 +50,15 @@ namespace Pidget.Client.Http
         public override async Task<SentryResponse> SendEventAsync(
             SentryEventData eventData)
         {
+            if (!IsEnabled)
+            {
+                return SentryResponse.Empty;
+            }
+
             using (var stream = _streamSerializer.Serialize(eventData))
             {
                 var httpResponse = await _sender
-                    .SendAsync(GetRequest(stream), None)
+                    .SendAsync(ComposeMessage(stream), None)
                     .ConfigureAwait(false);
 
                 var responseProvider = new SentryResponseProvider(_streamSerializer);
@@ -62,7 +69,7 @@ namespace Pidget.Client.Http
 
         public void Dispose() => _sender.Dispose();
 
-        public static HttpMessageInvoker CreateSender()
+        public static HttpClient CreateHttpClient()
         {
             var client = new HttpClient { Timeout = Timeout };
 
@@ -71,10 +78,10 @@ namespace Pidget.Client.Http
             return client;
         }
 
-        public static SentryHttpClient CreateDefault(Dsn dsn)
-            => new SentryHttpClient(dsn, CreateSender());
+        public static SentryHttpClient Default(Dsn dsn)
+            => new SentryHttpClient(dsn, CreateHttpClient());
 
-        private HttpRequestMessage GetRequest(Stream stream)
+        private HttpRequestMessage ComposeMessage(Stream stream)
         {
             var request = new HttpRequestMessage(HttpMethod.Post,
                 Dsn.GetCaptureUrl());

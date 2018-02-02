@@ -7,14 +7,12 @@ namespace Pidget.Client
     {
         public const string CurrentProtocolVersion = "7";
 
-        public const string DefaultLoggerName = "root";
-
         internal const string CSharpPlatformIdentifier = "csharp";
 
         public static Encoding ApiEncoding { get; }
             = new UTF8Encoding(false, false);
 
         public static SentryClient CreateClient(Dsn dsn)
-            => SentryHttpClient.CreateDefault(dsn);
+            => SentryHttpClient.Default(dsn);
     }
 }

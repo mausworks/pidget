@@ -30,16 +30,11 @@ namespace Pidget.Client.Test
             => Assert.Throws<ArgumentNullException>(()
                 => new SentryHttpClient(DsnTests.SentryDsn, null));
 
-        [Fact]
-        public void RequiresDsn()
-            => Assert.Throws<ArgumentNullException>(()
-                => new SentryHttpClient(null,
-                    SentryHttpClient.CreateSender()));
 
         [Fact]
-        public void HasExpectedUserAgent()
+        public void Sender_HasExpectedUserAgent()
         {
-            var httpClient = SentryHttpClient.CreateSender() as HttpClient;
+            var httpClient = SentryHttpClient.CreateHttpClient();
 
             Assert.Equal(SentryHttpClient.UserAgent,
                 httpClient.DefaultRequestHeaders.UserAgent.ToString());
@@ -70,6 +65,24 @@ namespace Pidget.Client.Test
         }
 
         [Fact]
+        public async Task DisabledClient_ReturnsEmptyResponse()
+        {
+            var senderMock = new Mock<HttpClient>();
+
+            var client = new SentryHttpClient(null, senderMock.Object);
+
+            var response = await client.SendEventAsync(
+                new SentryEventData());
+
+            senderMock.Verify(s => s.SendAsync(It.IsAny<HttpRequestMessage>(),
+                It.IsAny<CancellationToken>()),
+                Times.Never());
+
+            Assert.NotNull(response);
+            Assert.Null(response.EventId);
+        }
+
+        [Fact]
         public void DisposesSender()
         {
             var sender = new TestSender(new HttpClientHandler());
@@ -85,7 +98,7 @@ namespace Pidget.Client.Test
         [Fact]
         public void CreateDefault()
             => Assert.NotNull(
-                SentryHttpClient.CreateDefault(DsnTests.SentryDsn));
+                SentryHttpClient.Default(DsnTests.SentryDsn));
 
         [Fact(Skip = "Manual testing only")]
         public async Task SendException_ReturnsEventId()
