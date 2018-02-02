@@ -7,8 +7,6 @@ namespace Pidget.Client
     {
         public const string CurrentProtocolVersion = "7";
 
-        public const string DefaultLoggerName = "root";
-
         internal const string CSharpPlatformIdentifier = "csharp";
 
         public static Encoding ApiEncoding { get; }
