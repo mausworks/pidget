@@ -50,10 +50,15 @@ namespace Pidget.Client.Http
         public override async Task<SentryResponse> SendEventAsync(
             SentryEventData eventData)
         {
+            if (!IsEnabled)
+            {
+                return SentryResponse.Empty;
+            }
+
             using (var stream = _streamSerializer.Serialize(eventData))
             {
                 var httpResponse = await _sender
-                    .SendAsync(GetRequest(stream), None)
+                    .SendAsync(ComposeMessage(stream), None)
                     .ConfigureAwait(false);
 
                 var responseProvider = new SentryResponseProvider(_streamSerializer);
@@ -76,7 +81,7 @@ namespace Pidget.Client.Http
         public static SentryHttpClient CreateDefault(Dsn dsn)
             => new SentryHttpClient(dsn, CreateSender());
 
-        private HttpRequestMessage GetRequest(Stream stream)
+        private HttpRequestMessage ComposeMessage(Stream stream)
         {
             var request = new HttpRequestMessage(HttpMethod.Post,
                 Dsn.GetCaptureUrl());
