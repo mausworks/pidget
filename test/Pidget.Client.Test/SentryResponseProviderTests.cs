@@ -7,6 +7,7 @@ using Xunit;
 using System.Net.Http.Headers;
 using Moq;
 using System.IO;
+using System;
 
 namespace Pidget.Client.Http
 {
@@ -107,6 +108,48 @@ namespace Pidget.Client.Http
             var sentryResponse = await ResponseProvider.GetResponseAsync(response);
 
             Assert.Equal(error, sentryResponse.SentryError);
+        }
+
+        [Theory, InlineData(10)]
+        public async Task RetryAfter_Delta(int deltaSeconds)
+        {
+            var response = new HttpResponseMessage
+            {
+                StatusCode = (HttpStatusCode)429,
+                ReasonPhrase = "Too Many Requests",
+                Content = new StringContent("{ }"),
+            };
+
+            response.Headers.RetryAfter = new RetryConditionHeaderValue(
+                TimeSpan.FromSeconds(deltaSeconds));
+
+            var sentryResponse = await ResponseProvider.GetResponseAsync(response);
+
+            Assert.Equal(
+                expected: deltaSeconds,
+                actual: sentryResponse.RetryAfter.Value.TotalSeconds);
+        }
+
+        [Theory, InlineData(10)]
+        public async Task RetryAfter_Date(int deltaSeconds)
+        {
+            var response = new HttpResponseMessage
+            {
+                StatusCode = (HttpStatusCode)429,
+                ReasonPhrase = "Too Many Requests",
+                Content = new StringContent("{ }"),
+            };
+
+            response.Headers.RetryAfter = new RetryConditionHeaderValue(
+                DateTimeOffset.UtcNow.AddSeconds(deltaSeconds));
+
+            var sentryResponse = await ResponseProvider.GetResponseAsync(response);
+
+            var actualSeconds = sentryResponse.RetryAfter.Value.TotalSeconds;
+
+            Assert.Equal(
+                expected: deltaSeconds,
+                actual: Math.Round(actualSeconds));
         }
     }
 }
