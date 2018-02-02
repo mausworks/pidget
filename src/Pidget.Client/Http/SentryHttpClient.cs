@@ -69,7 +69,7 @@ namespace Pidget.Client.Http
 
         public void Dispose() => _sender.Dispose();
 
-        public static HttpMessageInvoker CreateSender()
+        public static HttpClient CreateHttpClient()
         {
             var client = new HttpClient { Timeout = Timeout };
 
@@ -78,8 +78,8 @@ namespace Pidget.Client.Http
             return client;
         }
 
-        public static SentryHttpClient CreateDefault(Dsn dsn)
-            => new SentryHttpClient(dsn, CreateSender());
+        public static SentryHttpClient Default(Dsn dsn)
+            => new SentryHttpClient(dsn, CreateHttpClient());
 
         private HttpRequestMessage ComposeMessage(Stream stream)
         {
