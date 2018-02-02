@@ -32,7 +32,7 @@ namespace Pidget.Client.Test
 
 
         [Fact]
-        public void HasExpectedUserAgent()
+        public void Sender_HasExpectedUserAgent()
         {
             var httpClient = SentryHttpClient.CreateSender() as HttpClient;
 
