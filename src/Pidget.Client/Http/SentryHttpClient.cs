@@ -13,12 +13,14 @@ namespace Pidget.Client.Http
 {
     public class SentryHttpClient : SentryClient, IDisposable
     {
-        public static TimeSpan Timeout { get; } = TimeSpan.FromSeconds(3);
+        public static TimeSpan Timeout { get; }
+            = TimeSpan.FromSeconds(3);
 
         public static JsonSerializer JsonSerializer { get; }
             = GetJsonSerializer();
 
-        public static string UserAgent => string.Join("/", Name, Version);
+        public static string UserAgent { get; }
+            = string.Join("/", Name, Version);
 
         private static readonly JsonStreamSerializer _streamSerializer
             = new JsonStreamSerializer(
