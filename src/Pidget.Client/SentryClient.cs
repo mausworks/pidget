@@ -12,12 +12,10 @@ namespace Pidget.Client
 
         public Dsn Dsn { get; }
 
-        protected SentryClient(Dsn dsn)
-        {
-            Assert.ArgumentNotNull(dsn, nameof(dsn));
+        public bool IsEnabled => Dsn != null;
 
-            Dsn = dsn;
-        }
+        protected SentryClient(Dsn dsn)
+            => Dsn = dsn;
 
         public Task<SentryResponse> CaptureAsync(
             Action<SentryEventBuilder> builderAccessor)
