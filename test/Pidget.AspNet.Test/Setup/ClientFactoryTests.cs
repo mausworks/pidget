@@ -41,6 +41,24 @@ namespace Pidget.AspNet.Setup
             AssertAreDefaultSanitationOptions(Options.Sanitation);
         }
 
+        [Theory, InlineData(null), InlineData("")]
+        public void NoDsn_CreatesDisabledClient(string dsn)
+        {
+            var providerMock = new Mock<IServiceProvider>();
+            var optionsMock = new Mock<IOptions<ExceptionReportingOptions>>();
+
+            optionsMock.SetupGet(o => o.Value)
+                .Returns(new ExceptionReportingOptions { Dsn = dsn });
+
+            providerMock.Setup(sp => sp.GetService(typeof(IOptions<ExceptionReportingOptions>)))
+                .Returns(optionsMock.Object);
+
+            var client = ClientFactory.CreateClient(providerMock.Object);
+
+            Assert.Null(client.Dsn);
+            Assert.False(client.IsEnabled);
+        }
+
         private void AssertAreDefaultSanitationOptions(SanitationOptions sanitation)
         {
             var defaults = SanitationOptions.Default;

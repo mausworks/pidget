@@ -12,9 +12,12 @@ namespace Pidget.AspNet.Setup
             var optionsAccessor = serviceProvider
                 .GetRequiredService<IOptions<ExceptionReportingOptions>>();
 
-            var dsn = Dsn.Create(optionsAccessor.Value.Dsn);
-
-            return Sentry.CreateClient(dsn);
+            return Sentry.CreateClient(GetDsn(optionsAccessor.Value));
         }
+
+        private static Dsn GetDsn(ExceptionReportingOptions options)
+            => !string.IsNullOrEmpty(options.Dsn)
+                ? Dsn.Create(options.Dsn)
+                : null;
     }
 }
