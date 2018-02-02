@@ -21,36 +21,11 @@ namespace Pidget.Client.Http
         {
             if (!ShouldReadBody(response.Content))
             {
-                return ErrorResponse(response);
+                return GetErrorResponse(response);
             }
 
-            using (var body = await ReadBodyAsync(response)
-                .ConfigureAwait(false))
-            {
-                var responseData = Serializer
-                    .Deserialize<SentryResponse>(body);
-
-                responseData.HttpStatusCode = response.StatusCode;
-                responseData.SentryError = GetSentryError(response);
-
-                return responseData;
-            }
+            return await GetErrorResponseWithBodyAsync(response);
         }
-
-        private SentryResponse ErrorResponse(HttpResponseMessage response)
-            => new SentryResponse
-            {
-                HttpStatusCode = response.StatusCode,
-                SentryError = GetSentryError(response)
-            };
-
-        private bool ShouldReadBody(HttpContent content)
-            => content.Headers.ContentLength > 0
-            && content.Headers.ContentType.MediaType
-                .Equals("application/json", StringComparison.OrdinalIgnoreCase);
-
-        private static Task<Stream> ReadBodyAsync(HttpResponseMessage httpResponse)
-            => httpResponse.Content.ReadAsStreamAsync();
 
         public string GetSentryError(HttpResponseMessage response)
         {
@@ -60,5 +35,52 @@ namespace Pidget.Client.Http
 
             return headerExists ? string.Join(", ", values) : null;
         }
+
+        private async Task<SentryResponse> GetErrorResponseWithBodyAsync(
+            HttpResponseMessage response)
+        {
+            using (var body = await ReadBodyAsync(response)
+                .ConfigureAwait(false))
+            {
+                var responseData = Serializer
+                    .Deserialize<SentryResponse>(body);
+
+                responseData.HttpStatusCode = response.StatusCode;
+                responseData.SentryError = GetSentryError(response);
+                responseData.RetryAfter = GetRetryAfter(response);
+
+                return responseData;
+            }
+        }
+
+        private SentryResponse GetErrorResponse(HttpResponseMessage response)
+            => new SentryResponse
+            {
+                HttpStatusCode = response.StatusCode,
+                SentryError = GetSentryError(response),
+                RetryAfter = GetRetryAfter(response)
+            };
+
+        private TimeSpan? GetRetryAfter(HttpResponseMessage response)
+        {
+            var retryAfter = response.Headers.RetryAfter;
+
+            if (retryAfter == null)
+            {
+                return null;
+            }
+
+            return retryAfter.Delta ?? (retryAfter.Date.HasValue
+                ? (retryAfter.Date - DateTimeOffset.UtcNow)
+                : null);
+        }
+
+        private bool ShouldReadBody(HttpContent content)
+            => content.Headers.ContentLength > 0
+            && content.Headers.ContentType.MediaType
+                .Equals("application/json", StringComparison.OrdinalIgnoreCase);
+
+        private static Task<Stream> ReadBodyAsync(HttpResponseMessage httpResponse)
+            => httpResponse.Content.ReadAsStreamAsync();
     }
 }
