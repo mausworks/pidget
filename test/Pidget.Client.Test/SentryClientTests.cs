@@ -9,11 +9,6 @@ namespace Pidget.Client.Test
         public static readonly Dsn Dsn = DsnTests.SentryDsn;
 
         [Fact]
-        public void ThrowsFullNullDsn()
-            => Assert.Throws<ArgumentNullException>(() =>
-                new TestableSentryClient(null, _ => null));
-
-        [Fact]
         public async Task Capture_InvokesSend()
         {
             // Arrange
