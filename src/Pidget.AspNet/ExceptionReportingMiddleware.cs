@@ -5,6 +5,8 @@ using Pidget.Client;
 using System;
 using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
+using Pidget.Client.DataModels;
+using System.Net;
 
 namespace Pidget.AspNet
 {
@@ -13,6 +15,8 @@ namespace Pidget.AspNet
         public const string EventIdKey = "SentryEventId";
 
         public ExceptionReportingOptions Options { get; }
+
+        public static DateTimeOffset RetryAfter { get; private set; }
 
         private readonly RequestDelegate _next;
 
@@ -27,52 +31,68 @@ namespace Pidget.AspNet
             Options = optionsAccessor.Value;
         }
 
-        public async Task Invoke(HttpContext context)
+        public async Task Invoke(HttpContext http)
         {
             try
             {
-                await _next(context);
+                await _next(http);
             }
             catch (Exception ex)
             {
-                var response = await CaptureAsync(ex, context);
+                var response = await CaptureAsync(ex, http);
 
-                context.Items.Add(EventIdKey, response.EventId);
-                ex.Data.Add(EventIdKey, response.EventId);
+                http.Items[EventIdKey] = response?.EventId;
+                ex.Data[EventIdKey] = response?.EventId;
 
                 SilentlyRethrow(ex);
             }
         }
 
-        private async Task<SentryResponse> CaptureAsync(Exception ex, HttpContext context)
-            => await _sentryClient.CaptureAsync(e
-                => BuildEvent(ex, context, e));
-
-        private void BuildEvent(Exception ex, HttpContext context,
-            SentryEventBuilder sentryEvent)
+        private async Task<SentryResponse> CaptureAsync(Exception ex,
+            HttpContext http)
         {
-            sentryEvent.SetException(ex);
+            var sentryEvent = BuildEventData(ex, http);
 
-            AddUserData(sentryEvent, context);
-            AddRequestData(sentryEvent, context.Request);
-        }
-
-        private void AddUserData(SentryEventBuilder sentryEvent, HttpContext context)
-        {
-            var user = UserDataProvider.Default.GetUserData(context);
-
-            if (user != null)
+            if (IsRateLimited())
             {
-                sentryEvent.SetUserData(user);
+                return null;
             }
+
+            var sentryResponse = await _sentryClient
+                .SendEventAsync(sentryEvent);
+
+            if (IsTooManyRequests(sentryResponse))
+            {
+                RetryAfter = DateTimeOffset.UtcNow
+                    + sentryResponse.RetryAfter.Value;
+            }
+
+            return sentryResponse;
         }
 
-        private void AddRequestData(SentryEventBuilder sentryEvent, HttpRequest request)
+        private bool IsTooManyRequests(SentryResponse response)
+            => response.HttpStatusCode == (HttpStatusCode)429
+            && response.RetryAfter != null;
+
+        private SentryEventData BuildEventData(Exception ex, HttpContext http)
+            => new SentryEventBuilder()
+                .SetException(ex)
+                .SetUserData(GetUserData(http))
+                .SetRequestData(GetRequestData(http.Request))
+                .Build();
+
+        private bool IsRateLimited()
+            => DateTimeOffset.UtcNow < RetryAfter;
+
+        private UserData GetUserData(HttpContext http)
+            => UserDataProvider.Default.GetUserData(http);
+
+        private RequestData GetRequestData(HttpRequest req)
         {
             var provider = new RequestDataProvider(
                 new RequestSanitizer(Options.Sanitation));
 
-            sentryEvent.SetRequestData(provider.GetRequestData(request));
+            return provider.GetRequestData(req);
         }
 
         /// <summary>
