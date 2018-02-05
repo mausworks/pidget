@@ -16,7 +16,7 @@ namespace Pidget.Client
 
         public string SentryError { get; set; }
 
-        public HttpStatusCode HttpStatusCode { get; set; }
+        public int StatusCode { get; set; }
 
         public TimeSpan? RetryAfter { get; set; }
     }

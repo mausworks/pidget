@@ -193,7 +193,7 @@ namespace Pidget.AspNet.Test
                 .SendEventAsync(It.IsAny<SentryEventData>()))
                 .ReturnsAsync(new SentryResponse
                 {
-                    HttpStatusCode = (HttpStatusCode)429,
+                    StatusCode = 429,
                     RetryAfter = retryAfter,
                 })
                 .Verifiable();

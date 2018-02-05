@@ -59,7 +59,7 @@ namespace Pidget.Client.Test
 
             senderMock.Verify();
 
-            Assert.Equal(HttpStatusCode.OK, response.HttpStatusCode);
+            Assert.Equal(200, response.StatusCode);
             Assert.NotNull(response.EventId);
             Assert.Null(response.SentryError);
         }

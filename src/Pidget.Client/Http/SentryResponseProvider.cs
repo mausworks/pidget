@@ -45,7 +45,7 @@ namespace Pidget.Client.Http
                 var responseData = Serializer
                     .Deserialize<SentryResponse>(body);
 
-                responseData.HttpStatusCode = response.StatusCode;
+                responseData.StatusCode = (int)response.StatusCode;
                 responseData.SentryError = GetSentryError(response);
                 responseData.RetryAfter = GetRetryAfter(response);
 
@@ -56,7 +56,7 @@ namespace Pidget.Client.Http
         private SentryResponse GetErrorResponse(HttpResponseMessage response)
             => new SentryResponse
             {
-                HttpStatusCode = response.StatusCode,
+                StatusCode = (int)response.StatusCode,
                 SentryError = GetSentryError(response),
                 RetryAfter = GetRetryAfter(response)
             };

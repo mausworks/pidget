@@ -71,7 +71,7 @@ namespace Pidget.AspNet
         }
 
         private bool IsTooManyRequests(SentryResponse response)
-            => response.HttpStatusCode == (HttpStatusCode)429
+            => response.StatusCode == 429
             && response.RetryAfter != null;
 
         private SentryEventData BuildEventData(Exception ex, HttpContext http)

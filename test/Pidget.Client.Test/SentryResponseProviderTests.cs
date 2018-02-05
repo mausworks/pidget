@@ -55,7 +55,7 @@ namespace Pidget.Client.Http
             var sentryResponse = await ResponseProvider
                 .GetResponseAsync(response);
 
-            Assert.Equal(response.StatusCode, sentryResponse.HttpStatusCode);
+            Assert.Equal(200, sentryResponse.StatusCode);
             Assert.Null(sentryResponse.EventId);
         }
 
@@ -75,7 +75,7 @@ namespace Pidget.Client.Http
             var sentryResponse = await ResponseProvider
                 .GetResponseAsync(response);
 
-            Assert.Equal(response.StatusCode, sentryResponse.HttpStatusCode);
+            Assert.Equal(200, sentryResponse.StatusCode);
             Assert.Null(sentryResponse.EventId);
         }
 
@@ -91,7 +91,7 @@ namespace Pidget.Client.Http
             var sentryResponse = await ResponseProvider
                 .GetResponseAsync(response);
 
-            Assert.Equal(statusCode, sentryResponse.HttpStatusCode);
+            Assert.Equal(200, sentryResponse.StatusCode);
         }
 
         [Theory, InlineData("foo")]
