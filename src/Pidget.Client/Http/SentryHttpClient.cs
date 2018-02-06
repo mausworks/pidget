@@ -83,18 +83,18 @@ namespace Pidget.Client.Http
 
         private HttpRequestMessage ComposeMessage(Stream stream)
         {
-            var request = new HttpRequestMessage(HttpMethod.Post,
+            var message = new HttpRequestMessage(HttpMethod.Post,
                 Dsn.GetCaptureUrl());
 
-            AddSentryAuthHeader(request);
+            AddSentryAuthHeader(message);
 
-            request.Content = GetContent(stream);
+            message.Content = GetContent(stream);
 
-            return request;
+            return message;
         }
 
-        private void AddSentryAuthHeader(HttpRequestMessage request)
-            => request.Headers.Add(SentryAuthHeader.Name,
+        private void AddSentryAuthHeader(HttpRequestMessage message)
+            => message.Headers.Add(SentryAuthHeader.Name,
                 SentryAuthHeader.GetValues(
                     SentryAuth.Issue(this, DateTimeOffset.Now)));
 

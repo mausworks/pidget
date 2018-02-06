@@ -50,9 +50,9 @@ namespace Pidget.AspNet
             => GetXForwardedFor(http.Request)
             ?? http.Connection?.RemoteIpAddress?.ToString();
 
-        private string GetXForwardedFor(HttpRequest request)
+        private string GetXForwardedFor(HttpRequest req)
         {
-            request.Headers?.TryGetValue("X-Forwarded-For",
+            req.Headers?.TryGetValue("X-Forwarded-For",
                 out var forwardedFor);
 
             return forwardedFor;
