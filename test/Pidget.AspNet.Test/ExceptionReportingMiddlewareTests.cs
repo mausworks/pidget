@@ -16,7 +16,8 @@ namespace Pidget.AspNet.Test
 {
     public class ExceptionReportingMiddlewareTests
     {
-        public RequestDelegate Next_Throw = _ => throw new InvalidOperationException();
+        public RequestDelegate Next_Throw = _ =>
+            throw new InvalidOperationException("Hey, look at me!");
 
         public RequestDelegate Next_Noop = _ => Task.CompletedTask;
 
@@ -170,10 +171,68 @@ namespace Pidget.AspNet.Test
             clientMock.Verify();
         }
 
+        [Fact]
+        public async Task Honors429RetryAfter()
+        {
+            var reqMock = new Mock<HttpRequest>();
+
+            var httpMock = new Mock<HttpContext>();
+
+            httpMock.Setup(m => m.Items)
+                .Returns(new Dictionary<object, object>());
+
+            httpMock.SetupGet(c => c.Request)
+                .Returns(reqMock.Object);
+
+            var clientMock = new Mock<SentryClient>(
+                Dsn.Create(ExceptionReportingOptions.Dsn));
+
+            var retryAfter = TimeSpan.FromMilliseconds(100);
+
+            clientMock.Setup(m => m
+                .SendEventAsync(It.IsAny<SentryEventData>()))
+                .ReturnsAsync(new SentryResponse
+                {
+                    StatusCode = 429,
+                    RetryAfter = retryAfter,
+                })
+                .Verifiable();
+
+            var middleware = CreateMiddleware(Next_Throw, clientMock.Object);
+
+            // Invoke once, get "RetryAfter"
+
+            await Assert.ThrowsAsync<InvalidOperationException>(
+                () => middleware.Invoke(httpMock.Object));
+
+            // Invoke twice: reject
+
+            await Assert.ThrowsAsync<InvalidOperationException>(
+                () => middleware.Invoke(httpMock.Object));
+
+            clientMock.Verify(m => m
+                .SendEventAsync(It.IsAny<SentryEventData>()),
+                Times.Once());
+
+            // Delay for requested period
+
+            await Task.Delay(retryAfter);
+
+            // Inoke again, responds with 429, but sends request.
+
+            await Assert.ThrowsAsync<InvalidOperationException>(
+                () => middleware.Invoke(httpMock.Object));
+
+            clientMock.Verify(m => m
+                .SendEventAsync(It.IsAny<SentryEventData>()),
+                Times.Exactly(2));
+        }
+
         public ExceptionReportingMiddleware CreateMiddleware(RequestDelegate next,
             SentryClient client)
             => new ExceptionReportingMiddleware(next,
                 Options.Create(ExceptionReportingOptions),
-                client);
+                client,
+                new RateLimiter());
     }
 }

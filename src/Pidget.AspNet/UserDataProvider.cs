@@ -10,20 +10,20 @@ namespace Pidget.AspNet
         public static UserDataProvider Default { get; }
              = new UserDataProvider();
 
-        public UserData GetUserData(HttpContext context)
+        public UserData GetUserData(HttpContext http)
         {
-            AssertContextNotNull(context);
+            AssertContextNotNull(http);
 
-            var user = context.User == null
+            var user = http.User == null
                 ? new UserData()
                 : new UserData
                 {
-                    Id = GetId(context.User),
-                    UserName = GetUserName(context.User),
-                    Email = GetEmail(context.User),
+                    Id = GetId(http.User),
+                    UserName = GetUserName(http.User),
+                    Email = GetEmail(http.User),
                 };
 
-            user.IpAddress = GetIpAddress(context);
+            user.IpAddress = GetIpAddress(http);
 
             return user;
         }
@@ -50,9 +50,9 @@ namespace Pidget.AspNet
             => GetXForwardedFor(http.Request)
             ?? http.Connection?.RemoteIpAddress?.ToString();
 
-        private string GetXForwardedFor(HttpRequest request)
+        private string GetXForwardedFor(HttpRequest req)
         {
-            request.Headers?.TryGetValue("X-Forwarded-For",
+            req.Headers?.TryGetValue("X-Forwarded-For",
                 out var forwardedFor);
 
             return forwardedFor;
