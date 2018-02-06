@@ -232,6 +232,7 @@ namespace Pidget.AspNet.Test
             SentryClient client)
             => new ExceptionReportingMiddleware(next,
                 Options.Create(ExceptionReportingOptions),
-                client);
+                client,
+                new RateLimiter());
     }
 }

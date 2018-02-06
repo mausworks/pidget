@@ -16,7 +16,7 @@ namespace Pidget.AspNet
 
         public ExceptionReportingOptions Options { get; }
 
-        public static DateTimeOffset RetryAfter { get; private set; }
+        private readonly RateLimiter _rateLimiter;
 
         private readonly RequestDelegate _next;
 
@@ -24,10 +24,12 @@ namespace Pidget.AspNet
 
         public ExceptionReportingMiddleware(RequestDelegate next,
             IOptions<ExceptionReportingOptions> optionsAccessor,
-            SentryClient sentryClient)
+            SentryClient sentryClient,
+            RateLimiter rateLimiter)
         {
             _next = next;
             _sentryClient = sentryClient;
+            _rateLimiter = rateLimiter;
             Options = optionsAccessor.Value;
         }
 
@@ -53,7 +55,7 @@ namespace Pidget.AspNet
         {
             var sentryEvent = BuildEventData(ex, http);
 
-            if (IsRateLimited())
+            if (_rateLimiter.IsRateLimited(DateTimeOffset.UtcNow))
             {
                 return null;
             }
@@ -63,8 +65,7 @@ namespace Pidget.AspNet
 
             if (IsTooManyRequests(sentryResponse))
             {
-                RetryAfter = DateTimeOffset.UtcNow
-                    + sentryResponse.RetryAfter.Value;
+                _rateLimiter.LimitFor(sentryResponse.RetryAfter.Value);
             }
 
             return sentryResponse;
@@ -80,9 +81,6 @@ namespace Pidget.AspNet
                 .SetUserData(GetUserData(http))
                 .SetRequestData(GetRequestData(http.Request))
                 .Build();
-
-        private bool IsRateLimited()
-            => DateTimeOffset.UtcNow < RetryAfter;
 
         private UserData GetUserData(HttpContext http)
             => UserDataProvider.Default.GetUserData(http);
