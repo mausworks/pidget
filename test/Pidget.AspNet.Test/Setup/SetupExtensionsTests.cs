@@ -28,6 +28,22 @@ namespace Pidget.AspNet.Setup
         }
 
         [Fact]
+        public void AddPidgetMiddleware_AddsRateLimiter()
+        {
+            var servicesMock = new Mock<IServiceCollection>();
+
+            servicesMock.Setup(m => m
+                .Add(It.Is<ServiceDescriptor>(s
+                    => typeof(RateLimiter) == s.ServiceType
+                    && s.Lifetime == ServiceLifetime.Singleton)))
+                .Verifiable();
+
+            servicesMock.Object.AddPidgetMiddleware(_ => {});
+
+            servicesMock.Verify();
+        }
+
+        [Fact]
         public void AddPidgetMiddleware_Setup_AddsOptions()
         {
             var servicesMock = new Mock<IServiceCollection>();

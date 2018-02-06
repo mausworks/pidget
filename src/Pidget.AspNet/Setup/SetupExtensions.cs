@@ -17,7 +17,8 @@ namespace Pidget.AspNet.Setup
             this IServiceCollection services,
             Action<ExceptionReportingOptions> setup)
             => services.Configure<ExceptionReportingOptions>(setup)
-                .AddScoped<SentryClient>(ClientFactory.CreateClient);
+                .AddScoped<SentryClient>(ClientFactory.CreateClient)
+                .AddSingleton<RateLimiter>();
 
         public static IApplicationBuilder UsePidgetMiddleware(
             this IApplicationBuilder builder)
