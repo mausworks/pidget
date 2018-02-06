@@ -19,26 +19,26 @@ namespace Pidget.AspNetExample
             Options = optionsAccessor.Value;
         }
 
-        public async Task Invoke(HttpContext context)
+        public async Task Invoke(HttpContext http)
         {
             try
             {
-                await _next(context);
+                await _next(http);
             }
             catch (Exception ex)
             {
-                context.Response.StatusCode = 200;
-                context.Response.ContentType = "text/plain";
+                http.Response.StatusCode = 200;
+                http.Response.ContentType = "text/plain";
 
-                await WriteExceptionAsync(context, ex);
+                await WriteExceptionAsync(http, ex);
             }
         }
 
-        public async Task WriteExceptionAsync(HttpContext context, Exception ex)
+        public async Task WriteExceptionAsync(HttpContext http, Exception ex)
         {
-            await context.Response.WriteAsync($"{ex}\r\n\r\n");
-            await context.Response.WriteAsync(
-                $"Sentry event ID: {context.Items[ExceptionReportingMiddleware.EventIdKey]}");
+            await http.Response.WriteAsync($"{ex}\r\n\r\n");
+            await http.Response.WriteAsync(
+                $"Sentry event ID: {http.Items[ExceptionReportingMiddleware.EventIdKey]}");
         }
     }
 }
