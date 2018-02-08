@@ -187,7 +187,10 @@ namespace Pidget.AspNet.Test
             var clientMock = new Mock<SentryClient>(
                 Dsn.Create(ExceptionReportingOptions.Dsn));
 
-            var retryAfter = TimeSpan.FromMilliseconds(100);
+            const int retryAfterMs = 200;
+
+            var retryAfter = DateTimeOffset.UtcNow
+                + TimeSpan.FromMilliseconds(retryAfterMs);
 
             clientMock.Setup(m => m
                 .SendEventAsync(It.IsAny<SentryEventData>()))
@@ -216,7 +219,7 @@ namespace Pidget.AspNet.Test
 
             // Delay for requested period
 
-            await Task.Delay(retryAfter);
+            await Task.Delay(retryAfterMs);
 
             // Invoke again, responds with 429, but sends request.
 

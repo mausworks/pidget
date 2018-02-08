@@ -42,27 +42,24 @@ namespace Pidget.AspNet
             }
             catch (Exception ex)
             {
-                var response = await CaptureAsync(ex, http);
-
-                http.Items[EventIdKey] = response?.EventId;
-                ex.Data[EventIdKey] = response?.EventId;
+                await CaptureAsync(ex, http);
 
                 SilentlyRethrow(ex);
             }
         }
 
-        private async Task<SentryResponse> CaptureAsync(Exception ex,
-            HttpContext http)
+        private async Task CaptureAsync(Exception ex, HttpContext http)
         {
             var builder = BuildEventData(ex, http);
 
-            await Options.BeforeSendCallback(builder, http);
+            if (!await Options.BeforeSendCallback(builder, http))
+            {
+                return;
+            }
 
             var response = await SendEventAsync(builder.Build());
 
             await Options.AfterSendCallback(response, http);
-
-            return response;
         }
 
         private async Task<SentryResponse> SendEventAsync(SentryEventData eventData)
@@ -77,7 +74,7 @@ namespace Pidget.AspNet
 
             if (IsTooManyRequests(response))
             {
-                _rateLimit.Until(UtcNow + response.RetryAfter);
+                _rateLimit.Until(response.RetryAfter);
             }
 
             return response;

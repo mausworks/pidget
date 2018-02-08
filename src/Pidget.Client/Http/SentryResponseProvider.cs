@@ -61,18 +61,18 @@ namespace Pidget.Client.Http
                 RetryAfter = GetRetryAfter(response)
             };
 
-        private TimeSpan? GetRetryAfter(HttpResponseMessage response)
+        private DateTimeOffset GetRetryAfter(HttpResponseMessage response)
         {
             var retryAfter = response.Headers.RetryAfter;
 
             if (retryAfter == null)
             {
-                return null;
+                return default(DateTimeOffset);
             }
 
-            return retryAfter.Delta ?? (retryAfter.Date.HasValue
-                ? (retryAfter.Date - DateTimeOffset.UtcNow)
-                : null);
+            return retryAfter.Date ?? (retryAfter.Delta.HasValue
+                ? DateTimeOffset.UtcNow + retryAfter.Delta.Value
+                : default(DateTimeOffset));
         }
 
         private bool ShouldReadBody(HttpContent content)

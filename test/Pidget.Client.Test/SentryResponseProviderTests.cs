@@ -111,27 +111,16 @@ namespace Pidget.Client.Http
         }
 
         [Theory, InlineData(10)]
-        public async Task RetryAfter_Delta(int deltaSeconds)
-        {
-            var response = new HttpResponseMessage
-            {
-                StatusCode = (HttpStatusCode)429,
-                ReasonPhrase = "Too Many Requests",
-                Content = new StringContent("{ }"),
-            };
-
-            response.Headers.RetryAfter = new RetryConditionHeaderValue(
-                TimeSpan.FromSeconds(deltaSeconds));
-
-            var sentryResponse = await ResponseProvider.GetResponseAsync(response);
-
-            Assert.Equal(
-                expected: deltaSeconds,
-                actual: sentryResponse.RetryAfter.Value.TotalSeconds);
-        }
+        public Task RetryAfter_Delta(int deltaSeconds)
+            => RetryAfter_Compare(deltaSeconds,
+                new RetryConditionHeaderValue(TimeSpan.FromSeconds(deltaSeconds)));
 
         [Theory, InlineData(10)]
-        public async Task RetryAfter_Date(int deltaSeconds)
+        public Task RetryAfter_Date(int deltaSeconds)
+            => RetryAfter_Compare(deltaSeconds,
+                new RetryConditionHeaderValue(DateTimeOffset.UtcNow.AddSeconds(deltaSeconds)));
+
+        private async Task RetryAfter_Compare(int deltaSeconds, RetryConditionHeaderValue headerValue)
         {
             var response = new HttpResponseMessage
             {
@@ -140,16 +129,15 @@ namespace Pidget.Client.Http
                 Content = new StringContent("{ }"),
             };
 
-            response.Headers.RetryAfter = new RetryConditionHeaderValue(
-                DateTimeOffset.UtcNow.AddSeconds(deltaSeconds));
+            response.Headers.RetryAfter = headerValue;
 
             var sentryResponse = await ResponseProvider.GetResponseAsync(response);
 
-            var actualSeconds = sentryResponse.RetryAfter.Value.TotalSeconds;
-
             Assert.Equal(
-                expected: deltaSeconds,
-                actual: Math.Round(actualSeconds));
+                expected: (DateTimeOffset.UtcNow + TimeSpan.FromSeconds(deltaSeconds))
+                    .ToString("yyyy-MM-dd HH:mm:ss"),
+                actual: sentryResponse.RetryAfter
+                    .ToString("yyyy-MM-dd HH:mm:ss"));
         }
     }
 }
