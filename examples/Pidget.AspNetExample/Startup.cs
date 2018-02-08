@@ -15,7 +15,12 @@ namespace Pidget.AspNetExample
 
         public void ConfigureServices(IServiceCollection services)
             => services.AddPidgetMiddleware(
-                Configuration.GetSection("ExceptionReporting"));
+                Configuration.GetSection("ExceptionReporting"), callbacks =>
+                {
+                    callbacks.BeforeSend(SentryCallbacks.BeforeSendAsync);
+                    callbacks.AfterSend(SentryCallbacks.AfterSendAsync);
+                });
+
 
         public void Configure(IApplicationBuilder app)
         {
