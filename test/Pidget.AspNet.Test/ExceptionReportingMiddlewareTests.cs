@@ -218,7 +218,7 @@ namespace Pidget.AspNet.Test
 
             await Task.Delay(retryAfter);
 
-            // Inoke again, responds with 429, but sends request.
+            // Invoke again, responds with 429, but sends request.
 
             await Assert.ThrowsAsync<InvalidOperationException>(
                 () => middleware.Invoke(httpMock.Object));
@@ -233,6 +233,6 @@ namespace Pidget.AspNet.Test
             => new ExceptionReportingMiddleware(next,
                 Options.Create(ExceptionReportingOptions),
                 client,
-                new RateLimiter());
+                new RateLimit());
     }
 }

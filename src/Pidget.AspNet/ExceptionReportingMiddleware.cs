@@ -6,7 +6,8 @@ using System;
 using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
 using Pidget.Client.DataModels;
-using System.Net;
+
+using static System.DateTimeOffset;
 
 namespace Pidget.AspNet
 {
@@ -16,7 +17,7 @@ namespace Pidget.AspNet
 
         public ExceptionReportingOptions Options { get; }
 
-        private readonly RateLimiter _rateLimiter;
+        private readonly RateLimit _rateLimit;
 
         private readonly RequestDelegate _next;
 
@@ -25,11 +26,11 @@ namespace Pidget.AspNet
         public ExceptionReportingMiddleware(RequestDelegate next,
             IOptions<ExceptionReportingOptions> optionsAccessor,
             SentryClient sentryClient,
-            RateLimiter rateLimiter)
+            RateLimit rateLimiter)
         {
             _next = next;
             _sentryClient = sentryClient;
-            _rateLimiter = rateLimiter;
+            _rateLimit = rateLimiter;
             Options = optionsAccessor.Value;
         }
 
@@ -53,34 +54,44 @@ namespace Pidget.AspNet
         private async Task<SentryResponse> CaptureAsync(Exception ex,
             HttpContext http)
         {
-            var sentryEvent = BuildEventData(ex, http);
+            var builder = BuildEventData(ex, http);
 
-            if (_rateLimiter.IsRateLimited(DateTimeOffset.UtcNow))
+            await Options.BeforeSendCallback(builder, http);
+
+            var response = await SendEventAsync(builder.Build());
+
+            await Options.AfterSendCallback(response, http);
+
+            return response;
+        }
+
+        private async Task<SentryResponse> SendEventAsync(SentryEventData eventData)
+        {
+            if (_rateLimit.IsHit(UtcNow))
             {
                 return null;
             }
 
-            var sentryResponse = await _sentryClient
-                .SendEventAsync(sentryEvent);
+            var response = await _sentryClient
+                .SendEventAsync(eventData);
 
-            if (IsTooManyRequests(sentryResponse))
+            if (IsTooManyRequests(response))
             {
-                _rateLimiter.LimitFor(sentryResponse.RetryAfter.Value);
+                _rateLimit.Until(UtcNow + response.RetryAfter);
             }
 
-            return sentryResponse;
+            return response;
         }
 
         private bool IsTooManyRequests(SentryResponse response)
             => response.StatusCode == 429
             && response.RetryAfter != null;
 
-        private SentryEventData BuildEventData(Exception ex, HttpContext http)
+        private SentryEventBuilder BuildEventData(Exception ex, HttpContext http)
             => new SentryEventBuilder()
                 .SetException(ex)
                 .SetUserData(GetUserData(http))
-                .SetRequestData(GetRequestData(http.Request))
-                .Build();
+                .SetRequestData(GetRequestData(http.Request));
 
         private UserData GetUserData(HttpContext http)
             => UserDataProvider.Default.GetUserData(http);
