@@ -187,7 +187,7 @@ namespace Pidget.AspNet.Test
             var clientMock = new Mock<SentryClient>(
                 Dsn.Create(ExceptionReportingOptions.Dsn));
 
-            const int retryAfterMs = 200;
+            const int retryAfterMs = 500;
 
             var retryAfter = DateTimeOffset.UtcNow
                 + TimeSpan.FromMilliseconds(retryAfterMs);
