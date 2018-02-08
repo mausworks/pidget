@@ -5,3 +5,7 @@ obj/
 
 dsn.txt
 examples/Pidget.AspNetExample/appsettings.json
+
+coverage-html/
+coverage.json
+coverage-hits.txt
