@@ -21,8 +21,8 @@ namespace Pidget.AspNet.Test
 
         public RequestDelegate Next_Noop = _ => Task.CompletedTask;
 
-        public ExceptionReportingOptions ExceptionReportingOptions
-            = new ExceptionReportingOptions
+        public SentryOptions ExceptionReportingOptions
+            = new SentryOptions
             {
                 Dsn = "https://PUBLIC:SECRET@sentry.io/PROJECT_ID"
             };
@@ -231,9 +231,9 @@ namespace Pidget.AspNet.Test
                 Times.Exactly(2));
         }
 
-        public ExceptionReportingMiddleware CreateMiddleware(RequestDelegate next,
+        public SentryMiddleware CreateMiddleware(RequestDelegate next,
             SentryClient client)
-            => new ExceptionReportingMiddleware(next,
+            => new SentryMiddleware(next,
                 Options.Create(ExceptionReportingOptions),
                 client,
                 new RateLimit());

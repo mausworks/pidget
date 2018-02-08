@@ -11,9 +11,9 @@ using static System.DateTimeOffset;
 
 namespace Pidget.AspNet
 {
-    public class ExceptionReportingMiddleware
+    public class SentryMiddleware
     {
-        public ExceptionReportingOptions Options { get; }
+        public SentryOptions Options { get; }
 
         private readonly RateLimit _rateLimit;
 
@@ -21,8 +21,8 @@ namespace Pidget.AspNet
 
         private readonly SentryClient _sentryClient;
 
-        public ExceptionReportingMiddleware(RequestDelegate next,
-            IOptions<ExceptionReportingOptions> optionsAccessor,
+        public SentryMiddleware(RequestDelegate next,
+            IOptions<SentryOptions> optionsAccessor,
             SentryClient sentryClient,
             RateLimit rateLimit)
         {

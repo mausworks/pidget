@@ -6,7 +6,7 @@ using Pidget.Client;
 
 namespace Pidget.AspNet
 {
-    public class ExceptionReportingOptions
+    public class SentryOptions
     {
         public string Dsn { get; set; }
 

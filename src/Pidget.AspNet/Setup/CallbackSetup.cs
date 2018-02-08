@@ -7,9 +7,9 @@ namespace Pidget.AspNet.Setup
 {
     public struct CallbackSetup
     {
-        private readonly ExceptionReportingOptions _options;
+        private readonly SentryOptions _options;
 
-        public CallbackSetup(ExceptionReportingOptions options) : this()
+        public CallbackSetup(SentryOptions options) : this()
             => _options = options;
 
         public CallbackSetup BeforeSend(Func<SentryEventBuilder, HttpContext, Task<bool>> callback)

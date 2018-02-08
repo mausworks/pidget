@@ -10,10 +10,10 @@ namespace Pidget.AspNetExample
     {
         private readonly RequestDelegate _next;
 
-        public ExceptionReportingOptions Options { get; }
+        public SentryOptions Options { get; }
 
         public OnExceptionMiddleware(RequestDelegate next,
-            IOptions<ExceptionReportingOptions> optionsAccessor)
+            IOptions<SentryOptions> optionsAccessor)
         {
             _next = next;
             Options = optionsAccessor.Value;
