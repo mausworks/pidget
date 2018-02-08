@@ -12,7 +12,7 @@ namespace Pidget.AspNetExample
         {
             var data = builder.Build();
 
-            if (data.Message == "You shall not pass!")
+            if (data.Exception.Value == "You shall not pass!")
             {
                 builder.SetErrorLevel(ErrorLevel.Debug);
 
