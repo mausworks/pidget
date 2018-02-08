@@ -21,8 +21,8 @@ namespace Pidget.AspNet.Test
 
         public RequestDelegate Next_Noop = _ => Task.CompletedTask;
 
-        public ExceptionReportingOptions ExceptionReportingOptions
-            = new ExceptionReportingOptions
+        public SentryOptions ExceptionReportingOptions
+            = new SentryOptions
             {
                 Dsn = "https://PUBLIC:SECRET@sentry.io/PROJECT_ID"
             };
@@ -187,7 +187,10 @@ namespace Pidget.AspNet.Test
             var clientMock = new Mock<SentryClient>(
                 Dsn.Create(ExceptionReportingOptions.Dsn));
 
-            var retryAfter = TimeSpan.FromMilliseconds(100);
+            const int retryAfterMs = 500;
+
+            var retryAfter = DateTimeOffset.UtcNow
+                + TimeSpan.FromMilliseconds(retryAfterMs);
 
             clientMock.Setup(m => m
                 .SendEventAsync(It.IsAny<SentryEventData>()))
@@ -216,9 +219,9 @@ namespace Pidget.AspNet.Test
 
             // Delay for requested period
 
-            await Task.Delay(retryAfter);
+            await Task.Delay(retryAfterMs);
 
-            // Inoke again, responds with 429, but sends request.
+            // Invoke again, responds with 429, but sends request.
 
             await Assert.ThrowsAsync<InvalidOperationException>(
                 () => middleware.Invoke(httpMock.Object));
@@ -228,11 +231,11 @@ namespace Pidget.AspNet.Test
                 Times.Exactly(2));
         }
 
-        public ExceptionReportingMiddleware CreateMiddleware(RequestDelegate next,
+        public SentryMiddleware CreateMiddleware(RequestDelegate next,
             SentryClient client)
-            => new ExceptionReportingMiddleware(next,
+            => new SentryMiddleware(next,
                 Options.Create(ExceptionReportingOptions),
                 client,
-                new RateLimiter());
+                new RateLimit());
     }
 }

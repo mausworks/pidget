@@ -18,6 +18,6 @@ namespace Pidget.Client
 
         public int StatusCode { get; set; }
 
-        public TimeSpan? RetryAfter { get; set; }
+        public DateTimeOffset RetryAfter { get; set; }
     }
 }

@@ -10,12 +10,12 @@ namespace Pidget.AspNet.Setup
         public static SentryClient CreateClient(IServiceProvider serviceProvider)
         {
             var optionsAccessor = serviceProvider
-                .GetRequiredService<IOptions<ExceptionReportingOptions>>();
+                .GetRequiredService<IOptions<SentryOptions>>();
 
             return Sentry.CreateClient(GetDsn(optionsAccessor.Value));
         }
 
-        private static Dsn GetDsn(ExceptionReportingOptions options)
+        private static Dsn GetDsn(SentryOptions options)
             => !string.IsNullOrEmpty(options.Dsn)
                 ? Dsn.Create(options.Dsn)
                 : null;

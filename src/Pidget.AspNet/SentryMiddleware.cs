@@ -6,30 +6,29 @@ using System;
 using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
 using Pidget.Client.DataModels;
-using System.Net;
+
+using static System.DateTimeOffset;
 
 namespace Pidget.AspNet
 {
-    public class ExceptionReportingMiddleware
+    public class SentryMiddleware
     {
-        public const string EventIdKey = "SentryEventId";
+        public SentryOptions Options { get; }
 
-        public ExceptionReportingOptions Options { get; }
-
-        private readonly RateLimiter _rateLimiter;
+        private readonly RateLimit _rateLimit;
 
         private readonly RequestDelegate _next;
 
         private readonly SentryClient _sentryClient;
 
-        public ExceptionReportingMiddleware(RequestDelegate next,
-            IOptions<ExceptionReportingOptions> optionsAccessor,
+        public SentryMiddleware(RequestDelegate next,
+            IOptions<SentryOptions> optionsAccessor,
             SentryClient sentryClient,
-            RateLimiter rateLimiter)
+            RateLimit rateLimit)
         {
             _next = next;
             _sentryClient = sentryClient;
-            _rateLimiter = rateLimiter;
+            _rateLimit = rateLimit;
             Options = optionsAccessor.Value;
         }
 
@@ -41,46 +40,53 @@ namespace Pidget.AspNet
             }
             catch (Exception ex)
             {
-                var response = await CaptureAsync(ex, http);
-
-                http.Items[EventIdKey] = response?.EventId;
-                ex.Data[EventIdKey] = response?.EventId;
+                await CaptureAsync(ex, http);
 
                 SilentlyRethrow(ex);
             }
         }
 
-        private async Task<SentryResponse> CaptureAsync(Exception ex,
-            HttpContext http)
+        private async Task CaptureAsync(Exception ex, HttpContext http)
         {
-            var sentryEvent = BuildEventData(ex, http);
+            var builder = BuildEventData(ex, http);
 
-            if (_rateLimiter.IsRateLimited(DateTimeOffset.UtcNow))
+            if (!await Options.BeforeSendCallback(builder, http))
+            {
+                return;
+            }
+
+            var response = await SendEventAsync(builder.Build());
+
+            await Options.AfterSendCallback(response, http);
+        }
+
+        private async Task<SentryResponse> SendEventAsync(SentryEventData eventData)
+        {
+            if (_rateLimit.IsHit(UtcNow))
             {
                 return null;
             }
 
-            var sentryResponse = await _sentryClient
-                .SendEventAsync(sentryEvent);
+            var response = await _sentryClient
+                .SendEventAsync(eventData);
 
-            if (IsTooManyRequests(sentryResponse))
+            if (IsTooManyRequests(response))
             {
-                _rateLimiter.LimitFor(sentryResponse.RetryAfter.Value);
+                _rateLimit.Until(response.RetryAfter);
             }
 
-            return sentryResponse;
+            return response;
         }
 
         private bool IsTooManyRequests(SentryResponse response)
             => response.StatusCode == 429
             && response.RetryAfter != null;
 
-        private SentryEventData BuildEventData(Exception ex, HttpContext http)
+        private SentryEventBuilder BuildEventData(Exception ex, HttpContext http)
             => new SentryEventBuilder()
                 .SetException(ex)
                 .SetUserData(GetUserData(http))
-                .SetRequestData(GetRequestData(http.Request))
-                .Build();
+                .SetRequestData(GetRequestData(http.Request));
 
         private UserData GetUserData(HttpContext http)
             => UserDataProvider.Default.GetUserData(http);

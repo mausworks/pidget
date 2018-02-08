@@ -28,13 +28,13 @@ namespace Pidget.AspNet.Setup
         }
 
         [Fact]
-        public void AddPidgetMiddleware_AddsRateLimiter()
+        public void AddPidgetMiddleware_AddsRateLimit()
         {
             var servicesMock = new Mock<IServiceCollection>();
 
             servicesMock.Setup(m => m
                 .Add(It.Is<ServiceDescriptor>(s
-                    => typeof(RateLimiter) == s.ServiceType
+                    => typeof(RateLimit) == s.ServiceType
                     && s.Lifetime == ServiceLifetime.Singleton)))
                 .Verifiable();
 
@@ -50,7 +50,7 @@ namespace Pidget.AspNet.Setup
 
             servicesMock.Setup(m => m
                 .Add(It.Is<ServiceDescriptor>(
-                    s => typeof(IConfigureOptions<ExceptionReportingOptions>) == s.ServiceType)))
+                    s => typeof(IConfigureOptions<SentryOptions>) == s.ServiceType)))
                 .Verifiable();
 
             servicesMock.Object.AddPidgetMiddleware(_ => {});
@@ -65,7 +65,7 @@ namespace Pidget.AspNet.Setup
 
             servicesMock.Setup(m => m
                 .Add(It.Is<ServiceDescriptor>(
-                    s => typeof(IConfigureOptions<ExceptionReportingOptions>) == s.ServiceType)))
+                    s => typeof(IConfigureOptions<SentryOptions>) == s.ServiceType)))
                 .Verifiable();
 
             servicesMock.Object.AddPidgetMiddleware(

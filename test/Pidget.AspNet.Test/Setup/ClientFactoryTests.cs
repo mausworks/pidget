@@ -13,8 +13,8 @@ namespace Pidget.AspNet.Setup
 {
     public class ClientFactoryTests
     {
-        public static ExceptionReportingOptions Options =
-            new ExceptionReportingOptions
+        public static SentryOptions Options =
+            new SentryOptions
             {
                 Dsn = "https://PUBLIC:SECRET@sentry.io/PROJECT_ID"
             };
@@ -23,13 +23,13 @@ namespace Pidget.AspNet.Setup
         public void CreateClient()
         {
             var providerMock = new Mock<IServiceProvider>();
-            var optionsMock = new Mock<IOptions<ExceptionReportingOptions>>();
+            var optionsMock = new Mock<IOptions<SentryOptions>>();
 
             optionsMock.SetupGet(o => o.Value)
                 .Returns(Options)
                 .Verifiable();
 
-            providerMock.Setup(sp => sp.GetService(typeof(IOptions<ExceptionReportingOptions>)))
+            providerMock.Setup(sp => sp.GetService(typeof(IOptions<SentryOptions>)))
                 .Returns(optionsMock.Object)
                 .Verifiable();
 
@@ -45,12 +45,12 @@ namespace Pidget.AspNet.Setup
         public void NoDsn_CreatesDisabledClient(string dsn)
         {
             var providerMock = new Mock<IServiceProvider>();
-            var optionsMock = new Mock<IOptions<ExceptionReportingOptions>>();
+            var optionsMock = new Mock<IOptions<SentryOptions>>();
 
             optionsMock.SetupGet(o => o.Value)
-                .Returns(new ExceptionReportingOptions { Dsn = dsn });
+                .Returns(new SentryOptions { Dsn = dsn });
 
-            providerMock.Setup(sp => sp.GetService(typeof(IOptions<ExceptionReportingOptions>)))
+            providerMock.Setup(sp => sp.GetService(typeof(IOptions<SentryOptions>)))
                 .Returns(optionsMock.Object);
 
             var client = ClientFactory.CreateClient(providerMock.Object);

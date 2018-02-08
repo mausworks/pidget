@@ -10,18 +10,21 @@ namespace Pidget.AspNet.Setup
     {
         public static IServiceCollection AddPidgetMiddleware(
             this IServiceCollection services,
-            IConfiguration configuration)
-            => AddPidgetMiddleware(services, configuration.Bind);
+            IConfiguration configuration,
+            Action<CallbackSetup> setupCallbacks = null)
+            => AddPidgetMiddleware(services, configuration.Bind)
+                .Configure<SentryOptions>(opts
+                    => setupCallbacks(new CallbackSetup(opts)));
 
         public static IServiceCollection AddPidgetMiddleware(
             this IServiceCollection services,
-            Action<ExceptionReportingOptions> setup)
-            => services.Configure<ExceptionReportingOptions>(setup)
+            Action<SentryOptions> setup)
+            => services.Configure<SentryOptions>(setup)
                 .AddScoped<SentryClient>(ClientFactory.CreateClient)
-                .AddSingleton<RateLimiter>();
+                .AddSingleton<RateLimit>();
 
         public static IApplicationBuilder UsePidgetMiddleware(
             this IApplicationBuilder builder)
-            => builder.UseMiddleware<ExceptionReportingMiddleware>();
+            => builder.UseMiddleware<SentryMiddleware>();
     }
 }

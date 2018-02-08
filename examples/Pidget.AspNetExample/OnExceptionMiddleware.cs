@@ -10,10 +10,10 @@ namespace Pidget.AspNetExample
     {
         private readonly RequestDelegate _next;
 
-        public ExceptionReportingOptions Options { get; }
+        public SentryOptions Options { get; }
 
         public OnExceptionMiddleware(RequestDelegate next,
-            IOptions<ExceptionReportingOptions> optionsAccessor)
+            IOptions<SentryOptions> optionsAccessor)
         {
             _next = next;
             Options = optionsAccessor.Value;
@@ -38,7 +38,7 @@ namespace Pidget.AspNetExample
         {
             await http.Response.WriteAsync($"{ex}\r\n\r\n");
             await http.Response.WriteAsync(
-                $"Sentry event ID: {http.Items[ExceptionReportingMiddleware.EventIdKey]}");
+                $"Sentry event ID: {http.Items["SentryEventId"]}");
         }
     }
 }
