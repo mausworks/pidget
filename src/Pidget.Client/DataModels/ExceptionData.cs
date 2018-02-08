@@ -12,7 +12,7 @@ namespace Pidget.Client.DataModels
         public string Module { get; set; }
 
         [JsonProperty("value")]
-        public string Value { get; set; }
+        public string Message { get; set; }
 
         [JsonProperty("stacktrace")]
         public StackTraceData Stacktrace { get; set; }
@@ -25,7 +25,7 @@ namespace Pidget.Client.DataModels
             {
                 Type = exception.GetType().FullName,
                 Module =  exception.TargetSite?.DeclaringType.FullName ?? exception.Source,
-                Value = exception.Message,
+                Message = exception.Message,
                 Stacktrace = StackTraceData.FromException(exception)
             };
         }
