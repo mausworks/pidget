@@ -6,9 +6,6 @@ namespace Pidget.Client.DataModels
 {
     public class SentryEventData
     {
-        [JsonProperty("event_id")]
-        public string EventId { get; set; }
-
         [JsonProperty("culprit")]
         public string Culprit { get; set; }
 
