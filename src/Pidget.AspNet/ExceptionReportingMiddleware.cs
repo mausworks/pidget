@@ -24,11 +24,11 @@ namespace Pidget.AspNet
         public ExceptionReportingMiddleware(RequestDelegate next,
             IOptions<ExceptionReportingOptions> optionsAccessor,
             SentryClient sentryClient,
-            RateLimit rateLimiter)
+            RateLimit rateLimit)
         {
             _next = next;
             _sentryClient = sentryClient;
-            _rateLimit = rateLimiter;
+            _rateLimit = rateLimit;
             Options = optionsAccessor.Value;
         }
 
