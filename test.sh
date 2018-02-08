@@ -7,4 +7,6 @@ do
    cd $f
 
    dotnet test --no-build
+
+   cd ../..
 done
