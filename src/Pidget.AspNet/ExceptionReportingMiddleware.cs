@@ -13,8 +13,6 @@ namespace Pidget.AspNet
 {
     public class ExceptionReportingMiddleware
     {
-        public const string EventIdKey = "SentryEventId";
-
         public ExceptionReportingOptions Options { get; }
 
         private readonly RateLimit _rateLimit;
