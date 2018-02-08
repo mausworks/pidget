@@ -34,7 +34,7 @@ namespace Pidget.AspNet.Setup
 
             servicesMock.Setup(m => m
                 .Add(It.Is<ServiceDescriptor>(s
-                    => typeof(RateLimiter) == s.ServiceType
+                    => typeof(RateLimit) == s.ServiceType
                     && s.Lifetime == ServiceLifetime.Singleton)))
                 .Verifiable();
 
