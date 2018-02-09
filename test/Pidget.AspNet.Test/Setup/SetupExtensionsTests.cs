@@ -29,7 +29,7 @@ namespace Pidget.AspNet.Setup
         }
 
         [Fact]
-        public void AddPidgetMiddleware_AddsRateLimit()
+        public void AddPidgetMiddleware_AddsSingletonRateLimit()
         {
             var servicesMock = new Mock<IServiceCollection>();
 
