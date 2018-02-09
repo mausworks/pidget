@@ -48,7 +48,34 @@ public void Configure(IApplicationBuilder app)
 
 **See also:** [Startup.cs](https://github.com/mausworks/pidget/blob/master/examples/Pidget.AspNetExample/Startup.cs) in Pidget.AspNetExample
 
-## Combining with other error handlers / middleware
+## Configuring callbacks
+
+Callbacks for before and- after send, can be configured with both setup options.
+
+Using configuration:
+
+```csharp
+service.AddPidgetMiddleware(config.GetSection("Sentry"), callbacks =>
+{
+    callbacks.BeforeSendAsync(async (builder, http) => /* ... */);
+    callbacks.AfterSendAsync(async (response, http) => /* ... */));
+});
+```
+
+Or by using a setup-action:
+
+```csharp
+service.AddPidgetMiddleware(sentry =>
+{
+    sentry.Dsn = "YOUR_DSN";
+    sentry.Callbacks.BeforeSendAsync(async (builder, http) => /* ... */);
+    sentry.Callbacks.AfterSendAsync(async (response, http) => /* ... */));
+});
+```
+
+**Note:** The after-send callback might return a response of `null`, if rate-limiting has occurred.
+
+## Combining with other error handlers or middleware
 
 The middleware is designed to be unintrusive. Any exceptions caught by the middleware will be re-thrown after being captured.
 No special considerations have to be made when combining this middleware with others. However; the order your middleware are configured in may effect which errors are reported, for instance: If the pidget error reporting middleware invokes middleware which suppresses an exception, that exception will not be caught. As such, is it wise to configure your application pipeline to have the pidget exception reporting middleware invoke your application code (see the graph below) and in the [example application](https://github.com/mausworks/pidget/blob/master/examples/Pidget.AspNetExample/Startup.cs#L20-L29).
