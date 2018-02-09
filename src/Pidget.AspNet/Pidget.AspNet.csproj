@@ -7,7 +7,6 @@
     <DebugType Condition=" $(Coverage) == '' "></DebugType>
     <DebugType Condition=" $(Coverage) != '' ">Full</DebugType>
 
-
     <Title>Pidget ASP.NET Middleware</Title>
     <AssemblyName>Pidget.AspNet</AssemblyName>
     <AssemblyTitle>Pidget ASP.NET Core Middleware</AssemblyTitle>
