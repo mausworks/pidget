@@ -89,5 +89,41 @@ namespace Pidget.AspNet.Setup
 
             appMock.Verify();
         }
+
+        [Theory, InlineData("https://pub:secreet@sentry.io/1")]
+        public void ActivateClient_Setup_HasCorrectDsn(string dsn)
+        {
+            var services = new ServiceCollection();
+
+            services.AddPidgetMiddleware(sentry =>
+            {
+                sentry.Dsn = dsn;
+            });
+
+            var provider = services.BuildServiceProvider();
+
+            var client = (SentryClient)provider.GetService(typeof(SentryClient));
+
+            Assert.NotNull(client);
+            Assert.Equal(dsn, client.Dsn.ToString());
+        }
+
+        [Theory, InlineData("https://pub:secreet@sentry.io/1")]
+        public void ActivateClient_Config_HasCorrectDsn(string dsn)
+        {
+            var services = new ServiceCollection();
+            var configMock = new Mock<IConfigurationSection>();
+
+            configMock.SetupGet(s => s["Dsn"]).Returns(dsn);
+
+            services.AddPidgetMiddleware(configMock.Object);
+
+            var provider = services.BuildServiceProvider();
+
+            var client = (SentryClient)provider.GetService(typeof(SentryClient));
+
+            Assert.NotNull(client);
+            Assert.Equal(dsn, client.Dsn.ToString());
+        }
     }
 }

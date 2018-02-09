@@ -9,10 +9,19 @@ namespace Pidget.AspNet.Setup
     {
         public static SentryClient CreateClient(IServiceProvider serviceProvider)
         {
-            var optionsAccessor = serviceProvider
-                .GetRequiredService<IOptions<SentryOptions>>();
+            var options = GetOptions(serviceProvider);
 
-            return Sentry.CreateClient(GetDsn(optionsAccessor.Value));
+            return Sentry.CreateClient(GetDsn(options));
+        }
+
+        private static SentryOptions GetOptions(IServiceProvider provider)
+        {
+            var options = new SentryOptions();
+            var configure = provider.GetRequiredService<IConfigureOptions<SentryOptions>>();
+
+            configure.Configure(options);
+
+            return options;
         }
 
         private static Dsn GetDsn(SentryOptions options)
