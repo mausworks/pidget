@@ -12,16 +12,15 @@ namespace Pidget.AspNet.Setup
             this IServiceCollection services,
             IConfiguration configuration,
             Action<CallbackSetup> callbackSetup = null)
-            => AddPidgetMiddleware(services, configuration.Bind)
-                .Configure<SentryOptions>(opts =>
-                {
-                    if (callbackSetup == null)
-                    {
-                        return;
-                    }
+            => AddPidgetMiddleware(services, opts =>
+            {
+                configuration.Bind(opts);
 
+                if (callbackSetup != null)
+                {
                     callbackSetup(new CallbackSetup(opts));
-                });
+                }
+            });
 
         public static IServiceCollection AddPidgetMiddleware(
             this IServiceCollection services,
