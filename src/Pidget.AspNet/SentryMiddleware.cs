@@ -7,8 +7,6 @@ using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
 using Pidget.Client.DataModels;
 
-using static System.DateTimeOffset;
-
 namespace Pidget.AspNet
 {
     public class SentryMiddleware
@@ -22,14 +20,23 @@ namespace Pidget.AspNet
         private readonly SentryClient _sentryClient;
 
         public SentryMiddleware(RequestDelegate next,
-            IOptions<SentryOptions> optionsAccessor,
+            IConfigureOptions<SentryOptions> optionSetup,
             SentryClient sentryClient,
             RateLimit rateLimit)
         {
             _next = next;
             _sentryClient = sentryClient;
             _rateLimit = rateLimit;
-            Options = optionsAccessor.Value;
+            Options = GetOptions(optionSetup);
+        }
+
+        private SentryOptions GetOptions(IConfigureOptions<SentryOptions> optionSetup)
+        {
+            var options = new SentryOptions();
+
+            optionSetup.Configure(options);
+
+            return options;
         }
 
         public async Task Invoke(HttpContext http)
@@ -62,7 +69,7 @@ namespace Pidget.AspNet
 
         private async Task<SentryResponse> SendEventAsync(SentryEventData eventData)
         {
-            if (_rateLimit.IsHit(UtcNow))
+            if (_rateLimit.IsHit(DateTimeOffset.UtcNow))
             {
                 return null;
             }
