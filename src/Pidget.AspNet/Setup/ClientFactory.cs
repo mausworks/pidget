@@ -17,9 +17,10 @@ namespace Pidget.AspNet.Setup
         private static SentryOptions GetOptions(IServiceProvider provider)
         {
             var options = new SentryOptions();
-            var configure = provider.GetRequiredService<IConfigureOptions<SentryOptions>>();
+            var setup = provider
+                .GetRequiredService<IConfigureOptions<SentryOptions>>();
 
-            configure.Configure(options);
+            setup.Configure(options);
 
             return options;
         }
