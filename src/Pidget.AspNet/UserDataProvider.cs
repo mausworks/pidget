@@ -12,27 +12,24 @@ namespace Pidget.AspNet
 
         public UserData GetUserData(HttpContext http)
         {
-            AssertContextNotNull(http);
+            AssertHttpContextNotNull(http);
 
-            var user = http.User == null
-                ? new UserData()
-                : new UserData
+            return http.User != null
+                ? new UserData
                 {
                     Id = GetId(http.User),
                     UserName = GetUserName(http.User),
                     Email = GetEmail(http.User),
-                };
-
-            user.IpAddress = GetIpAddress(http);
-
-            return user;
+                    IpAddress = GetIpAddress(http)
+                }
+                : null;
         }
 
-        private void AssertContextNotNull(HttpContext context)
+        private void AssertHttpContextNotNull(HttpContext http)
         {
-            if (context == null)
+            if (http == null)
             {
-                throw new ArgumentNullException(nameof(context));
+                throw new ArgumentNullException(nameof(http));
             }
         }
 
