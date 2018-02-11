@@ -13,11 +13,11 @@ namespace Pidget.AspNet
     {
         public SentryOptions Options { get; }
 
-        private readonly RateLimit _rateLimit;
-
         private readonly RequestDelegate _next;
 
         private readonly SentryClient _sentryClient;
+
+        private readonly RateLimit _rateLimit;
 
         public SentryMiddleware(RequestDelegate next,
             IConfigureOptions<SentryOptions> optionSetup,
@@ -49,7 +49,7 @@ namespace Pidget.AspNet
             {
                 await CaptureAsync(ex, http);
 
-                SilentlyRethrow(ex);
+                ForwardException(ex);
             }
         }
 
@@ -96,7 +96,7 @@ namespace Pidget.AspNet
                 .SetRequestData(GetRequestData(http.Request));
 
         private UserData GetUserData(HttpContext http)
-            => UserDataProvider.Default.GetUserData(http);
+            => UserDataProvider.GetUserData(http);
 
         private RequestData GetRequestData(HttpRequest req)
         {
@@ -110,7 +110,7 @@ namespace Pidget.AspNet
         /// Re-throws the provided exception without adding to the stack trace.
         /// </summary>
         /// <param name="ex">The exception to re-throw.</param>
-        private static void SilentlyRethrow(Exception ex)
+        private static void ForwardException(Exception ex)
             => ExceptionDispatchInfo.Capture(ex).Throw();
     }
 }

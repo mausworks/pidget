@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 
 using static System.Threading.CancellationToken;
+using System.Collections.Generic;
 
 namespace Pidget.Client.Http
 {
@@ -86,17 +87,17 @@ namespace Pidget.Client.Http
             var message = new HttpRequestMessage(HttpMethod.Post,
                 Dsn.GetCaptureUrl());
 
-            AddSentryAuthHeader(message);
+            message.Headers.Add(SentryAuthHeader.Name,
+                GetSentryAuthHeader());
 
             message.Content = GetContent(stream);
 
             return message;
         }
 
-        private void AddSentryAuthHeader(HttpRequestMessage message)
-            => message.Headers.Add(SentryAuthHeader.Name,
-                SentryAuthHeader.GetValues(
-                    SentryAuth.Issue(this, DateTimeOffset.Now)));
+        private IEnumerable<string> GetSentryAuthHeader()
+            => SentryAuthHeader.GetValues(
+                SentryAuth.Issue(this, DateTimeOffset.Now));
 
         private static StreamContent GetContent(Stream stream)
         {

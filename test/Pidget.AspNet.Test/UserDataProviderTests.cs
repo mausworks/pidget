@@ -16,7 +16,7 @@ namespace Pidget.AspNet
         {
             var user = MakeUser(Tuple.Create(ClaimTypes.NameIdentifier, id));
 
-            Assert.Equal(id, UserDataProvider.Default.GetId(user));
+            Assert.Equal(id, UserDataProvider.GetId(user));
         }
 
         [Theory, InlineData("foo@bar")]
@@ -24,7 +24,7 @@ namespace Pidget.AspNet
         {
             var user = MakeUser(Tuple.Create(ClaimTypes.Email, email));
 
-            Assert.Equal(email, UserDataProvider.Default.GetEmail(user));
+            Assert.Equal(email, UserDataProvider.GetEmail(user));
         }
 
         [Theory, InlineData("user")]
@@ -38,7 +38,7 @@ namespace Pidget.AspNet
 
             var user = new ClaimsPrincipal(identityMock.Object);
 
-            Assert.Equal(userName, UserDataProvider.Default.GetUserName(user));
+            Assert.Equal(userName, UserDataProvider.GetUserName(user));
 
             identityMock.Verify();
         }
@@ -48,7 +48,7 @@ namespace Pidget.AspNet
         {
             var user = MakeUser(Tuple.Create(ClaimTypes.Name, userName));
 
-            Assert.Equal(userName, UserDataProvider.Default.GetUserName(user));
+            Assert.Equal(userName, UserDataProvider.GetUserName(user));
         }
 
         [Theory, InlineData("user")]
@@ -67,7 +67,7 @@ namespace Pidget.AspNet
 
             var user = new ClaimsPrincipal(identityMock.Object);
 
-            Assert.Equal(userName, UserDataProvider.Default.GetUserName(user));
+            Assert.Equal(userName, UserDataProvider.GetUserName(user));
 
             identityMock.Verify();
         }
@@ -95,7 +95,7 @@ namespace Pidget.AspNet
                 .Returns(reqMock.Object);
 
             Assert.Equal(ipAddress,
-                UserDataProvider.Default.GetIpAddress(httpMock.Object));
+                UserDataProvider.GetIpAddress(httpMock.Object));
 
             connMock.Verify();
         }
@@ -126,7 +126,7 @@ namespace Pidget.AspNet
                 .Returns(reqMock.Object);
 
             Assert.Equal(xForwardedFor,
-                UserDataProvider.Default.GetIpAddress(httpMock.Object));
+                UserDataProvider.GetIpAddress(httpMock.Object));
         }
 
         [Theory]
@@ -162,7 +162,7 @@ namespace Pidget.AspNet
             httpMock.SetupGet(c => c.Request)
                 .Returns(Mock.Of<HttpRequest>());
 
-            var data = UserDataProvider.Default.GetUserData(httpMock.Object);
+            var data = UserDataProvider.GetUserData(httpMock.Object);
 
             Assert.Equal(id, data.Id);
             Assert.Equal(userName, data.UserName);
@@ -187,7 +187,7 @@ namespace Pidget.AspNet
             httpMock.SetupGet(r => r.Request)
                 .Returns(Mock.Of<HttpRequest>());
 
-            var data = UserDataProvider.Default.GetUserData(httpMock.Object);
+            var data = UserDataProvider.GetUserData(httpMock.Object);
 
             Assert.Null(data.Id);
             Assert.Null(data.UserName);
