@@ -11,11 +11,6 @@ namespace Pidget.AspNet
 {
     public class UserDataProviderTests
     {
-        [Fact]
-        public void GetUserData_ThrowsArgumentNull_ForNullContext()
-            => Assert.Throws<ArgumentNullException>(()
-                => UserDataProvider.Default.GetUserData(null));
-
         [Theory, InlineData("1")]
         public void GetId_UsesNameIdentifierClaim(string id)
         {

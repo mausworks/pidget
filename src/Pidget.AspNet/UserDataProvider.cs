@@ -12,8 +12,6 @@ namespace Pidget.AspNet
 
         public UserData GetUserData(HttpContext http)
         {
-            AssertHttpContextNotNull(http);
-
             return http.User != null
                 ? new UserData
                 {
@@ -23,14 +21,6 @@ namespace Pidget.AspNet
                     IpAddress = GetIpAddress(http)
                 }
                 : null;
-        }
-
-        private void AssertHttpContextNotNull(HttpContext http)
-        {
-            if (http == null)
-            {
-                throw new ArgumentNullException(nameof(http));
-            }
         }
 
         public string GetUserName(ClaimsPrincipal user)
