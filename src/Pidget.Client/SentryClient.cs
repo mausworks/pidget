@@ -8,7 +8,8 @@ namespace Pidget.Client
     {
         public const string Name = "pidget";
 
-        public static string Version => VersionNumber.Get();
+        public static string Version { get; }
+            = VersionNumber.Get();
 
         public Dsn Dsn { get; }
 
