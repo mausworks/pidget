@@ -6,9 +6,9 @@ using System;
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 using static System.Threading.CancellationToken;
-using System.Collections.Generic;
 
 namespace Pidget.Client.Http
 {
