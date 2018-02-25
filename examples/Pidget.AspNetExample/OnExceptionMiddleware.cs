@@ -10,14 +10,8 @@ namespace Pidget.AspNetExample
     {
         private readonly RequestDelegate _next;
 
-        public SentryOptions Options { get; }
-
-        public OnExceptionMiddleware(RequestDelegate next,
-            IOptions<SentryOptions> optionsAccessor)
-        {
-            _next = next;
-            Options = optionsAccessor.Value;
-        }
+        public OnExceptionMiddleware(RequestDelegate next)
+            => _next = next;
 
         public async Task Invoke(HttpContext http)
         {
