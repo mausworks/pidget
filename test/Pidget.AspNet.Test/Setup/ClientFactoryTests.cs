@@ -13,59 +13,42 @@ namespace Pidget.AspNet.Setup
 {
     public class ClientFactoryTests
     {
-        public static SentryOptions Options =
-            new SentryOptions
-            {
-                Dsn = "https://PUBLIC:SECRET@sentry.io/PROJECT_ID"
-            };
+        public const string Dsn = "https://PUBLIC:SECRET@sentry.io/PROJECT_ID";
+
+        public static Action<SentryOptions> SetDsn = (SentryOptions opts) =>
+        {
+            opts.Dsn = Dsn;
+        };
 
         [Fact]
-        public void CreateClient()
+        public void CreateClient_SetsDsn()
         {
             var providerMock = new Mock<IServiceProvider>();
-            var optionsMock = new Mock<IOptions<SentryOptions>>();
 
-            optionsMock.SetupGet(o => o.Value)
-                .Returns(Options)
-                .Verifiable();
-
-            providerMock.Setup(sp => sp.GetService(typeof(IOptions<SentryOptions>)))
-                .Returns(optionsMock.Object)
+            providerMock.Setup(sp => sp.GetService(typeof(IConfigureOptions<SentryOptions>)))
+                .Returns(new ConfigureOptions<SentryOptions>(SetDsn))
                 .Verifiable();
 
             var client = ClientFactory.CreateClient(providerMock.Object);
 
             providerMock.Verify();
 
-            Assert.Equal(Options.Dsn, client.Dsn.ToString());
-            AssertAreDefaultSanitationOptions(Options.Sanitation);
+            Assert.Equal(Dsn, client.Dsn.ToString());
         }
 
         [Theory, InlineData(null), InlineData("")]
         public void NoDsn_CreatesDisabledClient(string dsn)
         {
             var providerMock = new Mock<IServiceProvider>();
-            var optionsMock = new Mock<IOptions<SentryOptions>>();
 
-            optionsMock.SetupGet(o => o.Value)
-                .Returns(new SentryOptions { Dsn = dsn });
-
-            providerMock.Setup(sp => sp.GetService(typeof(IOptions<SentryOptions>)))
-                .Returns(optionsMock.Object);
+            providerMock.Setup(sp => sp.GetService(typeof(IConfigureOptions<SentryOptions>)))
+                .Returns(new ConfigureOptions<SentryOptions>(opts => opts.Dsn = dsn))
+                .Verifiable();
 
             var client = ClientFactory.CreateClient(providerMock.Object);
 
             Assert.Null(client.Dsn);
             Assert.False(client.IsEnabled);
-        }
-
-        private void AssertAreDefaultSanitationOptions(SanitationOptions sanitation)
-        {
-            var defaults = SanitationOptions.Default;
-
-            Assert.Equal(defaults.NamePatterns, sanitation.NamePatterns);
-            Assert.Equal(defaults.ValuePatterns, sanitation.ValuePatterns);
-            Assert.Equal(defaults.ReplacementValue, sanitation.ReplacementValue);
         }
     }
 }

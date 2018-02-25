@@ -21,7 +21,7 @@ namespace Pidget.AspNet.Test
 
         public RequestDelegate Next_Noop = _ => Task.CompletedTask;
 
-        public SentryOptions ExceptionReportingOptions
+        public SentryOptions SentryOptions
             = new SentryOptions
             {
                 Dsn = "https://PUBLIC:SECRET@sentry.io/PROJECT_ID"
@@ -31,7 +31,7 @@ namespace Pidget.AspNet.Test
         public async Task SuccessfulInvoke_DoesNotSend()
         {
             var clientMock = new Mock<SentryClient>(
-                Dsn.Create(ExceptionReportingOptions.Dsn));
+                Dsn.Create(SentryOptions.Dsn));
 
             var middleware = CreateMiddleware(Next_Noop, clientMock.Object);
 
@@ -54,7 +54,7 @@ namespace Pidget.AspNet.Test
                 .Returns(reqMock.Object);
 
             var clientMock = new Mock<SentryClient>(
-                Dsn.Create(ExceptionReportingOptions.Dsn));
+                Dsn.Create(SentryOptions.Dsn));
 
             clientMock.Setup(c => c.SendEventAsync(It.IsAny<SentryEventData>()))
                 .ReturnsAsync(new SentryResponse { EventId = eventId })
@@ -96,7 +96,7 @@ namespace Pidget.AspNet.Test
                 .Returns(reqMock.Object);
 
             var clientMock = new Mock<SentryClient>(
-                Dsn.Create(ExceptionReportingOptions.Dsn));
+                Dsn.Create(SentryOptions.Dsn));
 
             clientMock.Setup(c => c.SendEventAsync(It.Is<SentryEventData>(r
                 => r.Request.Url == url.Split('?', StringSplitOptions.None)[0]
@@ -153,7 +153,7 @@ namespace Pidget.AspNet.Test
                 .Returns(reqMock.Object);
 
             var clientMock = new Mock<SentryClient>(
-                Dsn.Create(ExceptionReportingOptions.Dsn));
+                Dsn.Create(SentryOptions.Dsn));
 
             clientMock.Setup(c => c.SendEventAsync(It.Is<SentryEventData>(r
                  => r.User.Id == userId
@@ -185,7 +185,7 @@ namespace Pidget.AspNet.Test
                 .Returns(reqMock.Object);
 
             var clientMock = new Mock<SentryClient>(
-                Dsn.Create(ExceptionReportingOptions.Dsn));
+                Dsn.Create(SentryOptions.Dsn));
 
             const int retryAfterMs = 500;
 
@@ -234,7 +234,10 @@ namespace Pidget.AspNet.Test
         public SentryMiddleware CreateMiddleware(RequestDelegate next,
             SentryClient client)
             => new SentryMiddleware(next,
-                Options.Create(ExceptionReportingOptions),
+                new ConfigureOptions<SentryOptions>(opts =>
+                {
+                    opts.Dsn = SentryOptions.Dsn;
+                }),
                 client,
                 new RateLimit());
     }

@@ -7,29 +7,36 @@ using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
 using Pidget.Client.DataModels;
 
-using static System.DateTimeOffset;
-
 namespace Pidget.AspNet
 {
     public class SentryMiddleware
     {
         public SentryOptions Options { get; }
 
-        private readonly RateLimit _rateLimit;
-
         private readonly RequestDelegate _next;
 
         private readonly SentryClient _sentryClient;
 
+        private readonly RateLimit _rateLimit;
+
         public SentryMiddleware(RequestDelegate next,
-            IOptions<SentryOptions> optionsAccessor,
+            IConfigureOptions<SentryOptions> optionSetup,
             SentryClient sentryClient,
             RateLimit rateLimit)
         {
             _next = next;
             _sentryClient = sentryClient;
             _rateLimit = rateLimit;
-            Options = optionsAccessor.Value;
+            Options = GetOptions(optionSetup);
+        }
+
+        private SentryOptions GetOptions(IConfigureOptions<SentryOptions> optionSetup)
+        {
+            var options = new SentryOptions();
+
+            optionSetup.Configure(options);
+
+            return options;
         }
 
         public async Task Invoke(HttpContext http)
@@ -42,7 +49,7 @@ namespace Pidget.AspNet
             {
                 await CaptureAsync(ex, http);
 
-                SilentlyRethrow(ex);
+                ForwardException(ex);
             }
         }
 
@@ -62,7 +69,7 @@ namespace Pidget.AspNet
 
         private async Task<SentryResponse> SendEventAsync(SentryEventData eventData)
         {
-            if (_rateLimit.IsHit(UtcNow))
+            if (_rateLimit.IsHit(DateTimeOffset.UtcNow))
             {
                 return null;
             }
@@ -89,7 +96,7 @@ namespace Pidget.AspNet
                 .SetRequestData(GetRequestData(http.Request));
 
         private UserData GetUserData(HttpContext http)
-            => UserDataProvider.Default.GetUserData(http);
+            => UserDataProvider.GetUserData(http);
 
         private RequestData GetRequestData(HttpRequest req)
         {
@@ -103,7 +110,7 @@ namespace Pidget.AspNet
         /// Re-throws the provided exception without adding to the stack trace.
         /// </summary>
         /// <param name="ex">The exception to re-throw.</param>
-        private static void SilentlyRethrow(Exception ex)
+        private static void ForwardException(Exception ex)
             => ExceptionDispatchInfo.Capture(ex).Throw();
     }
 }

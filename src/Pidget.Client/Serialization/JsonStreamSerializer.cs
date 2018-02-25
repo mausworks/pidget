@@ -22,7 +22,7 @@ namespace Pidget.Client.Serialization
 
         public Stream Serialize(object item)
         {
-            var stream = new MemoryStream(256);
+            var stream = new MemoryStream(BufferSize);
 
             using (var writer = CreateWriter(stream))
             {
