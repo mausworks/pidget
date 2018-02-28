@@ -32,7 +32,7 @@ Captures ASP.NET Core application errors and automatically attaches user & reque
 
 ## Pidget Client
 
-An easy-to use Sentry client. Basic by design; can be used in most .NET applications, Xamarin, etc &hellip;
+An easy-to use Sentry client. Basic by design.
 
 ### [Features](https://docs.sentry.io/clientdev/overview/#writing-an-sdk)
 
