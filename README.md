@@ -4,22 +4,20 @@ Error reporting for C# and ASP.NET Core using [sentry.io](https://sentry.io).
 
 [![Build Status](https://travis-ci.org/mausworks/pidget.svg?branch=master)](https://travis-ci.org/mausworks/pidget)
 
-### Pidget Sentry Client (Pidget.Client)
+### Pidget Client [![NuGet](https://img.shields.io/nuget/dt/Pidget.Client.svg)](https://nuget.org/packages/Pidget.Client)
 
 A lightweight client for sending events to Sentry.
 
-[![NuGet](https://img.shields.io/nuget/dt/Pidget.Client.svg)](https://nuget.org/packages/Pidget.Client)
+[Documentation & source](https://github.com/mausworks/pidget/tree/master/src/Pidget.Client)
 
-- [Documentation & source](https://github.com/mausworks/pidget/tree/master/src/Pidget.Client)
+* * *
 
-### Pidget ASP.NET Middleware (Pidget.AspNet)
+### Pidget ASP.NET Middleware [![NuGet](https://img.shields.io/nuget/dt/Pidget.AspNet.svg)](https://nuget.org/packages/Pidget.AspNet)
+
 
 ASP.NET Core middleware for automatically capturing application errors.
 
-[![NuGet](https://img.shields.io/nuget/dt/Pidget.AspNet.svg)](https://nuget.org/packages/Pidget.AspNet)
-
-- [Documentation & source](https://github.com/mausworks/pidget/tree/master/src/Pidget.AspNet)
-
+[Documentation & source](https://github.com/mausworks/pidget/tree/master/src/Pidget.AspNet)
 
 ## Target framework
 
