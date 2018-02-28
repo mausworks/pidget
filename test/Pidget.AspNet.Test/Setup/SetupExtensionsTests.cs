@@ -13,14 +13,14 @@ namespace Pidget.AspNet.Setup
     public class SetupExtensionsTests
     {
         [Fact]
-        public void AddPidgetMiddleware_AddsScopedClient()
+        public void AddPidgetMiddleware_AddsSingletonClient()
         {
             var servicesMock = new Mock<IServiceCollection>();
 
             servicesMock.Setup(m => m
                 .Add(It.Is<ServiceDescriptor>(s
                     => s.ServiceType == typeof(SentryClient)
-                    && s.Lifetime == ServiceLifetime.Scoped)))
+                    && s.Lifetime == ServiceLifetime.Singleton)))
                 .Verifiable();
 
             servicesMock.Object.AddPidgetMiddleware(_ => {});
