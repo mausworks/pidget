@@ -23,7 +23,7 @@ namespace Pidget.Client.Http
         private static readonly JsonStreamSerializer _serializer
             = new JsonStreamSerializer(
                 encoding: Sentry.ApiEncoding,
-                jsonSerializer: CreateJsonSerializer());
+                jsonSerializer: JsonSerializer.CreateDefault());
 
         private readonly HttpMessageInvoker _sender;
 
@@ -95,16 +95,6 @@ namespace Pidget.Client.Http
             content.Headers.Add("Content-Type", "application/json");
 
             return content;
-        }
-
-        private static JsonSerializer CreateJsonSerializer()
-        {
-            var settings = new JsonSerializerSettings();
-
-            settings.Converters.Add(
-                new StringEnumConverter(camelCaseText: true));
-
-            return JsonSerializer.Create(settings);
         }
     }
 }
