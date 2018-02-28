@@ -2,39 +2,48 @@
 
 Error reporting for C# and ASP.NET Core using [sentry.io](https://sentry.io).
 
-[![Build Status](https://travis-ci.org/mausworks/pidget.svg?branch=master)](https://travis-ci.org/mausworks/pidget)
+[![Build status](https://travis-ci.org/mausworks/pidget.svg?branch=master)](https://travis-ci.org/mausworks/pidget)
 
-### Pidget Client [![NuGet](https://img.shields.io/nuget/dt/Pidget.Client.svg)](https://nuget.org/packages/Pidget.Client)
+### Pidget Client
 
-A lightweight client for sending events to Sentry.
+An easy-to use Sentry client. Basic by design; can be used in any .NET Core application, Xamarin, etc &hellip;
 
-[Documentation & source](https://github.com/mausworks/pidget/tree/master/src/Pidget.Client)
-
-* * *
-
-### Pidget ASP.NET Middleware [![NuGet](https://img.shields.io/nuget/dt/Pidget.AspNet.svg)](https://nuget.org/packages/Pidget.AspNet)
-
-
-ASP.NET Core middleware for automatically capturing application errors.
-
-[Documentation & source](https://github.com/mausworks/pidget/tree/master/src/Pidget.AspNet)
-
-## Target framework
-
-All libraries target [.NET Standard 2.0](https://docs.microsoft.com/en-us/dotnet/standard/net-standard#net-implementation-support).
-
-## [Features](https://docs.sentry.io/clientdev/overview/#writing-an-sdk)
+#### [Features](https://docs.sentry.io/clientdev/overview/#writing-an-sdk)
 
 - DSN configuration
 - Graceful failures (e.g. Sentry server is unreachable)
 - Setting attributes (e.g. tags and extra data)
-- Support for Linux, Windows and OS X (where applicable)
+- Support for Linux, Windows and OS X
+- Non-blocking event submission
+- Context data helpers (e.g. setting the current user, recording breadcrumbs)
+- Event sampling
+- **Not possible/viable:** Local variable values in stacktrace
+
+**[Documentation & source](https://github.com/mausworks/pidget/tree/master/src/Pidget.Client)**
+
+[![NuGet](https://img.shields.io/nuget/dt/Pidget.Client.svg)](https://nuget.org/packages/Pidget.Client)
+
+* * *
+
+### Pidget ASP.NET Middleware 
+
+Captures ASP.NET Core application errors and automatically attaches user & request data.
+
+#### [Features](https://docs.sentry.io/clientdev/overview/#writing-an-sdk)
+
+- Support for Linux, Windows and OS X
 - Automated error capturing (e.g. uncaught exception handlers)
-- Logging framework integration *(Can be configured with before/after-send hook)*
+- ~~Logging framework integration~~ (Can be configured with before/after-send hooks)
 - Non-blocking event submission
 - ~~Basic~~ **configurable** data sanitization (e.g. filtering out values that look like passwords)
 - Context data helpers (e.g. setting the current user, recording breadcrumbs)
-- Event sampling
 - Honor Sentry’s HTTP 429 Retry-After header
 - Pre and Post event send hooks
-- **Not possible/viable:** Local variable values in stacktrace
+
+**[Documentation & source](https://github.com/mausworks/pidget/tree/master/src/Pidget.AspNet)**
+
+[![NuGet](https://img.shields.io/nuget/dt/Pidget.AspNet.svg)](https://nuget.org/packages/Pidget.AspNet)
+
+## Target framework
+
+All libraries target [.NET Standard 2.0](https://docs.microsoft.com/en-us/dotnet/standard/net-standard#net-implementation-support).
