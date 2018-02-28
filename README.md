@@ -1,8 +1,9 @@
+# PIDGET 
 ![Pidget logo](https://user-images.githubusercontent.com/8259221/36802949-8fc2ad48-1cb6-11e8-9f7d-c444cf991c8b.png)
+[![Build status](https://travis-ci.org/mausworks/pidget.svg?branch=master)](https://travis-ci.org/mausworks/pidget)
+
 
 Error reporting for C# and ASP.NET Core using [sentry.io](https://sentry.io).
-
-[![Build status](https://travis-ci.org/mausworks/pidget.svg?branch=master)](https://travis-ci.org/mausworks/pidget)
 
 ### Pidget Client
 
