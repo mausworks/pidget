@@ -83,19 +83,6 @@ namespace Pidget.Client.Test
         }
 
         [Fact]
-        public void DisposesSender()
-        {
-            var sender = new TestSender(new HttpClientHandler());
-
-            var client = new SentryHttpClient(DsnTests.SentryDsn,
-                sender);
-
-            client.Dispose();
-
-            Assert.True(sender.IsDisposed);
-        }
-
-        [Fact]
         public void CreateDefault()
             => Assert.NotNull(
                 SentryHttpClient.Default(DsnTests.SentryDsn));

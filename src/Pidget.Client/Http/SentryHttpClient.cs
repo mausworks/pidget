@@ -12,7 +12,7 @@ using static System.Threading.CancellationToken;
 
 namespace Pidget.Client.Http
 {
-    public class SentryHttpClient : SentryClient, IDisposable
+    public class SentryHttpClient : SentryClient
     {
         public static TimeSpan Timeout { get; }
             = TimeSpan.FromSeconds(3);
@@ -67,8 +67,6 @@ namespace Pidget.Client.Http
                 return await responseProvider.GetResponseAsync(httpResponse);
             }
         }
-
-        public void Dispose() => _sender.Dispose();
 
         public static HttpClient CreateHttpClient()
         {
