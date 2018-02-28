@@ -7,7 +7,7 @@ Error reporting for C# and ASP.NET Core using [sentry.io](https://sentry.io).
 
 ### Pidget Client
 
-An easy-to use Sentry client. Basic by design; can be used in any .NET Core application, Xamarin, etc &hellip;
+An easy-to use Sentry client. Basic by design; can be used in most .NET applications, Xamarin, etc &hellip;
 
 #### [Features](https://docs.sentry.io/clientdev/overview/#writing-an-sdk)
 
