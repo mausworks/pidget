@@ -14,7 +14,7 @@ dotnet add package Pidget.AspNet
 
 ## Usage
 
-After set-up, exceptions thrown inside the application are automatically captured and sent to Sentry.
+After setup, exceptions thrown inside the application are automatically captured and sent to Sentry.
 
 ### Setup
 
