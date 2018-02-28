@@ -26,7 +26,7 @@ namespace Pidget.AspNet.Setup
             this IServiceCollection services,
             Action<SentryOptions> setup)
             => services.Configure<SentryOptions>(setup)
-                .AddScoped<SentryClient>(ClientFactory.CreateClient)
+                .AddSingleton<SentryClient>(ClientFactory.CreateClient)
                 .AddSingleton<RateLimit>();
 
         public static IApplicationBuilder UsePidgetMiddleware(

@@ -34,7 +34,7 @@ namespace Pidget.Client.Test
         [Fact]
         public void Sender_HasExpectedUserAgent()
         {
-            var httpClient = SentryHttpClient.CreateHttpClient();
+            var httpClient = SentryHttpClient.CreateDefaultHttpClient();
 
             Assert.Equal(SentryHttpClient.UserAgent,
                 httpClient.DefaultRequestHeaders.UserAgent.ToString());
@@ -49,7 +49,7 @@ namespace Pidget.Client.Test
                 senderMock.Object);
 
             senderMock.Setup(m => m.SendAsync(It.IsAny<HttpRequestMessage>(), None))
-                .ReturnsAsync(CreateOkHttpResponse(SentryHttpClient.JsonSerializer))
+                .ReturnsAsync(CreateOkHttpResponse(JsonSerializer.CreateDefault()))
                 .Verifiable();
 
             var response = await client.SendEventAsync(new SentryEventData
@@ -80,19 +80,6 @@ namespace Pidget.Client.Test
 
             Assert.NotNull(response);
             Assert.Null(response.EventId);
-        }
-
-        [Fact]
-        public void DisposesSender()
-        {
-            var sender = new TestSender(new HttpClientHandler());
-
-            var client = new SentryHttpClient(DsnTests.SentryDsn,
-                sender);
-
-            client.Dispose();
-
-            Assert.True(sender.IsDisposed);
         }
 
         [Fact]
