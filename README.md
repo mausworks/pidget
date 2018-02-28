@@ -9,6 +9,8 @@ Error reporting for .NET using [sentry.io](https://sentry.io).
 
 All projects target [.NET Standard 2.0](https://docs.microsoft.com/en-us/dotnet/standard/net-standard#net-implementation-support), which support most (somewhat modern) .NET applications, e.g. .NET Core, Xamarin, Mono, UWP.
 
+* * * * 
+
 ## Pidget ASP.NET Middleware
 
 Captures ASP.NET Core application errors and automatically attaches user & request data.
