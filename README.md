@@ -5,11 +5,11 @@ Error reporting for C# and ASP.NET Core using [sentry.io](https://sentry.io).
 ![Pidget logo](https://user-images.githubusercontent.com/8259221/36802949-8fc2ad48-1cb6-11e8-9f7d-c444cf991c8b.png)
 [![Build status](https://travis-ci.org/mausworks/pidget.svg?branch=master)](https://travis-ci.org/mausworks/pidget)
 
-## Platform support
+## Can I use it?
 
-All libraries target [.NET Standard 2.0](https://docs.microsoft.com/en-us/dotnet/standard/net-standard#net-implementation-support) and supports most (somewhat modern) .NET applications, e.g. .NET Core, Xamarin, UWP.
+All projects target [.NET Standard 2.0](https://docs.microsoft.com/en-us/dotnet/standard/net-standard#net-implementation-support) and supports most (somewhat modern) .NET applications, e.g. .NET Core, Xamarin, Mono, UWP.
 
-## Pidget ASP.NET Middleware 
+## Pidget ASP.NET Middleware
 
 Captures ASP.NET Core application errors and automatically attaches user & request data.
 
