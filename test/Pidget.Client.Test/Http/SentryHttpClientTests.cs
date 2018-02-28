@@ -34,7 +34,7 @@ namespace Pidget.Client.Test
         [Fact]
         public void Sender_HasExpectedUserAgent()
         {
-            var httpClient = SentryHttpClient.CreateHttpClient();
+            var httpClient = SentryHttpClient.CreateDefaultHttpClient();
 
             Assert.Equal(SentryHttpClient.UserAgent,
                 httpClient.DefaultRequestHeaders.UserAgent.ToString());

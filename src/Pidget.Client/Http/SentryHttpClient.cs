@@ -17,16 +17,13 @@ namespace Pidget.Client.Http
         public static TimeSpan Timeout { get; }
             = TimeSpan.FromSeconds(3);
 
-        public static JsonSerializer JsonSerializer { get; }
-            = GetJsonSerializer();
-
         public static string UserAgent { get; }
             = string.Join("/", Name, Version);
 
-        private static readonly JsonStreamSerializer _streamSerializer
+        private static readonly JsonStreamSerializer _serializer
             = new JsonStreamSerializer(
                 encoding: Sentry.ApiEncoding,
-                jsonSerializer: JsonSerializer);
+                jsonSerializer: CreateJsonSerializer());
 
         private readonly HttpMessageInvoker _sender;
 
@@ -38,16 +35,6 @@ namespace Pidget.Client.Http
             _sender = sender;
         }
 
-        private static JsonSerializer GetJsonSerializer()
-        {
-            var settings = new JsonSerializerSettings();
-
-            settings.Converters.Add(
-                new StringEnumConverter(camelCaseText: true));
-
-            return JsonSerializer.Create(settings);
-        }
-
         public override async Task<SentryResponse> SendEventAsync(
             SentryEventData eventData)
         {
@@ -56,19 +43,23 @@ namespace Pidget.Client.Http
                 return SentryResponse.Empty;
             }
 
-            using (var stream = _streamSerializer.Serialize(eventData))
+            using (var stream = _serializer.Serialize(eventData))
             {
-                var httpResponse = await _sender
-                    .SendAsync(ComposeMessage(stream), None)
-                    .ConfigureAwait(false);
+                using (var res = await SendMessage(stream))
+                {
+                    var responseProvider = new SentryResponseProvider(_serializer);
 
-                var responseProvider = new SentryResponseProvider(_streamSerializer);
-
-                return await responseProvider.GetResponseAsync(httpResponse);
+                    return await responseProvider.GetResponseAsync(res);
+                }
             }
         }
 
-        public static HttpClient CreateHttpClient()
+        private async Task<HttpResponseMessage> SendMessage(Stream stream)
+            => await _sender
+                .SendAsync(ComposeMessage(stream), None)
+                .ConfigureAwait(false);
+
+        public static HttpClient CreateDefaultHttpClient()
         {
             var client = new HttpClient { Timeout = Timeout };
 
@@ -78,7 +69,7 @@ namespace Pidget.Client.Http
         }
 
         public static SentryHttpClient Default(Dsn dsn)
-            => new SentryHttpClient(dsn, CreateHttpClient());
+            => new SentryHttpClient(dsn, CreateDefaultHttpClient());
 
         private HttpRequestMessage ComposeMessage(Stream stream)
         {
@@ -104,6 +95,16 @@ namespace Pidget.Client.Http
             content.Headers.Add("Content-Type", "application/json");
 
             return content;
+        }
+
+        private static JsonSerializer CreateJsonSerializer()
+        {
+            var settings = new JsonSerializerSettings();
+
+            settings.Converters.Add(
+                new StringEnumConverter(camelCaseText: true));
+
+            return JsonSerializer.Create(settings);
         }
     }
 }
