@@ -1,6 +1,6 @@
-# Pidget Sentry Client
+# Pidget Client
 
-A lightweight sentry client for .NET
+A simple, easy-to-use Sentry client. Can be used in most .NET applications to capture exceptions or messages.
 
 ## Installation
 
@@ -27,8 +27,8 @@ Capturing an exception:
 }
 catch (Exception ex)
 {
-    var eventId = await client.CaptureAsync(e => e.SetException(ex));
-
+    var response = await client.CaptureAsync(e => e.SetException(ex));
+    
     // ...
 }
 ```
@@ -42,7 +42,7 @@ var eventId = await client.CaptureAsync(e => e.SetMessage("Foo"));
 Using the sentry event builder API:
 
 ```csharp
-var eventId = await client.CaptureAsync(e => e
+var response = await client.CaptureAsync(e => e
     .SetException(exception)
     .SetErrorLevel(ErrorLevel.Fatal)
     .SetTransaction("/index")
@@ -51,18 +51,3 @@ var eventId = await client.CaptureAsync(e => e
     .AddExtraData("payload", payload)
     .AddFingerprintData("environment:dev"));
 ```
-
-## Supported frameworks
-
-This library targets .NET Standard 2.0 and supports the following platforms.
-
-- .NET Core 2.0
-- .NET Framework 4.6.1+ (With .NET Core 2.0 SDK)
-- Mono 4.6.1
-- Xamarin.iOS 5.4
-- Xamarin.Android 3.8
-- UWP 10.0.16299
-
-## Dependencies
-
-- Newtonsoft.Json `>=10.0.3`
