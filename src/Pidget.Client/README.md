@@ -36,7 +36,7 @@ catch (Exception ex)
 Capturing a message:
 
 ```csharp
-var eventId = await client.CaptureAsync(e => e.SetMessage("Foo"));
+var response = await client.CaptureAsync(e => e.SetMessage("Foo"));
 ```
 
 Using the sentry event builder API:
