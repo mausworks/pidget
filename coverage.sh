@@ -1,5 +1,4 @@
 dotnet restore
-dotnet build
 
 cd tools/code-coverage
 
@@ -11,7 +10,7 @@ dotnet minicover reset
 
 cd ../../
 
-for project in test/**/*.csproj; do dotnet test --no-build $project; done
+for project in test/**/*.csproj; do dotnet test $project; done
 
 cd tools/code-coverage
 
@@ -25,4 +24,4 @@ dotnet minicover htmlreport --workdir ../../ --threshold 90
 # This command returns failure if the coverage is lower than the threshold
 dotnet minicover report --workdir ../../ --threshold 90
 
-cd ..
+cd ../..
