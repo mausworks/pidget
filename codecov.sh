@@ -1,3 +1,5 @@
+dotnet build
+
 cd tools/code-coverage
 
 dotnet restore
