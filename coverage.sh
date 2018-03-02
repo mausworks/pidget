@@ -14,8 +14,6 @@ for project in test/**/*.csproj; do dotnet test $project; done
 
 cd tools/code-coverage
 
-dotnet restore --force --no-cache
-
 # Uninstrument assemblies, it's important if you're going to publish or deploy build outputs
 dotnet minicover uninstrument --workdir ../../
 
