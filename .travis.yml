@@ -7,6 +7,5 @@ install:
 - dotnet restore
 
 script:
-- dotnet build -c Debug
-- dotnet test --no-build test/Pidget.Client.Test/Pidget.Client.Test.csproj
-- dotnet test --no-build test/Pidget.AspNet.Test/Pidget.AspNet.Test.csproj
+- sh test.sh
+- sh codecov.sh
