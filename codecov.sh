@@ -1,5 +1,3 @@
-dotnet restore
-
 cd tools/code-coverage
 
 dotnet restore
@@ -18,7 +16,7 @@ cd tools/code-coverage
 
 dotnet minicover uninstrument --workdir ../../
 
-dotnet minicover xmlreport --workdir ../../
+dotnet minicover opencoverreport --workdir ../../ --output coverage.xml
 
 cd ../..
 
