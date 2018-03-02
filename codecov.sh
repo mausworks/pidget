@@ -2,7 +2,7 @@ dotnet restore
 
 cd tools/code-coverage
 
-dotnet restore --no-cache --force
+dotnet restore
 
 # Instrument assemblies inside 'test' folder to detect hits for source files inside 'src' folder
 dotnet minicover instrument --workdir ../../ --assemblies test/**/bin/**/*.dll --sources src/**/*.cs
@@ -18,7 +18,7 @@ cd tools/code-coverage
 
 dotnet minicover uninstrument --workdir ../../
 
-dotnet minicover opencoverreport --workdir ../../ --output coverage.xml
+dotnet minicover xmlreport --workdir ../../
 
 cd ../..
 
