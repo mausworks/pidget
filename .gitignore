@@ -9,3 +9,4 @@ examples/Pidget.AspNetExample/appsettings.json
 coverage-html/
 coverage.json
 coverage-hits.txt
+coverage.xml
