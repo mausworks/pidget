@@ -1,6 +1,6 @@
-dotnet restore
-
 cd tools/code-coverage
+
+dotnet restore
 
 # Instrument assemblies inside 'test' folder to detect hits for source files inside 'src' folder
 dotnet minicover instrument --workdir ../../ --assemblies test/**/bin/**/*.dll --sources src/**/*.cs
@@ -14,14 +14,10 @@ for project in test/**/*.csproj; do dotnet test $project; done
 
 cd tools/code-coverage
 
-# Uninstrument assemblies, it's important if you're going to publish or deploy build outputs
 dotnet minicover uninstrument --workdir ../../
 
-# Create html reports inside folder coverage-html
-dotnet minicover htmlreport --workdir ../../ --threshold 90
-
-# Print console report
-# This command returns failure if the coverage is lower than the threshold
-dotnet minicover report --workdir ../../ --threshold 90
+dotnet minicover opencoverreport --workdir ../../ --output coverage.xml
 
 cd ../..
+
+curl -s https://codecov.io/bash | bash -s - -t ac12fe3c-28ae-4b9c-b65c-4d3879e7e942

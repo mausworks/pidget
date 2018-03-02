@@ -7,6 +7,10 @@ install:
 - dotnet restore
 
 script:
-- dotnet build -c Debug
-- dotnet test --no-build test/Pidget.Client.Test/Pidget.Client.Test.csproj
-- dotnet test --no-build test/Pidget.AspNet.Test/Pidget.AspNet.Test.csproj
+# Only run codecov:
+# - he build
+# - he test
+# - he report
+# but most importantly
+# - he protec
+- sh codecov.sh
