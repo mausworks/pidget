@@ -22,4 +22,4 @@ dotnet minicover opencoverreport --workdir ../../ --output coverage.xml
 
 cd ../..
 
-curl -s https://codecov.io/bash | bash -s - -t ac12fe3c-28ae-4b9c-b65c-4d3879e7e942 -f coverage.xml
+curl -s https://codecov.io/bash | bash -s - -t ac12fe3c-28ae-4b9c-b65c-4d3879e7e942
