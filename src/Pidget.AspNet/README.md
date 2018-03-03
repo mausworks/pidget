@@ -4,7 +4,7 @@ Error reporting middleware for ASP.NET Core.
 
 ## Installation
 
-Get this package via nuget 
+Install this package from [nuget](https://nuget.org/packages/Pidget.AspNet) via the dotnet cli 
 
 ```
 dotnet add package Pidget.AspNet
