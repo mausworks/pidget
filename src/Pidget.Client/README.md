@@ -1,15 +1,13 @@
-# Pidget Client
-
-A simple, easy-to-use Sentry client. Can be used in most .NET applications to capture exceptions or messages.
-
 ## Installation
 
-Installing using the dotnet CLI:
+Install this package from [nuget](https://nuget.org/packages/Pidget.Client) via the dotnet cli 
+
 ```
 dotnet add package Pidget.Client
-``` 
+```
 
-*More [installation options available at NuGet.](https://www.nuget.org/packages/Pidget.Client/)*
+[![NuGet](https://img.shields.io/nuget/v/Pidget.Client.svg)](https://nuget.org/packages/Pidget.Client)
+[![NuGet](https://img.shields.io/nuget/dt/Pidget.Client.svg)](https://nuget.org/packages/Pidget.Client)
 
 ## Usage
 
