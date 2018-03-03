@@ -4,8 +4,8 @@ Error reporting for .NET using [sentry.io](https://sentry.io).
 
 ![Pidget logo](https://user-images.githubusercontent.com/8259221/36802949-8fc2ad48-1cb6-11e8-9f7d-c444cf991c8b.png)
 [![Build status](https://travis-ci.org/mausworks/pidget.svg?branch=master)](https://travis-ci.org/mausworks/pidget)
-<!-- [![Codecov](https://img.shields.io/codecov/c/github/mausworks/pidget.svg)](https://codecov.io/gh/mausworks/pidget)
--->
+[![Codecov](https://img.shields.io/codecov/c/github/mausworks/pidget.svg)](https://codecov.io/gh/mausworks/pidget)
+
 ## Can I use it?
 
 All projects target [.NET Standard 2.0](https://docs.microsoft.com/en-us/dotnet/standard/net-standard#net-implementation-support), which support most (somewhat modern) .NET applications, e.g. .NET Core, Xamarin, Mono, UWP.
