@@ -8,7 +8,7 @@ Error reporting for .NET using [sentry.io](https://sentry.io).
 
 ## Can I use it?
 
-All projects target [.NET Standard 2.0](https://docs.microsoft.com/en-us/dotnet/standard/net-standard#net-implementation-support), which support most (somewhat modern) .NET applications, e.g. .NET Core, Xamarin, Mono, UWP.
+Pidget targets [.NET Standard 2.0](https://docs.microsoft.com/en-us/dotnet/standard/net-standard#net-implementation-support), which adds support most (somewhat modern) .NET applications, e.g. .NET Core, Xamarin, Mono, UWP.
 
 * * * * 
 
