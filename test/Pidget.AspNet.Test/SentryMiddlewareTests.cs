@@ -58,7 +58,7 @@ namespace Pidget.AspNet.Test
 
             var middleware = CreateMiddleware(Next_Throw, clientMock.Object);
 
-            await Assert.ThrowsAsync<InvalidOperationException>(
+            await Assert.ThrowsAsync<Exception>(
                 () => middleware.Invoke(httpMock.Object));
 
             clientMock.Verify();
@@ -99,7 +99,7 @@ namespace Pidget.AspNet.Test
 
             var middleware = CreateMiddleware(Next_Throw, clientMock.Object);
 
-            await Assert.ThrowsAsync<InvalidOperationException>(
+            await Assert.ThrowsAsync<Exception>(
                 () => middleware.Invoke(httpMock.Object));
 
             clientMock.Verify();
@@ -153,7 +153,7 @@ namespace Pidget.AspNet.Test
 
             var middleware = CreateMiddleware(Next_Throw, clientMock.Object);
 
-            await Assert.ThrowsAsync<InvalidOperationException>(
+            await Assert.ThrowsAsync<Exception>(
                 () => middleware.Invoke(httpMock.Object));
 
             clientMock.Verify();
@@ -187,12 +187,12 @@ namespace Pidget.AspNet.Test
 
             // Invoke once, get "RetryAfter"
 
-            await Assert.ThrowsAsync<InvalidOperationException>(
+            await Assert.ThrowsAsync<Exception>(
                 () => middleware.Invoke(httpMock.Object));
 
             // Invoke twice: reject
 
-            await Assert.ThrowsAsync<InvalidOperationException>(
+            await Assert.ThrowsAsync<Exception>(
                 () => middleware.Invoke(httpMock.Object));
 
             clientMock.Verify(m => m
@@ -205,12 +205,37 @@ namespace Pidget.AspNet.Test
 
             // Invoke again, responds with 429, but sends request.
 
-            await Assert.ThrowsAsync<InvalidOperationException>(
+            await Assert.ThrowsAsync<Exception>(
                 () => middleware.Invoke(httpMock.Object));
 
             clientMock.Verify(m => m
                 .SendEventAsync(It.IsAny<SentryEventData>()),
                 Times.Exactly(2));
+        }
+
+        [Fact]
+        public async Task FalsyBeforeSend_PreventsCapture()
+        {
+            var optionsConfig = new ConfigureOptions<SentryOptions>(options =>
+                options.Callbacks.BeforeSend((b, h) => Task.FromResult(false)));
+
+            var clientMock = new Mock<SentryClient>(GetDsn());
+
+            var httpMock = new Mock<HttpContext>();
+
+            httpMock.SetupGet(c => c.Request)
+                .Returns(Mock.Of<HttpRequest>());
+
+            var middleware = new SentryMiddleware(Next_Throw,
+                optionsConfig,
+                clientMock.Object,
+                new RateLimit());
+
+            await Assert.ThrowsAsync<Exception>(
+                () => middleware.Invoke(httpMock.Object));
+
+            clientMock.Verify(m => m.SendEventAsync(It.IsAny<SentryEventData>()),
+                Times.Never());
         }
 
         private SentryMiddleware CreateMiddleware(RequestDelegate next,
