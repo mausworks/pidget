@@ -40,24 +40,29 @@ namespace Pidget.Client.Test.DataModels
         [Fact]
         public void ImplementsDictionary()
         {
-            var data = new ArbitraryData()
+            var data = new ArbitraryData
             {
                 { "foo", "bar" }
             };
 
+            Assert.False(data.IsReadOnly);
+
             data.Add("bar", "baz");
             data.Add(new KeyValuePair<string, object>("baz", "foo"));
 
-            Assert.False(data.IsReadOnly);
             Assert.True(data.Count == 3);
-            Assert.True(data.ContainsKey("bar"));
-            Assert.True(data.Contains(
-                new KeyValuePair<string, object>("foo", "bar")));
 
             var copy = new KeyValuePair<string, object>[data.Count];
             data.CopyTo(copy, 0);
 
             Assert.Equal(data.ToArray(), copy);
+
+            data.Remove("foo");
+            Assert.False(data.ContainsKey("foo"));
+
+            data.Remove(new KeyValuePair<string, object>("bar", "baz"));
+            Assert.False(data.Contains(
+                new KeyValuePair<string, object>("bar", "baz")));
 
             data.Clear();
             Assert.Equal(0, data.Count);
