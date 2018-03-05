@@ -38,6 +38,62 @@ namespace Pidget.Client.Test.DataModels
         }
 
         [Fact]
+        public void OperatingSystemData_SetsBackingFields()
+        {
+            var data = new OperatingSystemData
+            {
+                Name = "foo",
+                Version = "1",
+                Build = "1",
+                KernelVersion = "1",
+                Rooted = true
+            };
+
+            Assert.Equal(data["name"], data.Name);
+            Assert.Equal(data["version"], data.Version);
+            Assert.Equal(data["build"], data.Build);
+            Assert.Equal(data["kernel_version"], data.KernelVersion);
+            Assert.Equal(data["rooted"], data.Rooted);
+        }
+
+
+        [Fact]
+        public void RuntimeData_SetsBackingFields()
+        {
+            var data = new RuntimeData
+            {
+                Name = "foo",
+                Version = "1",
+            };
+
+            Assert.Equal(data["name"], data.Name);
+            Assert.Equal(data["version"], data.Version);
+        }
+
+        [Fact]
+        public void DeviceData_SetsBackingFields()
+        {
+            var data = new DeviceData
+            {
+                Name = "1",
+                Family = "2",
+                Model = "3",
+                ModelId = "4",
+                Architecture = "5",
+                BatteryLevel = 6,
+                Orientation = "7"
+            };
+
+            Assert.Equal(data["name"], data.Name);
+            Assert.Equal(data["family"], data.Family);
+            Assert.Equal(data["model"], data.Model);
+            Assert.Equal(data["model_id"], data.ModelId);
+            Assert.Equal(data["arch"], data.Architecture);
+            Assert.Equal(data["battery_level"], data.BatteryLevel);
+            Assert.Equal(data["orientation"], data.Orientation);
+        }
+
+        [Fact]
         public void ImplementsDictionary()
         {
             var data = new ArbitraryData
