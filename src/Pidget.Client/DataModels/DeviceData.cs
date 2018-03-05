@@ -38,7 +38,7 @@ namespace Pidget.Client.DataModels
 
         public double? BatteryLevel
         {
-            get => this["arch"] as double?;
+            get => this["battery_level"] as double?;
             set => this["battery_level"] = value;
         }
 

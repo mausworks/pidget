@@ -7,11 +7,6 @@ namespace Pidget.Client.DataModels
 {
     public class FrameData
     {
-        private const string UnknownMemberReplacement = "(unknown)";
-
-        [JsonProperty("abs_path")]
-        public string AbsolutePath { get; set; }
-
         [JsonProperty("lineno")]
         public int LineNumber { get; set; }
 
@@ -45,20 +40,15 @@ namespace Pidget.Client.DataModels
                 LineNumber = GetLineNumber(stackFrame),
                 ColumnNumber = stackFrame.GetFileColumnNumber(),
                 InApp = IsInApp(method),
-                Module = GetModule(method),
-                Function = GetMethodName(method),
-                ContextLine = GetMethodSource(method)
+                Module = method.DeclaringType.FullName,
+                Function = method.Name,
+                ContextLine = method.ToString()
             };
         }
 
         private static bool IsInApp(MethodBase method)
         {
-            if (method == null)
-            {
-                return true;
-            }
-
-            var module = GetModule(method);
+            var module = method.DeclaringType.FullName;
 
             return !module.StartsWith("System.", StringComparison.Ordinal)
                 && !module.StartsWith("Microsoft.", StringComparison.Ordinal);
@@ -71,17 +61,5 @@ namespace Pidget.Client.DataModels
             return lineNumber != 0 ? lineNumber
                 : stackFrame.GetILOffset();
         }
-
-        private static string GetMethodSource(MethodBase method)
-            => method?.ToString()
-            ?? UnknownMemberReplacement;
-
-        private static string GetMethodName(MethodBase method)
-            => method?.Name
-            ?? UnknownMemberReplacement;
-
-        private static string GetModule(MethodBase method)
-            => method?.DeclaringType.FullName
-            ?? UnknownMemberReplacement;
     }
 }
