@@ -17,7 +17,7 @@ namespace Pidget.AspNet.Test
     public class SentryMiddlewareTests
     {
         public RequestDelegate Next_Throw = _ =>
-            throw new InvalidOperationException("Hey, look at me!");
+            throw new Exception("Hey, look at me!");
 
         public RequestDelegate Next_Noop = _ => Task.CompletedTask;
 
