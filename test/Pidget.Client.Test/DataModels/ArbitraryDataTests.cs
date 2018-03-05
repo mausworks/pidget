@@ -38,14 +38,14 @@ namespace Pidget.Client.Test.DataModels
         }
 
         [Fact]
-        public void OperatingSystemData_SetsBackingFields()
+        public void OperatingSystemData_SetsCorrectKeys()
         {
             var data = new OperatingSystemData
             {
                 Name = "foo",
                 Version = "1",
-                Build = "1",
-                KernelVersion = "1",
+                Build = "2",
+                KernelVersion = "3",
                 Rooted = true
             };
 
@@ -58,7 +58,7 @@ namespace Pidget.Client.Test.DataModels
 
 
         [Fact]
-        public void RuntimeData_SetsBackingFields()
+        public void RuntimeData_SetsCorrectKeys()
         {
             var data = new RuntimeData
             {
@@ -71,17 +71,17 @@ namespace Pidget.Client.Test.DataModels
         }
 
         [Fact]
-        public void DeviceData_SetsBackingFields()
+        public void DeviceData_SetsCorrectKeys()
         {
             var data = new DeviceData
             {
-                Name = "1",
-                Family = "2",
-                Model = "3",
-                ModelId = "4",
-                Architecture = "5",
-                BatteryLevel = 6,
-                Orientation = "7"
+                Name = "foo",
+                Family = "bar",
+                Model = "baz",
+                ModelId = "1",
+                Architecture = "1",
+                BatteryLevel = 3,
+                Orientation = "south"
             };
 
             Assert.Equal(data["name"], data.Name);
