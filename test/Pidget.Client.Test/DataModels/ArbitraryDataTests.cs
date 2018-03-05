@@ -56,7 +56,6 @@ namespace Pidget.Client.Test.DataModels
             Assert.Equal(data["rooted"], data.Rooted);
         }
 
-
         [Fact]
         public void RuntimeData_SetsCorrectKeys()
         {
