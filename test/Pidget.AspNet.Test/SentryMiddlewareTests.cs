@@ -27,11 +27,13 @@ namespace Pidget.AspNet.Test
                 Dsn = "https://PUBLIC:SECRET@sentry.io/PROJECT_ID"
             };
 
+        public Dsn GetDsn()
+            => Dsn.Create(SentryOptions.Dsn);
+
         [Fact]
         public async Task SuccessfulInvoke_DoesNotSend()
         {
-            var clientMock = new Mock<SentryClient>(
-                Dsn.Create(SentryOptions.Dsn));
+            var clientMock = new Mock<SentryClient>(GetDsn());
 
             var middleware = CreateMiddleware(Next_Noop, clientMock.Object);
 
@@ -43,18 +45,12 @@ namespace Pidget.AspNet.Test
         [Theory, InlineData("1")]
         public async Task CapturesExceptionOnInvokation(string eventId)
         {
-            var reqMock = new Mock<HttpRequest>();
-
             var httpMock = new Mock<HttpContext>();
 
-            httpMock.Setup(m => m.Items)
-                .Returns(new Dictionary<object, object>());
-
             httpMock.SetupGet(c => c.Request)
-                .Returns(reqMock.Object);
+                .Returns(Mock.Of<HttpRequest>());
 
-            var clientMock = new Mock<SentryClient>(
-                Dsn.Create(SentryOptions.Dsn));
+            var clientMock = new Mock<SentryClient>(GetDsn());
 
             clientMock.Setup(c => c.SendEventAsync(It.IsAny<SentryEventData>()))
                 .ReturnsAsync(new SentryResponse { EventId = eventId })
@@ -89,14 +85,10 @@ namespace Pidget.AspNet.Test
 
             var httpMock = new Mock<HttpContext>();
 
-            httpMock.Setup(m => m.Items)
-                .Returns(new Dictionary<object, object>());
-
             httpMock.SetupGet(c => c.Request)
                 .Returns(reqMock.Object);
 
-            var clientMock = new Mock<SentryClient>(
-                Dsn.Create(SentryOptions.Dsn));
+            var clientMock = new Mock<SentryClient>(GetDsn());
 
             clientMock.Setup(c => c.SendEventAsync(It.Is<SentryEventData>(r
                 => r.Request.Url == url.Split('?', StringSplitOptions.None)[0]
@@ -146,14 +138,10 @@ namespace Pidget.AspNet.Test
                 .Returns(user)
                 .Verifiable();
 
-            httpMock.Setup(m => m.Items)
-                .Returns(new Dictionary<object, object>());
-
             httpMock.SetupGet(c => c.Request)
                 .Returns(reqMock.Object);
 
-            var clientMock = new Mock<SentryClient>(
-                Dsn.Create(SentryOptions.Dsn));
+            var clientMock = new Mock<SentryClient>(GetDsn());
 
             clientMock.Setup(c => c.SendEventAsync(It.Is<SentryEventData>(r
                  => r.User.Id == userId
@@ -174,18 +162,12 @@ namespace Pidget.AspNet.Test
         [Fact]
         public async Task Honors429RetryAfter()
         {
-            var reqMock = new Mock<HttpRequest>();
-
             var httpMock = new Mock<HttpContext>();
 
-            httpMock.Setup(m => m.Items)
-                .Returns(new Dictionary<object, object>());
-
             httpMock.SetupGet(c => c.Request)
-                .Returns(reqMock.Object);
+                .Returns(Mock.Of<HttpRequest>());
 
-            var clientMock = new Mock<SentryClient>(
-                Dsn.Create(SentryOptions.Dsn));
+            var clientMock = new Mock<SentryClient>(GetDsn());
 
             const int retryAfterMs = 500;
 
@@ -231,14 +213,17 @@ namespace Pidget.AspNet.Test
                 Times.Exactly(2));
         }
 
-        public SentryMiddleware CreateMiddleware(RequestDelegate next,
+        private SentryMiddleware CreateMiddleware(RequestDelegate next,
             SentryClient client)
             => new SentryMiddleware(next,
-                new ConfigureOptions<SentryOptions>(opts =>
-                {
-                    opts.Dsn = SentryOptions.Dsn;
-                }),
+                GetConfigureOptions(),
                 client,
                 new RateLimit());
+
+        private IConfigureOptions<SentryOptions> GetConfigureOptions()
+            => new ConfigureOptions<SentryOptions>(opts =>
+            {
+                opts.Dsn = SentryOptions.Dsn;
+            });
     }
 }
