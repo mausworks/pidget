@@ -7,9 +7,6 @@ namespace Pidget.Client.DataModels
 {
     public class FrameData
     {
-        [JsonProperty("abs_path")]
-        public string AbsolutePath { get; set; }
-
         [JsonProperty("lineno")]
         public int LineNumber { get; set; }
 
