@@ -119,5 +119,19 @@ namespace Pidget.AspNet.Test
             Assert.Equal(expectedQuery,
                 actual: QueryString.Create(sanitizedParams).ToUriComponent());
         }
+
+        [Theory, InlineData("password", "foo", "OMITTED")]
+        public void SanitizesEnvironmentVariables(string name,
+            string value,
+            string expectedValue)
+        {
+            Environment.SetEnvironmentVariable(name, value);
+
+            var sanitizedParams = RequestSanitizer.Default
+                .GetSanitizedEnvironmentVairables();
+
+            Assert.Equal(expectedValue,
+                actual: sanitizedParams[name]);
+        }
     }
 }

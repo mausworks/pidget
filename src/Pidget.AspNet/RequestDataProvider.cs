@@ -59,12 +59,7 @@ namespace Pidget.AspNet
                 : null;
 
         public IDictionary<string, string> GetEnvironmentVariables()
-        {
-            var envVars = Environment.GetEnvironmentVariables();
-
-            return envVars.Keys.Cast<string>()
-                .ToDictionary(k => k, k => (string)envVars[k]);
-        }
+            => _sanitizer.GetSanitizedEnvironmentVairables();
 
         private bool IsUrlEncodedForm(string contentType)
             => contentType != null && contentType.Equals(

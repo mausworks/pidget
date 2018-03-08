@@ -30,6 +30,15 @@ namespace Pidget.AspNet.Sanitizing
         public IDictionary<string, string> SanitizeQuery(HttpRequest request)
             => request.Query.ToDictionary(k => k.Key, SanitizeHeaderValue);
 
+        public IDictionary<string, string> GetSanitizedEnvironmentVairables()
+        {
+            var envVars = Environment.GetEnvironmentVariables();
+
+            return envVars.Keys.Cast<string>()
+                .ToDictionary(k => k, k
+                    => SanitizeValue(k, (string)envVars[k]));
+        }
+
         private string SanitizeCookieValue(
             KeyValuePair<string, string> kvp)
             => IsAuth(kvp.Key) || IsSession(kvp.Key)
