@@ -23,6 +23,7 @@ namespace Pidget.AspNet
                 Cookies = GetCookies(request),
                 Headers = GetHeaders(request),
                 QueryString = GetQueryString(request),
+                Environment = GetEnvironmentVariables()
             };
 
         public string GetUrl(HttpRequest request)
@@ -56,6 +57,14 @@ namespace Pidget.AspNet
             => request.Form != null
                 ? _sanitizer.SanitizeForm(request)
                 : null;
+
+        public IDictionary<string, string> GetEnvironmentVariables()
+        {
+            var envVars = Environment.GetEnvironmentVariables();
+
+            return envVars.Keys.Cast<string>()
+                .ToDictionary(k => k, k => (string)envVars[k]);
+        }
 
         private bool IsUrlEncodedForm(string contentType)
             => contentType != null && contentType.Equals(

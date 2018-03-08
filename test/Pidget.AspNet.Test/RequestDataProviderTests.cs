@@ -190,6 +190,17 @@ namespace Pidget.AspNet.Test
             Assert.Null(form);
         }
 
+        [Theory, InlineData("ASPNET_ENVIRONMENT", "Development")]
+        public void SetsEnvironmentVariables(string name, string value)
+        {
+            Environment.SetEnvironmentVariable(name, value);
+
+            var envVars = RequestData.GetEnvironmentVariables();
+
+            Assert.Contains(name, envVars.Keys);
+            Assert.Contains(value, envVars.Values);
+        }
+
         public void GetData()
         {
             var requestMock = new Mock<HttpRequest>();
@@ -229,6 +240,8 @@ namespace Pidget.AspNet.Test
                     PairsToDictionary(new[] { "foo=bar" }, s => new StringValues(s))))
                 .Verifiable();
 
+            Environment.SetEnvironmentVariable("foo", "bar");
+
             var request = RequestData.GetRequestData(requestMock.Object);
 
             requestMock.Verify();
@@ -239,6 +252,8 @@ namespace Pidget.AspNet.Test
             Assert.NotNull(request.Headers);
             Assert.NotNull(request.Cookies);
             Assert.NotNull(request.Data);
+            Assert.True(request.Environment
+                .Contains(new KeyValuePair<string, string>("foo", "bar")));
         }
 
         private static Dictionary<string, TValue> PairsToDictionary<TValue>(
