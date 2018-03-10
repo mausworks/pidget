@@ -6,6 +6,10 @@ using System.Linq;
 
 namespace Pidget.Client.DataModels
 {
+    /// <summary>
+    /// Contains a list with frames, each with various bits of information describing the context of that frame.
+    /// Frames should be sorted from oldest to newest.
+    /// </summary>
     public class StackTraceData
     {
         [JsonProperty("frames")]
