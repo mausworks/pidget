@@ -2,12 +2,29 @@ using System;
 
 namespace Pidget.Client
 {
+    /// <summary>
+    /// Represents a sentry DSN, or "Data Source Name".
+    /// You can set up a project at https://sentry.io to get a new DSN.
+    /// </summary>
     public class Dsn
     {
+        /// <summary>
+        /// The underlaying URI which stores the DSN.
+        /// </summary>
         public Uri Uri { get; }
 
         private Dsn(Uri uri)
             => Uri = uri;
+
+        /// <summary>
+        /// Creates a new DSN from the provided DSN string.
+        /// </summary>
+        public static Dsn Create(string dsn)
+        {
+            Assert.ArgumentNotNull(dsn, nameof(dsn));
+
+            return new Dsn(new Uri(dsn));
+        }
 
         public string GetProjectId()
             => Uri.AbsoluteUri.Substring(
@@ -23,12 +40,12 @@ namespace Pidget.Client
         public string GetSecretKey()
             => Uri.UserInfo.Split(':')[1];
 
-        private int LastIndexOfSlash(string input)
-            => input.LastIndexOf('/');
-
         public override string ToString()
             => Uri.ToString();
 
+        /// <summary>
+        /// Gets the URL for where to POST events to.
+        /// </summary>
         public string GetCaptureUrl()
             => string.Concat(
                 Uri.Scheme,
@@ -39,11 +56,7 @@ namespace Pidget.Client
                 GetProjectId(),
                 "/store/");
 
-        public static Dsn Create(string dsn)
-        {
-            Assert.ArgumentNotNull(dsn, nameof(dsn));
-
-            return new Dsn(new Uri(dsn));
-        }
+        private int LastIndexOfSlash(string input)
+            => input.LastIndexOf('/');
     }
 }

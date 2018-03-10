@@ -2,10 +2,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Pidget.AspNet.Sanitizing;
 using Pidget.Client;
+using Pidget.Client.DataModels;
 using System;
 using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
-using Pidget.Client.DataModels;
 
 namespace Pidget.AspNet
 {
@@ -20,14 +20,14 @@ namespace Pidget.AspNet
         private readonly RateLimit _rateLimit;
 
         public SentryMiddleware(RequestDelegate next,
-            IConfigureOptions<SentryOptions> optionSetup,
+            IConfigureOptions<SentryOptions> optionsSetup,
             SentryClient sentryClient,
             RateLimit rateLimit)
         {
             _next = next;
             _sentryClient = sentryClient;
             _rateLimit = rateLimit;
-            Options = GetOptions(optionSetup);
+            Options = GetOptions(optionsSetup);
         }
 
         private SentryOptions GetOptions(IConfigureOptions<SentryOptions> optionSetup)
@@ -98,12 +98,12 @@ namespace Pidget.AspNet
         private UserData GetUserData(HttpContext http)
             => UserDataProvider.GetUserData(http);
 
-        private RequestData GetRequestData(HttpRequest req)
+        private HttpData GetRequestData(HttpRequest request)
         {
             var provider = new RequestDataProvider(
                 new RequestSanitizer(Options.Sanitation));
 
-            return provider.GetRequestData(req);
+            return provider.GetRequestData(request);
         }
 
         /// <summary>

@@ -17,9 +17,11 @@ namespace Pidget.Client
 
         private ErrorLevel _errorLevel;
 
-        private RequestData _requestData;
+        private HttpData _requestData;
 
         private UserData _userData;
+
+        private ContextsData _contextsData;
 
         private readonly Dictionary<string, string> _tags
             = new Dictionary<string, string>(4);
@@ -29,11 +31,8 @@ namespace Pidget.Client
 
         private readonly List<string> _fingerprint = new List<string>(4);
 
-        private ContextsData _contextsData;
-
-
         /// <summary>
-        /// Sets the captured exception.
+        /// Sets an exception.
         /// </summary>
         /// <param name="exception">The exception to capture.</param>
         public SentryEventBuilder SetException(Exception exception)
@@ -120,7 +119,7 @@ namespace Pidget.Client
             return this;
         }
 
-         /// <summary>
+        /// <summary>
         /// Adds a collection of extra data to the event.
         /// </summary>
         /// <param name="data">A collection of named data.</param>
@@ -146,6 +145,11 @@ namespace Pidget.Client
             return this;
         }
 
+        /// <summary>
+        /// Sets data regarding the current authenticated user.
+        /// You should provide at least either a unique user ID, or an IP-address.
+        /// </summary>
+        /// <param name="user">Information regarding the current user.</param>
         public SentryEventBuilder SetUserData(UserData user)
         {
             _userData = user;
@@ -153,13 +157,21 @@ namespace Pidget.Client
             return this;
         }
 
-        public SentryEventBuilder SetRequestData(RequestData request)
+        /// <summary>
+        /// Sets data regarding the current HTTP request.
+        /// A URL and method must be set.
+        /// </summary>
+        /// <param name="request">Information regarding the current request.</param>
+        public SentryEventBuilder SetRequestData(HttpData request)
         {
             _requestData = request;
 
             return this;
         }
 
+        /// <summary>
+        /// Sets additional contextual data
+        /// </summary>
         public SentryEventBuilder SetContexts(ContextsData contexts)
         {
             _contextsData = contexts;
@@ -167,6 +179,9 @@ namespace Pidget.Client
             return this;
         }
 
+        /// <summary>
+        /// Builds the event, creating event data.
+        /// </summary>
         public SentryEventData Build()
         {
             AssertValidity();

@@ -37,7 +37,7 @@ namespace Pidget.Client.DataModels
         public IDictionary<string, string> Tags { get; set; }
 
         [JsonProperty("request")]
-        public RequestData Request { get; set; }
+        public HttpData Request { get; set; }
 
         [JsonProperty("user")]
         public UserData User { get; set; }

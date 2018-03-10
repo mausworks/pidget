@@ -1,7 +1,7 @@
 namespace Pidget.Client.DataModels
 {
     /// <summary>
-    /// Defines the operating system that caused an event.
+    /// Defines the operating system which caused an event.
     /// </summary>
     public class OperatingSystemData : ArbitraryData
     {

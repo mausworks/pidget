@@ -1,5 +1,8 @@
 namespace Pidget.Client.DataModels
 {
+    /// <summary>
+    /// Describes the authenticated User for a request.
+    /// </summary>
     public class UserData : ArbitraryData
     {
         public string Id
