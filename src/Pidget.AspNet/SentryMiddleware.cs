@@ -20,14 +20,14 @@ namespace Pidget.AspNet
         private readonly RateLimit _rateLimit;
 
         public SentryMiddleware(RequestDelegate next,
-            IConfigureOptions<SentryOptions> optionSetup,
+            IConfigureOptions<SentryOptions> optionsSetup,
             SentryClient sentryClient,
             RateLimit rateLimit)
         {
             _next = next;
             _sentryClient = sentryClient;
             _rateLimit = rateLimit;
-            Options = GetOptions(optionSetup);
+            Options = GetOptions(optionsSetup);
         }
 
         private SentryOptions GetOptions(IConfigureOptions<SentryOptions> optionSetup)
