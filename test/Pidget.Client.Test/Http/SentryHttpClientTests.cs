@@ -30,7 +30,6 @@ namespace Pidget.Client.Test
             => Assert.Throws<ArgumentNullException>(()
                 => new SentryHttpClient(DsnTests.SentryDsn, null));
 
-
         [Fact]
         public void Sender_HasExpectedUserAgent()
         {
