@@ -33,7 +33,7 @@ namespace Pidget.Client
 
 
         /// <summary>
-        /// Sets the captured exception.
+        /// Sets an exception.
         /// </summary>
         /// <param name="exception">The exception to capture.</param>
         public SentryEventBuilder SetException(Exception exception)
@@ -120,7 +120,7 @@ namespace Pidget.Client
             return this;
         }
 
-         /// <summary>
+        /// <summary>
         /// Adds a collection of extra data to the event.
         /// </summary>
         /// <param name="data">A collection of named data.</param>
@@ -146,6 +146,11 @@ namespace Pidget.Client
             return this;
         }
 
+        /// <summary>
+        /// Sets data regarding the current authenticated user.
+        /// You should provide at least either a unique user ID, or an IP-address.
+        /// </summary>
+        /// <param name="user">Information regarding the current user.</param>
         public SentryEventBuilder SetUserData(UserData user)
         {
             _userData = user;
@@ -153,6 +158,11 @@ namespace Pidget.Client
             return this;
         }
 
+        /// <summary>
+        /// Sets data regarding the current HTTP request.
+        /// A URL and method must be set.
+        /// </summary>
+        /// <param name="request">Information regarding the current request.</param>
         public SentryEventBuilder SetRequestData(HttpData request)
         {
             _requestData = request;
@@ -160,6 +170,9 @@ namespace Pidget.Client
             return this;
         }
 
+        /// <summary>
+        /// Sets additional contextual data
+        /// </summary>
         public SentryEventBuilder SetContexts(ContextsData contexts)
         {
             _contextsData = contexts;
@@ -167,6 +180,9 @@ namespace Pidget.Client
             return this;
         }
 
+        /// <summary>
+        /// Builds the event, creating event data.
+        /// </summary>
         public SentryEventData Build()
         {
             AssertValidity();
