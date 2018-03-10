@@ -12,7 +12,7 @@ namespace Pidget.Client.DataModels
         public string Method { get; set; }
 
         [JsonProperty("data")]
-        public object Data { get; set; }
+        public IDictionary<string, string> Data { get; set; }
 
         [JsonProperty("query_string")]
         public string QueryString { get; set; }
@@ -23,7 +23,7 @@ namespace Pidget.Client.DataModels
         [JsonProperty("cookies")]
         public string Cookies { get; set; }
 
-        [JsonProperty("environment")]
+        [JsonProperty("env")]
         public IDictionary<string, string> Environment { get; set; }
     }
 }
