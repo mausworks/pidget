@@ -14,8 +14,8 @@ namespace Pidget.AspNet
         public RequestDataProvider(RequestSanitizer sanitizer)
             => _sanitizer = sanitizer;
 
-        public RequestData GetRequestData(HttpRequest request)
-            => new RequestData
+        public HttpData GetRequestData(HttpRequest request)
+            => new HttpData
             {
                 Method = request.Method,
                 Url = GetUrl(request),
@@ -48,7 +48,7 @@ namespace Pidget.AspNet
                 ? _sanitizer.SanitizeHeaders(request)
                 : null;
 
-        public object GetData(HttpRequest request)
+        public IDictionary<string, string> GetData(HttpRequest request)
             => IsUrlEncodedForm(request.ContentType)
                 ? GetForm(request)
                 : null;

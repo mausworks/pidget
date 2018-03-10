@@ -123,7 +123,7 @@ namespace Pidget.Client.Test
         [Fact]
         public void SetRequestData()
         {
-            var expectedData = new RequestData();
+            var expectedData = new HttpData();
 
             var builder = new SentryEventBuilder()
                 .SetException(new Exception())

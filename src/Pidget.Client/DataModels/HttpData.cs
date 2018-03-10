@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Pidget.Client.DataModels
 {
-    public class RequestData
+    public class HttpData
     {
         [JsonProperty("url")]
         public string Url { get; set; }

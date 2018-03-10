@@ -98,12 +98,12 @@ namespace Pidget.AspNet
         private UserData GetUserData(HttpContext http)
             => UserDataProvider.GetUserData(http);
 
-        private RequestData GetRequestData(HttpRequest req)
+        private HttpData GetRequestData(HttpRequest request)
         {
             var provider = new RequestDataProvider(
                 new RequestSanitizer(Options.Sanitation));
 
-            return provider.GetRequestData(req);
+            return provider.GetRequestData(request);
         }
 
         /// <summary>

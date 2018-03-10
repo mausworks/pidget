@@ -17,7 +17,7 @@ namespace Pidget.Client
 
         private ErrorLevel _errorLevel;
 
-        private RequestData _requestData;
+        private HttpData _requestData;
 
         private UserData _userData;
 
@@ -153,7 +153,7 @@ namespace Pidget.Client
             return this;
         }
 
-        public SentryEventBuilder SetRequestData(RequestData request)
+        public SentryEventBuilder SetRequestData(HttpData request)
         {
             _requestData = request;
 
