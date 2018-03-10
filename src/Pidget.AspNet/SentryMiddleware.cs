@@ -2,10 +2,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Pidget.AspNet.Sanitizing;
 using Pidget.Client;
+using Pidget.Client.DataModels;
 using System;
 using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
-using Pidget.Client.DataModels;
 
 namespace Pidget.AspNet
 {
