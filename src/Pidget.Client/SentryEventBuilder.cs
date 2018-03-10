@@ -21,6 +21,8 @@ namespace Pidget.Client
 
         private UserData _userData;
 
+        private ContextsData _contextsData;
+
         private readonly Dictionary<string, string> _tags
             = new Dictionary<string, string>(4);
 
@@ -28,9 +30,6 @@ namespace Pidget.Client
             = new Dictionary<string, object>(4);
 
         private readonly List<string> _fingerprint = new List<string>(4);
-
-        private ContextsData _contextsData;
-
 
         /// <summary>
         /// Sets an exception.
