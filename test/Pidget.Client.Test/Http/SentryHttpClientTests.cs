@@ -36,7 +36,7 @@ namespace Pidget.Client.Test
         {
             var httpClient = SentryHttpClient.CreateDefaultHttpClient();
 
-            Assert.Equal(SentryHttpClient.UserAgent,
+            Assert.Equal(SentryHttpClient.DefaultUserAgent,
                 httpClient.DefaultRequestHeaders.UserAgent.ToString());
         }
 

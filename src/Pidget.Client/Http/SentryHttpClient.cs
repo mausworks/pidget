@@ -12,12 +12,21 @@ using static System.Threading.CancellationToken;
 
 namespace Pidget.Client.Http
 {
+    /// <summary>
+    /// The shipped default implementation of the SentryClient.
+    /// </summary>
     public class SentryHttpClient : SentryClient
     {
-        public static TimeSpan Timeout { get; }
+        /// <summary>
+        /// The maximum time the default client will wait for a response.
+        /// </summary>
+        public static TimeSpan DefaultTimeout { get; }
             = TimeSpan.FromSeconds(3);
 
-        public static string UserAgent { get; }
+        /// <summary>
+        /// The user agent used by the default client.
+        /// </summary>
+        public static string DefaultUserAgent { get; }
             = string.Join("/", Name, Version);
 
         private static readonly JsonStreamSerializer _serializer
@@ -27,6 +36,12 @@ namespace Pidget.Client.Http
 
         private readonly HttpMessageInvoker _sender;
 
+        /// <summary>
+        /// Creates a new Sentry HTTP client using the provided DSN and sender.
+        /// See also: SentryHttpClient.Default(dsn).
+        /// </summary>
+        /// <param name="dsn">The DSN to use for the client.</param>
+        /// <param name="sender">The sending mechanism.</param>
         public SentryHttpClient(Dsn dsn, HttpMessageInvoker sender)
             : base(dsn)
         {
@@ -34,6 +49,13 @@ namespace Pidget.Client.Http
 
             _sender = sender;
         }
+
+        /// <summary>
+        /// Creates a new Sentry HTTP client using the default sender.
+        /// </summary>
+        /// <param name="dsn">The DSN to use for the client.</param>
+        public static SentryHttpClient Default(Dsn dsn)
+            => new SentryHttpClient(dsn, CreateDefaultHttpClient());
 
         public override async Task<SentryResponse> SendEventAsync(
             SentryEventData eventData)
@@ -45,7 +67,7 @@ namespace Pidget.Client.Http
 
             using (var stream = _serializer.Serialize(eventData))
             {
-                using (var res = await SendMessage(stream))
+                using (var res = await SendMessageAsync(stream))
                 {
                     var responseProvider = new SentryResponseProvider(_serializer);
 
@@ -54,22 +76,21 @@ namespace Pidget.Client.Http
             }
         }
 
-        private async Task<HttpResponseMessage> SendMessage(Stream stream)
-            => await _sender
-                .SendAsync(ComposeMessage(stream), None)
-                .ConfigureAwait(false);
-
+        /// <summary>
+        /// Creates a HttpClient using the default user agent and timeout.
+        /// </summary>
         public static HttpClient CreateDefaultHttpClient()
         {
-            var client = new HttpClient { Timeout = Timeout };
+            var client = new HttpClient { Timeout = DefaultTimeout };
 
-            client.DefaultRequestHeaders.Add("User-Agent", UserAgent);
+            client.DefaultRequestHeaders.Add("User-Agent", DefaultUserAgent);
 
             return client;
         }
 
-        public static SentryHttpClient Default(Dsn dsn)
-            => new SentryHttpClient(dsn, CreateDefaultHttpClient());
+        private async Task<HttpResponseMessage> SendMessageAsync(Stream stream)
+            => await _sender.SendAsync(ComposeMessage(stream), None)
+                .ConfigureAwait(false);
 
         private HttpRequestMessage ComposeMessage(Stream stream)
         {
