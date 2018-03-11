@@ -1,4 +1,3 @@
-using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -6,22 +5,42 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Moq;
 using Pidget.Client;
+using System;
+using System.Collections.Generic;
 using Xunit;
 
 namespace Pidget.AspNet.Setup
 {
     public class SetupExtensionsTests
     {
-        [Fact]
-        public void AddPidgetMiddleware_AddsSingletonClient()
+        public static Dictionary<Type, ServiceLifetime> ExpectedServices =
+            new Dictionary<Type, ServiceLifetime>()
+            {
+                { typeof(SentryClient), ServiceLifetime.Singleton },
+                { typeof(RateLimit), ServiceLifetime.Singleton },
+                { typeof(IConfigureOptions<SentryOptions>), ServiceLifetime.Singleton }
+            };
+
+        private static Mock<IServiceCollection> GetExpectedServicesMock()
         {
             var servicesMock = new Mock<IServiceCollection>();
 
-            servicesMock.Setup(m => m
-                .Add(It.Is<ServiceDescriptor>(s
-                    => s.ServiceType == typeof(SentryClient)
-                    && s.Lifetime == ServiceLifetime.Singleton)))
-                .Verifiable();
+            foreach(var (serviceType, lifetime) in ExpectedServices)
+            {
+                servicesMock.Setup(m => m
+                    .Add(It.Is<ServiceDescriptor>(s
+                        => s.ServiceType == serviceType
+                        && s.Lifetime == lifetime)))
+                    .Verifiable();
+            }
+
+            return servicesMock;
+        }
+
+        [Fact]
+        public void AddPidgetMiddleware_UsingSetup_AddsExpectedServices()
+        {
+            var servicesMock = GetExpectedServicesMock();
 
             servicesMock.Object.AddPidgetMiddleware(_ => {});
 
@@ -29,47 +48,9 @@ namespace Pidget.AspNet.Setup
         }
 
         [Fact]
-        public void AddPidgetMiddleware_AddsSingletonRateLimit()
+        public void AddPidgetMiddleware_UsingConfig_AddsExpectedServices()
         {
-            var servicesMock = new Mock<IServiceCollection>();
-
-            servicesMock.Setup(m => m
-                .Add(It.Is<ServiceDescriptor>(s
-                    => s.ServiceType == typeof(RateLimit)
-                    && s.Lifetime == ServiceLifetime.Singleton)))
-                .Verifiable();
-
-            servicesMock.Object.AddPidgetMiddleware(_ => {});
-
-            servicesMock.Verify();
-        }
-
-        [Fact]
-        public void AddPidgetMiddleware_Setup_AddsSingletonOptions()
-        {
-            var servicesMock = new Mock<IServiceCollection>();
-
-            servicesMock.Setup(m => m
-                .Add(It.Is<ServiceDescriptor>(s
-                    => s.ServiceType == typeof(IConfigureOptions<SentryOptions>)
-                    && s.Lifetime == ServiceLifetime.Singleton)))
-                .Verifiable();
-
-            servicesMock.Object.AddPidgetMiddleware(_ => {});
-
-            servicesMock.Verify();
-        }
-
-        [Fact]
-        public void AddPidgetMiddleware_Configuration_AddsSingletonOptions()
-        {
-            var servicesMock = new Mock<IServiceCollection>();
-
-            servicesMock.Setup(m => m
-                .Add(It.Is<ServiceDescriptor>(s
-                    => s.ServiceType == typeof(IConfigureOptions<SentryOptions>)
-                    && s.Lifetime == ServiceLifetime.Singleton)))
-                .Verifiable();
+            var servicesMock = GetExpectedServicesMock();
 
             servicesMock.Object.AddPidgetMiddleware(
                 Mock.Of<IConfigurationSection>());
@@ -78,7 +59,7 @@ namespace Pidget.AspNet.Setup
         }
 
         [Fact]
-        public void UsePidgetMiddleware_AddsMiddleware()
+        public void UsePidgetMiddleware_AddsDelegateToPipeline()
         {
             var appMock = new Mock<IApplicationBuilder>();
 
@@ -90,7 +71,7 @@ namespace Pidget.AspNet.Setup
             appMock.Verify();
         }
 
-        [Theory, InlineData("https://pub:secreet@sentry.io/1")]
+        [Theory, InlineData("https://pub:secret@sentry.io/1")]
         public void ActivatedClient_HasExpectedDsn(string expectedDsn)
         {
             var services = new ServiceCollection();
