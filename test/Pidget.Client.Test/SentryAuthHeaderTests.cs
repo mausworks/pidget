@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Moq;
 using Pidget.Client.Http;
 using Pidget.Client.Test;
 using Xunit;
@@ -15,8 +16,7 @@ namespace Pidget.Client.Test.Http
         public static readonly DateTime IssuedAt = new DateTime(2000, 01, 01);
 
         public static readonly SentryAuth Auth
-            = SentryAuth.Issue(
-                new TestableSentryClient(Dsn, _ => null), IssuedAt);
+            = SentryAuth.Issue(Dsn, IssuedAt);
 
         [Fact]
         public void GetValues_ContainsExpectedValues()
