@@ -91,13 +91,13 @@ namespace Pidget.AspNet.Setup
         }
 
         [Theory, InlineData("https://pub:secreet@sentry.io/1")]
-        public void ActivateClient_HasCorrectDsn(string dsn)
+        public void ActivatedClient_HasExpectedDsn(string expectedDsn)
         {
             var services = new ServiceCollection();
 
             services.AddPidgetMiddleware(sentry =>
             {
-                sentry.Dsn = dsn;
+                sentry.Dsn = expectedDsn;
             });
 
             var provider = services.BuildServiceProvider();
@@ -105,7 +105,7 @@ namespace Pidget.AspNet.Setup
             var client = (SentryClient)provider.GetService(typeof(SentryClient));
 
             Assert.NotNull(client);
-            Assert.Equal(dsn, client.Dsn.ToString());
+            Assert.Equal(expectedDsn, client.Dsn.ToString());
         }
     }
 }
