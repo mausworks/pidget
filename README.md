@@ -5,7 +5,7 @@
 
 Pidget is an exception and error-reporting library for **[Sentry.io](https://sentry.io/)!** 
 
-If you are looking for extensive and configurable exception handling in ASP.NET Core, then have a look at the [ASP.NET Middleware](https://github.com/mausworks/pidget/tree/master/src/Pidget.AspNet). For any other applications use you can use [client](https://github.com/mausworks/pidget/tree/master/src/Pidget.Client).
+If you are looking for extensive and configurable exception handling in ASP.NET Core, then have a look at the [ASP.NET Middleware](https://github.com/mausworks/pidget/tree/master/src/Pidget.AspNet). For any other applications you can use [client](https://github.com/mausworks/pidget/tree/master/src/Pidget.Client).
 
 If you have any questions, ideas or requests, please open a [new issue](https://github.com/mausworks/pidget/issues/new)!
 
