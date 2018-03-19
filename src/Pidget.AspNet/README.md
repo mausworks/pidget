@@ -36,7 +36,7 @@ public void ConfigureServices(IServiceCollection services)
 ```
 
 In the `Configure` method in Startup.cs, configure your application to use the pidget error reporting middleware.
-Make sure you you add the Pidget middleware before your application code, like in the below example (using MVC).
+Make sure you add the Pidget middleware before your application code, like in the below example (using MVC).
 
 ```csharp
 public void Configure(IApplicationBuilder app)
