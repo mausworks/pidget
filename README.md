@@ -1,10 +1,13 @@
 # PIDGET 
 
-Error reporting for .NET using [sentry.io](https://sentry.io).
-
-![Pidget logo](https://user-images.githubusercontent.com/8259221/36802949-8fc2ad48-1cb6-11e8-9f7d-c444cf991c8b.png)
 [![Build status](https://travis-ci.org/mausworks/pidget.svg?branch=master)](https://travis-ci.org/mausworks/pidget)
 [![Codecov](https://img.shields.io/codecov/c/github/mausworks/pidget.svg)](https://codecov.io/gh/mausworks/pidget)
+
+Pidget is an exception and error-reporting library for **[Sentry.io](https://sentry.io/)!** 
+
+If you are looking for extensive and configurable exception handling in ASP.NET Core, then have a look at the [ASP.NET Middleware](https://github.com/mausworks/pidget/tree/master/src/Pidget.AspNet). For any other applications use you can use [client](https://github.com/mausworks/pidget/tree/master/src/Pidget.Client).
+
+If you have any questions, ideas or requests, please open a [new issue](https://github.com/mausworks/pidget/issues/new)!
 
 ## Can I use it?
 
