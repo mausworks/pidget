@@ -76,7 +76,8 @@ namespace Pidget.Client.Http
         }
 
         private bool ShouldReadBody(HttpContent content)
-            => content.Headers.ContentLength > 0
+            => content != null
+            && content.Headers.ContentLength > 0
             && content.Headers.ContentType.MediaType
                 .Equals("application/json", StringComparison.OrdinalIgnoreCase);
 
