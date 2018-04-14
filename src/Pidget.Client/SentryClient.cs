@@ -14,8 +14,7 @@ namespace Pidget.Client
         /// <summary>
         /// The current version of Pidget.
         /// </summary>
-        public static string Version { get; }
-            = VersionNumber.Get();
+        public static string Version => VersionNumber.Get();
 
         /// <summary>
         /// The DSN which determines which project this client is configured for.

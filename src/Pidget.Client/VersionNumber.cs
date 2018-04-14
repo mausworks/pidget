@@ -5,8 +5,10 @@ namespace Pidget.Client
 {
     internal static class VersionNumber
     {
+        private static string _cached;
+
         public static string Get()
-            => FileVersionInfo.GetVersionInfo(
-                Assembly.GetExecutingAssembly().Location).ProductVersion;
+            => _cached ?? (_cached = FileVersionInfo.GetVersionInfo(
+                Assembly.GetExecutingAssembly().Location).ProductVersion);
     }
 }
