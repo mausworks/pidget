@@ -1,18 +1,34 @@
 using Newtonsoft.Json;
 using Pidget.Client.Serialization;
+using System;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Xunit;
-using System.Net.Http.Headers;
-using Moq;
-using System.IO;
-using System;
 
 namespace Pidget.Client.Http
 {
     public class SentryResponseProviderTests
     {
+        /**
+         * The sentry response provider provides
+         * a SentryResponse from a HttpResponseMessage
+         *
+         * It provides things like: The event ID, HTTP status code, 
+         * and the X-Sentry-Error and- Retry-After header.
+         * It then abstracts these into a model, and returns it.
+         *
+         * Philosophy:
+         *  Be forgiving: Attempt to provide each component independent of each other.
+         *  E.g. The body should be parsed independent of whatever status-code is served.
+         *  The idea as much information as possible from the HTTP response.
+         *
+         *  Be paranoid: take care when reading the HttpResponse.
+         *  E.g. do not attempt to read the body as JSON, if the response
+         *  is served with a non-JSON Content-Type.
+         */
+
         public const string SentryErrorHeaderName = "X-Sentry-Error";
 
         public static JsonStreamSerializer Serializer
@@ -22,32 +38,48 @@ namespace Pidget.Client.Http
         public SentryResponseProvider ResponseProvider
             = new SentryResponseProvider(Serializer);
 
-        [Theory, InlineData("{ \"id\": \"event_id\" }", "event_id")]
-        public async Task ReturnsEventIdFromJsonBody(string json,
-            string eventId)
+        public const string ExampleEventId = "EVENT_ID";
+
+        public static readonly string ExampleJson =
+            $"{{ \"id\": \"{ExampleEventId}\" }}";
+
+        public async Task ParsesExampleEventId()
         {
             var response = new HttpResponseMessage
             {
-                Content = new StringContent(json,
-                    Sentry.ApiEncoding,
-                    "application/json")
+                Content = JsonContent(ExampleJson)
             };
 
             var sentryResponse = await ResponseProvider.GetResponseAsync(response);
 
-            Assert.Equal(eventId, sentryResponse.EventId);
-            Assert.Equal(eventId, sentryResponse["id"]);
+            Assert.Equal(ExampleEventId, sentryResponse.EventId);
+            Assert.Equal(ExampleEventId, sentryResponse["id"]);
         }
 
-        [Theory]
-        [InlineData(200, "application/json")]
-        [InlineData(200, "text/plain")]
-        public async Task EmptyContent(int statusCode, string contentType)
+
+        [Theory, InlineData(200)]
+        public async Task CapturesStatusCode(int statusCode)
         {
             var response = new HttpResponseMessage
             {
-                StatusCode = (HttpStatusCode)statusCode,
-                Content = new StringContent("",
+                StatusCode = (HttpStatusCode)statusCode
+            };
+
+            var sentryResponse = await ResponseProvider
+                .GetResponseAsync(response);
+
+            Assert.Equal(statusCode, sentryResponse.StatusCode);
+        }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData(null)]
+        [InlineData("text/plain")]
+        public async Task HandlesBadContentTypeSafely(string contentType)
+        {
+            var response = new HttpResponseMessage
+            {
+                Content = new StringContent(ExampleJson,
                     Sentry.ApiEncoding,
                     contentType)
             };
@@ -55,55 +87,32 @@ namespace Pidget.Client.Http
             var sentryResponse = await ResponseProvider
                 .GetResponseAsync(response);
 
-            Assert.Equal(200, sentryResponse.StatusCode);
+            // The idea is to not attempt to parse the
+            // body if it's not 'application/json'
             Assert.Null(sentryResponse.EventId);
         }
 
         [Theory]
-        [InlineData(200, "")]
-        [InlineData(200, "NOT_JSON")]
-        public async Task WrongContentType(int statusCode, string content)
+        [InlineData("")]
+        [InlineData("NOT_JSON")]
+        public async Task HandlesBadContentGracefully(string badContent)
         {
             var response = new HttpResponseMessage
             {
-                StatusCode = (HttpStatusCode)statusCode,
-                Content = new StringContent(content,
-                    Sentry.ApiEncoding,
-                    "text/plain")
+                Content = JsonContent(badContent)
             };
 
             var sentryResponse = await ResponseProvider
                 .GetResponseAsync(response);
 
-            Assert.Equal(200, sentryResponse.StatusCode);
             Assert.Null(sentryResponse.EventId);
         }
 
-        [Theory, InlineData(HttpStatusCode.OK)]
-        public async Task ReturnsStatusCode(HttpStatusCode statusCode)
-        {
-            var response = new HttpResponseMessage
-            {
-                StatusCode = statusCode,
-                Content = new StringContent("{ }")
-            };
-
-            var sentryResponse = await ResponseProvider
-                .GetResponseAsync(response);
-
-            Assert.Equal(200, sentryResponse.StatusCode);
-        }
-
         [Theory, InlineData("foo")]
-        public async Task ReturnsSentryError(string error)
+        public async Task CapturesSentryErrorHeader(string error)
         {
-            var response = new HttpResponseMessage
-            {
-                Content = new StringContent("{ }")
-            };
-
-            response.Headers.Add(SentryResponseProvider.SentryErrorHeaderName,
-                error);
+            var response = new HttpResponseMessage();
+            response.Headers.Add(SentryErrorHeaderName, error);
 
             var sentryResponse = await ResponseProvider.GetResponseAsync(response);
 
@@ -111,33 +120,39 @@ namespace Pidget.Client.Http
         }
 
         [Theory, InlineData(10)]
-        public Task RetryAfter_Delta(int deltaSeconds)
+        public Task CapturesRetryAfterHeader_AsDelta(int deltaSeconds)
             => RetryAfter_Compare(deltaSeconds,
                 new RetryConditionHeaderValue(TimeSpan.FromSeconds(deltaSeconds)));
 
         [Theory, InlineData(10)]
-        public Task RetryAfter_Date(int deltaSeconds)
+        public Task CapturesRetryAfterHeader_AsDate(int deltaSeconds)
             => RetryAfter_Compare(deltaSeconds,
                 new RetryConditionHeaderValue(DateTimeOffset.UtcNow.AddSeconds(deltaSeconds)));
 
-        private async Task RetryAfter_Compare(int deltaSeconds, RetryConditionHeaderValue headerValue)
+        private async Task RetryAfter_Compare(int deltaSeconds,
+            RetryConditionHeaderValue headerValue)
         {
             var response = new HttpResponseMessage
             {
-                StatusCode = (HttpStatusCode)429,
-                ReasonPhrase = "Too Many Requests",
-                Content = new StringContent("{ }"),
+                StatusCode = (HttpStatusCode)429
             };
 
             response.Headers.RetryAfter = headerValue;
 
-            var sentryResponse = await ResponseProvider.GetResponseAsync(response);
+            var sentryResponse = await ResponseProvider
+                .GetResponseAsync(response);
 
+            // This is perhaps a "dirty compare", but useful.
             Assert.Equal(
                 expected: (DateTimeOffset.UtcNow + TimeSpan.FromSeconds(deltaSeconds))
-                    .ToString("yyyy-MM-dd HH:mm:ss"),
+                    .ToString("yyyyMMddHHmmss"),
                 actual: sentryResponse.RetryAfter
-                    .ToString("yyyy-MM-dd HH:mm:ss"));
+                    .ToString("yyyyMMddHHmmss"));
         }
+
+        private StringContent JsonContent(string json)
+            => new StringContent(json,
+                Sentry.ApiEncoding,
+                "application/json");
     }
 }
