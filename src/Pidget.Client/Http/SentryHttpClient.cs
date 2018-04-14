@@ -62,7 +62,7 @@ namespace Pidget.Client.Http
         {
             if (!IsEnabled)
             {
-                return SentryResponse.Empty;
+                return SentryResponse.Empty();
             }
 
             using (var stream = _serializer.Serialize(eventData))

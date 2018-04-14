@@ -6,8 +6,6 @@ namespace Pidget.Client
 {
     public class SentryResponse : ArbitraryData
     {
-        public static SentryResponse Empty => new SentryResponse();
-
         public string EventId
         {
             get => this["id"] as string;
@@ -19,5 +17,7 @@ namespace Pidget.Client
         public int StatusCode { get; set; }
 
         public DateTimeOffset RetryAfter { get; set; }
+
+        public static SentryResponse Empty() => new SentryResponse();
     }
 }

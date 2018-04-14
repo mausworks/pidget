@@ -72,8 +72,6 @@ namespace Pidget.Client.Http
         }
 
         [Theory]
-        [InlineData("")]
-        [InlineData(null)]
         [InlineData("text/plain")]
         public async Task HandlesBadContentTypeSafely(string contentType)
         {
