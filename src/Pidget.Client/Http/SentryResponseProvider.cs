@@ -42,14 +42,25 @@ namespace Pidget.Client.Http
             using (var body = await ReadBodyAsync(response)
                 .ConfigureAwait(false))
             {
-                var responseData = Serializer
-                    .Deserialize<SentryResponse>(body);
+                var responseData = DeserializeBody(body);
 
                 responseData.StatusCode = (int)response.StatusCode;
                 responseData.SentryError = GetSentryError(response);
                 responseData.RetryAfter = GetRetryAfter(response);
 
                 return responseData;
+            }
+        }
+
+        private SentryResponse DeserializeBody(Stream body)
+        {
+            try
+            {
+                return Serializer.Deserialize<SentryResponse>(body);
+            }
+            catch
+            {
+                return SentryResponse.Empty();
             }
         }
 
@@ -76,9 +87,13 @@ namespace Pidget.Client.Http
         }
 
         private bool ShouldReadBody(HttpContent content)
-            => content.Headers.ContentLength > 0
-            && content.Headers.ContentType.MediaType
-                .Equals("application/json", StringComparison.OrdinalIgnoreCase);
+            => content != null
+            && content.Headers.ContentLength > 0
+            && IsJsonMediaType(content.Headers.ContentType.MediaType);
+
+        private bool IsJsonMediaType(string mediaType)
+            => mediaType != null
+            && mediaType.Equals("application/json", StringComparison.Ordinal);
 
         private static Task<Stream> ReadBodyAsync(HttpResponseMessage httpResponse)
             => httpResponse.Content.ReadAsStreamAsync();

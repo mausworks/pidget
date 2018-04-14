@@ -1,34 +1,32 @@
 using System;
 using System.Threading.Tasks;
+using Moq;
+using Pidget.Client.DataModels;
 using Xunit;
 
 namespace Pidget.Client.Test
 {
     public class SentryClientTests
     {
-        public static readonly Dsn Dsn = DsnTests.SentryDsn;
-
         [Fact]
-        public async Task Capture_InvokesSend()
+        public async Task CaptureAsync_InvokesSendAsync()
         {
             // Arrange
 
-            var didSend = false;
+            var clientMock = new Mock<SentryClient>(null);
 
-            var client = new TestableSentryClient(Dsn, e =>
-            {
-                didSend = true;
-                return null;
-            });
+            clientMock.Setup(m => m.SendEventAsync(It.IsAny<SentryEventData>()))
+                .ReturnsAsync(SentryResponse.Empty)
+                .Verifiable();
 
             // Act
 
-            await client.CaptureAsync(e => e
+            await clientMock.Object.CaptureAsync(e => e
                 .SetException(new Exception()));
 
             // Assert
 
-            Assert.True(didSend);
+            clientMock.Verify();
         }
     }
 }

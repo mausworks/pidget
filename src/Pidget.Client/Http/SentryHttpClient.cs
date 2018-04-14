@@ -62,7 +62,7 @@ namespace Pidget.Client.Http
         {
             if (!IsEnabled)
             {
-                return SentryResponse.Empty;
+                return SentryResponse.Empty();
             }
 
             using (var stream = _serializer.Serialize(eventData))
@@ -107,7 +107,7 @@ namespace Pidget.Client.Http
 
         private IEnumerable<string> GetSentryAuthHeader()
             => SentryAuthHeader.GetValues(
-                SentryAuth.Issue(this, DateTimeOffset.Now));
+                SentryAuth.Issue(Dsn, DateTimeOffset.Now));
 
         private static StreamContent GetContent(Stream stream)
         {

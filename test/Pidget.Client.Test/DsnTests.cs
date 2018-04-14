@@ -20,6 +20,11 @@ namespace Pidget.Client.Test
             $"https://{PublicKey}:{SecretKey}@{Host}{Path}{ProjectId}");
 
         [Fact]
+        public void CreateThrows_ForNullDsn()
+            => Assert.Throws<ArgumentNullException>(()
+                => Dsn.Create(null));
+
+        [Fact]
         public void GetPublicKey()
             => Assert.Equal(PublicKey, SentryDsn.GetPublicKey());
 

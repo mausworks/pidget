@@ -38,7 +38,7 @@ namespace Pidget.Client.Test.DataModels
         }
 
         [Fact]
-        public void OperatingSystemData_SetsCorrectKeys()
+        public void OperatingSystemData_SetsExpectedKeys()
         {
             var data = new OperatingSystemData
             {
@@ -57,7 +57,7 @@ namespace Pidget.Client.Test.DataModels
         }
 
         [Fact]
-        public void RuntimeData_SetsCorrectKeys()
+        public void RuntimeData_SetsExpectedKeys()
         {
             var data = new RuntimeData
             {
@@ -70,7 +70,7 @@ namespace Pidget.Client.Test.DataModels
         }
 
         [Fact]
-        public void DeviceData_SetsCorrectKeys()
+        public void DeviceData_SetsExpectedKeys()
         {
             var data = new DeviceData
             {
