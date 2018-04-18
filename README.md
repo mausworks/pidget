@@ -9,6 +9,15 @@ If you are looking for extensive and configurable exception handling in ASP.NET 
 
 If you have any questions, ideas or requests, please open a [new issue](https://github.com/mausworks/pidget/issues/new)!
 
+## How is this different from SharpRaven?
+
+- Pidget is async-first (for blocking calls use, e.g. `client.CaptureAsync([...]).Result`)
+- Pidget is primarily targeted towards .NET Core
+- Pidget aims to be modular and extensible, whereas SharpRaven is a bit more monolithic
+- The Pidget client is a unopinionated minimalistic client, i.e. "it just sends stuff"
+- The Pidget client uses a `HttpClient` as primary transfer mechanism, whereas SharpRaven uses a [`WebRequest`](https://github.com/getsentry/raven-csharp/blob/3c30a19c953744afb99ff4a618c6c97a062597e7/src/app/SharpRaven/Data/Requester.cs#L61-L85)
+- The Pidget ASP.NET Middleware is specifically tailored for ASP.NET Core
+
 ## Can I use it?
 
 Pidget targets [.NET Standard 2.0](https://docs.microsoft.com/en-us/dotnet/standard/net-standard#net-implementation-support), which adds support for most (somewhat modern) .NET applications, e.g. .NET Core, Xamarin, Mono, UWP.
