@@ -21,7 +21,8 @@ namespace Pidget.Client.DataModels
 
             return new StackTraceData
             {
-                Frames = GetFrames(exception).Reverse()
+                Frames = GetFrames(exception)
+                    .Reverse()
                     .Select(FrameData.FromStackFrame)
                     .ToArray()
             };
