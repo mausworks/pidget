@@ -13,11 +13,11 @@ namespace Pidget.AspNet
     {
         public SentryOptions Options { get; }
 
+        public RateLimit RateLimit { get; }
+
         private readonly RequestDelegate _next;
 
         private readonly SentryClient _sentryClient;
-
-        private readonly RateLimit _rateLimit;
 
         public SentryMiddleware(RequestDelegate next,
             IConfigureOptions<SentryOptions> optionsSetup,
@@ -26,7 +26,7 @@ namespace Pidget.AspNet
         {
             _next = next;
             _sentryClient = sentryClient;
-            _rateLimit = rateLimit;
+            RateLimit = rateLimit;
             Options = GetOptions(optionsSetup);
         }
 
@@ -69,7 +69,7 @@ namespace Pidget.AspNet
 
         private async Task<SentryResponse> SendEventAsync(SentryEventData eventData)
         {
-            if (_rateLimit.IsHit(DateTimeOffset.UtcNow))
+            if (RateLimit.IsHit(DateTimeOffset.UtcNow))
             {
                 return null;
             }
@@ -79,7 +79,7 @@ namespace Pidget.AspNet
 
             if (IsTooManyRequests(response))
             {
-                _rateLimit.Until(response.RetryAfter);
+                RateLimit.Until(response.RetryAfter);
             }
 
             return response;
