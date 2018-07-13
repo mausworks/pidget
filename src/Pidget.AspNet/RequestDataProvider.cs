@@ -59,7 +59,7 @@ namespace Pidget.AspNet
                 : null;
 
         public IDictionary<string, string> GetEnvironmentVariables()
-            => _sanitizer.GetSanitizedEnvironmentVairables();
+            => _sanitizer.GetSanitizedEnvironmentVariables();
 
         private bool IsUrlEncodedForm(string contentType)
             => contentType != null && contentType.Equals(

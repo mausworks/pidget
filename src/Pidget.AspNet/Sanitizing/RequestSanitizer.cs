@@ -30,7 +30,7 @@ namespace Pidget.AspNet.Sanitizing
         public IDictionary<string, string> SanitizeQuery(HttpRequest request)
             => request.Query.ToDictionary(k => k.Key, SanitizeHeaderValue);
 
-        public IDictionary<string, string> GetSanitizedEnvironmentVairables()
+        public IDictionary<string, string> GetSanitizedEnvironmentVariables()
         {
             var envVars = Environment.GetEnvironmentVariables();
 
@@ -72,6 +72,5 @@ namespace Pidget.AspNet.Sanitizing
         /// </summary>
         public static RequestSanitizer Noop
             => new RequestSanitizer(SanitationOptions.None);
-
     }
 }
