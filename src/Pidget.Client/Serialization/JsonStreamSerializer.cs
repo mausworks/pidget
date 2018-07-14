@@ -40,11 +40,9 @@ namespace Pidget.Client.Serialization
         public object Deserialize(Stream stream, Type type)
         {
             using (var streamReader = new StreamReader(stream, Encoding))
+            using (var jsonReader = new JsonTextReader(streamReader))
             {
-                using (var jsonReader = new JsonTextReader(streamReader))
-                {
-                    return _serializer.Deserialize(jsonReader, type);
-                }
+                return _serializer.Deserialize(jsonReader, type);
             }
         }
 

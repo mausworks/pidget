@@ -66,14 +66,13 @@ namespace Pidget.Client.Http
             }
 
             using (var stream = _serializer.Serialize(eventData))
+            using (var res = await SendMessageAsync(stream))
             {
-                using (var res = await SendMessageAsync(stream))
-                {
-                    var responseProvider = new SentryResponseProvider(_serializer);
+                var responseProvider = new SentryResponseProvider(_serializer);
 
-                    return await responseProvider.GetResponseAsync(res);
-                }
+                return await responseProvider.GetResponseAsync(res);
             }
+
         }
 
         /// <summary>
