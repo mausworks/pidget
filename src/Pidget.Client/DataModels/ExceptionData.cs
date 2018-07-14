@@ -24,9 +24,10 @@ namespace Pidget.Client.DataModels
             return new ExceptionData
             {
                 Type = exception.GetType().FullName,
-                Module =  exception.TargetSite?.DeclaringType.FullName ?? exception.Source,
                 Message = exception.Message,
-                Stacktrace = StackTraceData.FromException(exception)
+                Stacktrace = StackTraceData.FromException(exception),
+                Module = exception.TargetSite?.DeclaringType.FullName
+                    ?? exception.Source
             };
         }
     }
