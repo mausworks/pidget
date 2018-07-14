@@ -7,17 +7,19 @@ namespace Pidget.AspNet.Setup
 {
     public static class ClientFactory
     {
-        public static SentryClient CreateClient(IServiceProvider serviceProvider)
+        public static SentryClient CreateClient(
+            IServiceProvider serviceProvider)
         {
             var options = GetOptions(serviceProvider);
 
             return Sentry.CreateClient(GetDsn(options));
         }
 
-        private static SentryOptions GetOptions(IServiceProvider provider)
+        private static SentryOptions GetOptions(
+            IServiceProvider serviceProvider)
         {
             var options = new SentryOptions();
-            var setup = provider
+            var setup = serviceProvider
                 .GetRequiredService<IConfigureOptions<SentryOptions>>();
 
             setup.Configure(options);
