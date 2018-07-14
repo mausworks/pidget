@@ -78,12 +78,12 @@ namespace Pidget.Client.Http
 
             if (retryAfter == null)
             {
-                return default(DateTimeOffset);
+                return default;
             }
 
             return retryAfter.Date ?? (retryAfter.Delta.HasValue
                 ? DateTimeOffset.UtcNow + retryAfter.Delta.Value
-                : default(DateTimeOffset));
+                : default);
         }
 
         private bool ShouldReadBody(HttpContent content)
