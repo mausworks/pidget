@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+using static System.StringComparison;
+
 namespace Pidget.AspNet.Sanitizing
 {
     public class RequestSanitizer
@@ -35,8 +37,8 @@ namespace Pidget.AspNet.Sanitizing
             var envVars = Environment.GetEnvironmentVariables();
 
             return envVars.Keys.Cast<string>()
-                .ToDictionary(k => k, k
-                    => SanitizeValue(k, (string)envVars[k]));
+                .ToDictionary(k => k,
+                    k => SanitizeValue(k, (string)envVars[k]));
         }
 
         private string SanitizeCookieValue(
@@ -52,14 +54,14 @@ namespace Pidget.AspNet.Sanitizing
                 : _itemSanitizer.SanitizeValue(kvp.Key, kvp.Value);
 
         private bool IsSession(string name)
-            => name.IndexOf("sess", StringComparison.OrdinalIgnoreCase) > -1;
+            => name.IndexOf("sess", OrdinalIgnoreCase) > -1;
 
         private bool IsAuth(string name)
-            => name.IndexOf("auth", StringComparison.OrdinalIgnoreCase) > -1
-            || name.IndexOf("token", StringComparison.OrdinalIgnoreCase) > -1;
+            => name.IndexOf("auth", OrdinalIgnoreCase) > -1
+            || name.IndexOf("token", OrdinalIgnoreCase) > -1;
 
         private bool IsCookieHeader(string name)
-            => name.IndexOf("cookie", StringComparison.OrdinalIgnoreCase) > -1;
+            => name.IndexOf("cookie", OrdinalIgnoreCase) > -1;
 
         /// <summary>
         /// Returns a new instance of a request sanitizer with default options.
