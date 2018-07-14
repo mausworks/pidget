@@ -26,8 +26,8 @@ namespace Pidget.AspNet.Test
         {
             var requestMock = new Mock<HttpRequest>();
 
-            requestMock.SetupGet(r => r.Headers).Returns(new HeaderDictionary(
-                new Dictionary<string, StringValues>
+            requestMock.SetupGet(r => r.Headers)
+                .Returns(new HeaderDictionary(new Dictionary<string, StringValues>
                 {
                     { "password", "" },
                     { "passwd", "" },
@@ -56,6 +56,7 @@ namespace Pidget.AspNet.Test
 
             requestMock.SetupGet(r => r.ContentType)
                 .Returns("application/x-www-form-urlencoded");
+
             requestMock.SetupGet(r => r.Form).Returns(new FormCollection(
                 new Dictionary<string, StringValues>
                 {
@@ -66,7 +67,8 @@ namespace Pidget.AspNet.Test
                     { "secret", "" },
                     { "secretKey", "" },
                     { "user_secret", "" },
-                    { "cc", "1234 4567 9876 5432" }
+                    { "cc", "1234 4567 9876 5432" },
+                    { "num", "1234 4567 9876 5432" }
                 }));
 
             var form = RequestSanitizer.Default.SanitizeForm(requestMock.Object);
@@ -128,7 +130,7 @@ namespace Pidget.AspNet.Test
             Environment.SetEnvironmentVariable(name, value);
 
             var sanitizedParams = RequestSanitizer.Default
-                .GetSanitizedEnvironmentVairables();
+                .GetSanitizedEnvironmentVariables();
 
             Assert.Equal(expectedValue,
                 actual: sanitizedParams[name]);
