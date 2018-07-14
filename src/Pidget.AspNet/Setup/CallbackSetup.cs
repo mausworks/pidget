@@ -5,11 +5,11 @@ using Pidget.Client;
 
 namespace Pidget.AspNet.Setup
 {
-    public struct CallbackSetup
+    public readonly struct CallbackSetup
     {
         private readonly SentryOptions _options;
 
-        public CallbackSetup(SentryOptions options) : this()
+        public CallbackSetup(SentryOptions options)
             => _options = options;
 
         public CallbackSetup BeforeSend(Func<SentryEventBuilder, HttpContext, Task<bool>> callback)
