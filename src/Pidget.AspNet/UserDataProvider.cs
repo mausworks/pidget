@@ -17,7 +17,7 @@ namespace Pidget.AspNet
                 }
                 : null;
 
-        public static  string GetUserName(ClaimsPrincipal user)
+        public static string GetUserName(ClaimsPrincipal user)
             => user.Identity?.Name
             ?? user.FindFirst(ClaimTypes.Name)?.Value;
 

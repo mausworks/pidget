@@ -4,7 +4,7 @@ using Newtonsoft.Json.Converters;
 namespace Pidget.Client
 {
     [JsonConverter(typeof(StringEnumConverter), true)]
-    public enum ErrorLevel : byte
+    public enum ErrorLevel
     {
         Error,
         Fatal,

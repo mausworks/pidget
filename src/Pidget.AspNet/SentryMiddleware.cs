@@ -30,7 +30,8 @@ namespace Pidget.AspNet
             Options = GetOptions(optionsSetup);
         }
 
-        private SentryOptions GetOptions(IConfigureOptions<SentryOptions> optionSetup)
+        private SentryOptions GetOptions(
+            IConfigureOptions<SentryOptions> optionSetup)
         {
             var options = new SentryOptions();
 
@@ -67,7 +68,8 @@ namespace Pidget.AspNet
             await Options.AfterSendCallback(response, http);
         }
 
-        private async Task<SentryResponse> SendEventAsync(SentryEventData eventData)
+        private async Task<SentryResponse> SendEventAsync(
+            SentryEventData eventData)
         {
             if (RateLimit.IsHit(DateTimeOffset.UtcNow))
             {
@@ -89,7 +91,8 @@ namespace Pidget.AspNet
             => response.StatusCode == 429
             && response.RetryAfter != null;
 
-        private SentryEventBuilder BuildEventData(Exception ex, HttpContext http)
+        private SentryEventBuilder BuildEventData(Exception ex,
+            HttpContext http)
             => new SentryEventBuilder()
                 .SetException(ex)
                 .SetUserData(GetUserData(http))

@@ -6,6 +6,9 @@ using Pidget.Client;
 
 namespace Pidget.AspNet
 {
+    using BeforeSendFunc = Func<SentryEventBuilder, HttpContext, Task<bool>>;
+    using AfterSendFunc = Func<SentryResponse, HttpContext, Task>;
+
     public class SentryOptions
     {
         public string Dsn { get; set; }
@@ -13,9 +16,9 @@ namespace Pidget.AspNet
         public SanitationOptions Sanitation { get; set; }
             = SanitationOptions.Default;
 
-        public Func<SentryEventBuilder, HttpContext, Task<bool>> BeforeSendCallback { get; set; }
+        public BeforeSendFunc BeforeSendCallback { get; set; }
             = ((b, h) => Task.FromResult(true));
-        public Func<SentryResponse, HttpContext, Task> AfterSendCallback { get; set; }
+        public AfterSendFunc AfterSendCallback { get; set; }
             = ((r, h) => Task.CompletedTask);
 
         public CallbackSetup Callbacks => new CallbackSetup(this);

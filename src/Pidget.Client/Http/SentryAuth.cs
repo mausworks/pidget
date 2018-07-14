@@ -2,7 +2,7 @@ using System;
 
 namespace Pidget.Client.Http
 {
-    public struct SentryAuth
+    public readonly struct SentryAuth
     {
         public string SentryVersion { get; }
 
