@@ -10,7 +10,7 @@ namespace Pidget.Client.Test.DataModels
         public void FromDefaultStackFrame()
         {
             // The default constructor for StackFrame
-            // will extract the current executing function's data.
+            // will extract the current executing method's data.
             var data = FrameData.FromStackFrame(new StackFrame());
 
             Assert.NotNull(data.Module);
