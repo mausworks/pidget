@@ -7,14 +7,18 @@ namespace Pidget.Client.Http
         public const string Name = "X-Sentry-Auth";
 
         public static IEnumerable<string> GetValues(SentryAuth auth)
-            => new[]
+        {
+            yield return Combine("Sentry sentry_version", auth.SentryVersion);
+            yield return Combine("sentry_timestamp", auth.Timestamp);
+            yield return Combine("sentry_key", auth.PublicKey);
+
+            if (auth.SecretKey != null)
             {
-                Combine("Sentry sentry_version", auth.SentryVersion),
-                Combine("sentry_timestamp", auth.Timestamp),
-                Combine("sentry_key", auth.PublicKey),
-                Combine("sentry_secret", auth.SecretKey),
-                Combine("sentry_client", auth.ClientVersion)
-            };
+                yield return Combine("sentry_secret", auth.SecretKey);
+            }
+
+            yield return Combine("sentry_client", auth.ClientVersion);
+        }
 
         private static string Combine(string key, object value)
             => $"{key}={value}";
