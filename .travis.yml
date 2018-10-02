@@ -1,16 +1,16 @@
 language: csharp
 dist: trusty
 mono: none
-dotnet: 2.0.0
+dotnet: 2.1
 
 install:
-- dotnet restore
+  - dotnet restore
 
 script:
-# Only run codecov:
-# - he build
-# - he test
-# - he report
-# but most importantly
-# - he protec
-- sh codecov.sh
+  # Only run codecov:
+  # - he build
+  # - he test
+  # - he report
+  # but most importantly
+  # - he protec
+  - sh codecov.sh

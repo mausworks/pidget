@@ -9,6 +9,6 @@ namespace Pidget.Client.Test
     {
         [Fact]
         public void CreateClient_IsSentryHttpClient()
-            => Assert.True(Sentry.CreateClient(DsnTests.SentryDsn) is SentryHttpClient);
+            => Assert.True(Sentry.CreateClient(Dsn.Create(Dsns.SentryDsn)) is SentryHttpClient);
     }
 }

@@ -13,7 +13,7 @@ using static System.Threading.CancellationToken;
 namespace Pidget.Client.Http
 {
     /// <summary>
-    /// The shipped default implementation of the SentryClient.
+    /// The default implementation of the SentryClient.
     /// </summary>
     public class SentryHttpClient : SentryClient
     {

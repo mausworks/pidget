@@ -10,24 +10,31 @@ namespace Pidget.Client.Test.Http
 {
     public class SentryAuthHeaderTests
     {
-        public static readonly Dsn Dsn = DsnTests.SentryDsn;
-
         public static readonly DateTime IssuedAt = new DateTime(2000, 01, 01);
 
-        public static readonly SentryAuth Auth
-            = SentryAuth.Issue(Dsn, IssuedAt);
-
-        [Fact]
-        public void GetValues_ContainsExpectedValues()
+        [Theory]
+        [InlineData(Dsns.SentryDsn)]
+        [InlineData(Dsns.LegacyDsn)]
+        public void SentryDsn_ContainsExpectedValues(string dsnValue)
         {
-            var values = SentryAuthHeader.GetValues(Auth);
+            var dsn = Dsn.Create(dsnValue);
+            var auth = SentryAuth.Issue(dsn, IssuedAt);
+            var values = SentryAuthHeader.GetValues(auth);
 
-            Assert.Contains(
-                $"Sentry sentry_version={Auth.SentryVersion}", values);
-            Assert.Contains($"sentry_timestamp={Auth.Timestamp}", values);
-            Assert.Contains($"sentry_key={Auth.PublicKey}", values);
-            Assert.Contains($"sentry_secret={Auth.SecretKey}", values);
-            Assert.Contains($"sentry_client={Auth.ClientVersion}", values);
+            Assert.Contains($"Sentry sentry_version={auth.SentryVersion}", values);
+            Assert.Contains($"sentry_timestamp={auth.Timestamp}", values);
+            Assert.Contains($"sentry_key={auth.PublicKey}", values);
+
+            if (dsn.GetSecretKey() != null)
+            {
+                Assert.Contains($"sentry_secret={auth.SecretKey}", values);
+            }
+            else
+            {
+                Assert.DoesNotContain("sentry_secret", values);
+            }
+
+            Assert.Contains($"sentry_client={auth.ClientVersion}", values);
         }
     }
 }

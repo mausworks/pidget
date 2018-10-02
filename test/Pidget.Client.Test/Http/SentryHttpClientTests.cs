@@ -17,6 +17,9 @@ namespace Pidget.Client.Test
 
     public class SentryHttpClientTests
     {
+
+        public static readonly Dsn Dsn = Dsn.Create(Dsns.SentryDsn);
+
         public const string EventId = "event_id";
 
         public static SentryResponse OkResponse { get; }
@@ -28,7 +31,7 @@ namespace Pidget.Client.Test
         [Fact]
         public void RequiresHttpClient()
             => Assert.Throws<ArgumentNullException>(()
-                => new SentryHttpClient(DsnTests.SentryDsn, null));
+                => new SentryHttpClient(Dsn, null));
 
         [Fact]
         public void Sender_HasExpectedUserAgent()
@@ -43,9 +46,7 @@ namespace Pidget.Client.Test
         public async Task SendMessageEvent(string message)
         {
             var senderMock = new Mock<HttpClient>();
-
-            var client = new SentryHttpClient(DsnTests.SentryDsn,
-                senderMock.Object);
+            var client = new SentryHttpClient(Dsn, senderMock.Object);
 
             senderMock.Setup(m => m.SendAsync(It.IsAny<HttpRequestMessage>(), None))
                 .ReturnsAsync(CreateOkHttpResponse(JsonSerializer.CreateDefault()))
@@ -83,13 +84,13 @@ namespace Pidget.Client.Test
 
         [Fact]
         public void CreateDefault()
-            => Assert.NotNull(
-                SentryHttpClient.Default(DsnTests.SentryDsn));
+            => Assert.NotNull(SentryHttpClient.Default(Dsn));
 
         [Fact(Skip = "Manual testing only")]
         public async Task SendException_ReturnsEventId()
         {
-            var client = Sentry.CreateClient(Dsn.Create(GetProductionDsn()));
+            var dsn = "<YOUR DSN HERE>";
+            var client = Sentry.CreateClient(Dsn.Create(dsn));
 
             var value = 0;
 
@@ -128,19 +129,6 @@ namespace Pidget.Client.Test
                 StatusCode = HttpStatusCode.OK,
                 Content = content
             };
-        }
-
-        private static string GetProductionDsn()
-        {
-            var filePath = Path.Combine(Directory.GetCurrentDirectory(),
-                "dsn.txt");
-
-            if (!File.Exists(filePath))
-            {
-                return null;
-            }
-
-            return File.ReadAllText(filePath).Trim();
         }
     }
 }
