@@ -48,7 +48,7 @@ namespace Pidget.Client.DataModels
 
         private static bool IsInApp(MethodBase method)
         {
-            if (method is null || method.DeclaringType is null)
+            if (method?.DeclaringType is null)
             {
                 return false;
             }
