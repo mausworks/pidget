@@ -1,4 +1,4 @@
-
+﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26124.0
@@ -18,6 +18,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "examples", "examples", "{7219C684-E31E-444C-928A-2B487EA3D6F1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pidget.AspNetExample", "examples\Pidget.AspNetExample\Pidget.AspNetExample.csproj", "{84C87327-91E8-4F19-9359-C6A27A7AFDC3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pidget.MvcExample", "examples\Pidget.MvcExample\Pidget.MvcExample.csproj", "{52C97AB1-517B-4174-859C-7A50EBD7C427}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -92,6 +94,18 @@ Global
 		{84C87327-91E8-4F19-9359-C6A27A7AFDC3}.Release|x64.Build.0 = Release|x64
 		{84C87327-91E8-4F19-9359-C6A27A7AFDC3}.Release|x86.ActiveCfg = Release|x86
 		{84C87327-91E8-4F19-9359-C6A27A7AFDC3}.Release|x86.Build.0 = Release|x86
+		{52C97AB1-517B-4174-859C-7A50EBD7C427}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52C97AB1-517B-4174-859C-7A50EBD7C427}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52C97AB1-517B-4174-859C-7A50EBD7C427}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{52C97AB1-517B-4174-859C-7A50EBD7C427}.Debug|x64.Build.0 = Debug|Any CPU
+		{52C97AB1-517B-4174-859C-7A50EBD7C427}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{52C97AB1-517B-4174-859C-7A50EBD7C427}.Debug|x86.Build.0 = Debug|Any CPU
+		{52C97AB1-517B-4174-859C-7A50EBD7C427}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52C97AB1-517B-4174-859C-7A50EBD7C427}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52C97AB1-517B-4174-859C-7A50EBD7C427}.Release|x64.ActiveCfg = Release|Any CPU
+		{52C97AB1-517B-4174-859C-7A50EBD7C427}.Release|x64.Build.0 = Release|Any CPU
+		{52C97AB1-517B-4174-859C-7A50EBD7C427}.Release|x86.ActiveCfg = Release|Any CPU
+		{52C97AB1-517B-4174-859C-7A50EBD7C427}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{8849E34F-917F-4EF2-B5B4-3E9EC7A4790A} = {3EB90C1C-5D19-464F-9EFA-B48E3DB13F84}
@@ -99,5 +113,6 @@ Global
 		{029E9B5B-EE90-435C-825E-B9C1DD7EDBDF} = {AA379F5D-D46B-47EA-85C1-C7D3BB265D1B}
 		{387A07F9-312A-44AE-9B5E-45B7220A0AB9} = {AA379F5D-D46B-47EA-85C1-C7D3BB265D1B}
 		{84C87327-91E8-4F19-9359-C6A27A7AFDC3} = {7219C684-E31E-444C-928A-2B487EA3D6F1}
+		{52C97AB1-517B-4174-859C-7A50EBD7C427} = {7219C684-E31E-444C-928A-2B487EA3D6F1}
 	EndGlobalSection
 EndGlobal
