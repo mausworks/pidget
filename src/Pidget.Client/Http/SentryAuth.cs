@@ -28,8 +28,11 @@ namespace Pidget.Client.Http
         }
 
         public static SentryAuth Issue(Dsn dsn, DateTimeOffset issuedAt)
-            => new SentryAuth(sentryVersion: Sentry.CurrentProtocolVersion,
-                clientVersion: string.Join("/", $"{SentryClient.Name}-csharp", SentryClient.Version),
+            => new SentryAuth(
+                sentryVersion: Sentry.CurrentProtocolVersion,
+                clientVersion: string.Join("/",
+                    $"{SentryClient.Name}-csharp",
+                    SentryClient.Version),
                 timestamp: DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
                 publicKey: dsn.GetPublicKey(),
                 secretKey: dsn.GetSecretKey());

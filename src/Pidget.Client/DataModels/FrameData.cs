@@ -20,7 +20,7 @@ namespace Pidget.Client.DataModels
         public string Module { get; set; }
 
         [JsonProperty("function")]
-        public string Function { get; set;}
+        public string Function { get; set; }
 
         [JsonProperty(PropertyName = "context_line")]
         public string ContextLine { get; set; }
