@@ -34,7 +34,7 @@ namespace Pidget.Client.Test.DataModels
             Assert.Null(data.Module);
             Assert.Null(data.Function);
             Assert.False(data.InApp);
-            Assert.True(data.LineNumber <= 0);
+            Assert.Equal(StackFrame.OFFSET_UNKNOWN, data.LineNumber);
         }
     }
 }
