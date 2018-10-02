@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 
 namespace Pidget.Client
 {
@@ -35,10 +36,12 @@ namespace Pidget.Client
                 LastIndexOfSlash(Uri.AbsolutePath) + 1);
 
         public string GetPublicKey()
-            => Uri.UserInfo.Split(':')[0];
+            => Uri.UserInfo.Split(':')
+                .ElementAtOrDefault(0);
 
         public string GetSecretKey()
-            => Uri.UserInfo.Split(':')[1];
+            => Uri.UserInfo.Split(':')
+                .ElementAtOrDefault(1);
 
         public override string ToString()
             => Uri.ToString();

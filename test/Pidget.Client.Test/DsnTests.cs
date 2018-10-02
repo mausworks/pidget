@@ -4,53 +4,58 @@ using Xunit;
 
 namespace Pidget.Client.Test
 {
+    using static Dsns;
+
     public class DsnTests
     {
-        public const string PublicKey = "public_key";
-
-        public const string SecretKey = "secret_key";
-
-        public const string Host = "host";
-
-        public const string ProjectId = "project_id";
-
-        public const string Path = "/path/";
-
-        public static readonly Dsn SentryDsn = Dsn.Create(
-            $"https://{PublicKey}:{SecretKey}@{Host}{Path}{ProjectId}");
-
         [Fact]
         public void CreateThrows_ForNullDsn()
             => Assert.Throws<ArgumentNullException>(()
                 => Dsn.Create(null));
 
-        [Fact]
-        public void GetPublicKey()
-            => Assert.Equal(PublicKey, SentryDsn.GetPublicKey());
+        [Theory]
+        [InlineData(SentryDsn)]
+        [InlineData(LegacyDsn)]
+        public void GetPublicKey(string dsn)
+            => Assert.Equal(PublicKey, Dsn.Create(dsn).GetPublicKey());
 
         [Fact]
-        public void GetPrivateKey()
-            => Assert.Equal(SecretKey, SentryDsn.GetSecretKey());
+        public void LegacyDsn_GetSecretKey()
+            => Assert.Equal(SecretKey,
+                Dsn.Create(LegacyDsn).GetSecretKey());
 
         [Fact]
-        public void GetPath()
-            => Assert.Equal(Path, SentryDsn.GetPath());
+        public void SentryDsn_HasNullSecretKey()
+            => Assert.Null(Dsn.Create(SentryDsn).GetSecretKey());
 
-        [Fact]
-        public void GetProjectId()
-            => Assert.Equal(ProjectId, SentryDsn.GetProjectId());
+        [Theory]
+        [InlineData(SentryDsn)]
+        [InlineData(LegacyDsn)]
+        public void GetPath(string dsn)
+            => Assert.Equal(Path, Dsn.Create(dsn).GetPath());
 
-        [Fact]
-        public void ToString_ReturnsUriString()
-            => Assert.Equal(SentryDsn.Uri.ToString(), SentryDsn.ToString());
+        [Theory]
+        [InlineData(SentryDsn)]
+        [InlineData(LegacyDsn)]
+        public void GetProjectId(string dsn)
+            => Assert.Equal(ProjectId, Dsn.Create(dsn).GetProjectId());
 
-        [Fact]
-        public void GetCaptureUrl()
+        [Theory]
+        [InlineData(SentryDsn)]
+        [InlineData(LegacyDsn)]
+        public void ToString_IsOriginalString(string dsn)
+            => Assert.Equal(dsn, Dsn.Create(dsn).ToString());
+
+        [Theory]
+        [InlineData(SentryDsn)]
+        [InlineData(LegacyDsn)]
+        public void GetCaptureUrl(string dsn)
             => Assert.Equal(
                 expected: $"https://{Host}/api/{ProjectId}/store/",
-                actual: SentryDsn.GetCaptureUrl());
+                actual: Dsn.Create(dsn).GetCaptureUrl());
 
-        [Theory, InlineData(5000)]
+        [Theory]
+        [InlineData(5000)]
         public void GetCaptureUrl_NonStandardPort(int port)
         {
             var dsn = Dsn.Create(
@@ -60,6 +65,5 @@ namespace Pidget.Client.Test
                 expected: $"https://{Host}:{port}/api/{ProjectId}/store/",
                 actual: dsn.GetCaptureUrl());
         }
-
     }
 }
