@@ -40,14 +40,19 @@ namespace Pidget.Client.DataModels
                 LineNumber = GetLineNumber(stackFrame),
                 ColumnNumber = stackFrame.GetFileColumnNumber(),
                 InApp = IsInApp(method),
-                Module = method.DeclaringType.FullName,
-                Function = method.Name,
-                ContextLine = method.ToString()
+                Module = method?.DeclaringType?.FullName,
+                Function = method?.Name,
+                ContextLine = method?.ToString()
             };
         }
 
         private static bool IsInApp(MethodBase method)
         {
+            if (method?.DeclaringType is null)
+            {
+                return false;
+            }
+
             var module = method.DeclaringType.FullName;
 
             return !module.StartsWith("System.", StringComparison.Ordinal)
